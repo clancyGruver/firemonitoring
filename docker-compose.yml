@@ -1,0 +1,63 @@
+version: '2'
+
+services: 
+  nginx:
+    build:
+      context: ./
+      dockerfile: docker/nginx.docker
+    volumes:
+      - ./:/var/www
+#      - ./docker/nginx/ssl:/etc/nginx/ssl
+    ports:
+      - '5000:80'
+    links:
+      - php-fpm
+
+  php-fpm:
+      build:
+        context: ./
+        dockerfile: docker/php-fpm.docker
+      volumes:
+        - ./:/var/www
+      links:
+        - db
+        - redis
+      environment:
+        DB_PORT: 3306
+        DB_HOST: db
+        REDIS_PORT: 6379
+        REDIS_HOST: redis
+        
+  php-cli:
+      build:
+        context: ./
+        dockerfile: docker/php-cli.docker
+      volumes:
+        - ./:/var/www
+      links:
+        - db
+        - redis
+      environment:
+        DB_PORT: 3306
+        DB_HOST: db
+        REDIS_PORT: 6379
+        REDIS_HOST: redis
+      tty: true
+        
+  db:
+    image: mysql:5.7
+    restart:  always
+    volumes:
+      - ./storage/docker/mysql:/var/lib/mysql
+    environment: 
+      MYSQL_DATABASE: 'app'
+      MYSQL_USER: 'app'
+      MYSQL_PASSWORD: 'secret'
+      MYSQL_ROOT_PASSWORD: 'secret'
+    ports: 
+      # <Port exposed> : < MySQL Port running inside container>
+      - '33060:3306'
+  redis:
+    image: redis:3.2
+    ports:
+      - '63791:6379'
