@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DeviceReglamentElement extends Migration
+class DeviceLimitations extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class DeviceReglamentElement extends Migration
      */
     public function up()
     {
-        Schema::create('device_reglament_element', function (Blueprint $table) {
+        Schema::create('device_limitations', function (Blueprint $table) {
             $table->smallIncrements('id');
+            $table->unsignedBigInteger('device_id');
             $table->string('text');
-            $table->unsignedSmallInteger('dvice_reglament_id');
             $table->unsignedBigInteger('created_user_id');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
 
             $table->foreign('created_user_id')->references('id')->on('users');
-            $table->foreign('dvice_reglament_id')->references('id')->on('dvice_reglament');
+            $table->foreign('device_id')->references('id')->on('dvices');
         });
     }
 
@@ -33,7 +33,7 @@ class DeviceReglamentElement extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('device_reglament_element');
+        Schema::dropIfExists('device_limitations');
         //
     }
 }
