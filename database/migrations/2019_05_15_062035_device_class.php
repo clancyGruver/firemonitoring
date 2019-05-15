@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Raions extends Migration
+class DeviceClass extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class Raions extends Migration
      */
     public function up()
     {
-        Schema::create('raions', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('device_class', function (Blueprint $table) {
+            $table->tinyIncrements('id');
             $table->string('name');
-            $table->decimal('lng', 10, 7);
-            $table->decimal('lat', 10, 7);
-            $table->boolean('is_active')->default(1);            
+            $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
     }
@@ -30,6 +28,7 @@ class Raions extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('raions');
+        Schema::dropIfExists('device_class');
+        //
     }
 }
