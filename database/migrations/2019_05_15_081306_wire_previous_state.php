@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class WireSensor extends Migration
+class WirePreviousState extends Migration
 {
     /**
      * Run the migrations.
@@ -13,22 +13,19 @@ class WireSensor extends Migration
      */
     public function up()
     {
-        Schema::create('wire_sensor_previous_state', function (Blueprint $table) {
+        Schema::create('wire_previous_state', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('wire_sensor_id');            
-            $table->unsignedBigInteger('wire_sensor_reglament_id');            
+            $table->unsignedBigInteger('wire_id');            
             $table->unsignedBigInteger('created_user_id');
-            $table->string('name');
-            $table->tinyIntunsignedTinyIntegereger('floor');
-            $table->string('cabinet_name');
-            $table->boolean('SP5_valid')->default(1);
             $table->boolean('is_good')->default(1);
+            $table->string('description');
+            $table->string('sertificate');
+            $table->boolean('is_fire_safety')->default(1);
             $table->boolean('is_active')->default(1);
             $table->timestamps();
 
             $table->foreign('created_user_id')->references('id')->on('users');
             $table->foreign('wire_id')->references('id')->on('wires');
-            $table->foreign('sensor_id')->references('id')->on('sensors');
         });
     }
 
@@ -39,7 +36,7 @@ class WireSensor extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('wire_sensor_previous_state');
+        Schema::dropIfExists('wire_previous_state');
         //
     }
 }
