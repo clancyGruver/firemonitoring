@@ -24,7 +24,7 @@ class Devices extends Migration
             $table->timestamps();
 
             $table->foreign('created_user_id')->references('id')->on('users');
-            $table->foreign('class_id')->references('id')->on('users');
+            $table->foreign('class_id')->references('id')->on('device_class');
         });
     }
 

@@ -13,7 +13,18 @@ class DeviceReglament extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('device_reglament', function (Blueprint $table) {
+            $table->smallIncrements('id');
+            $table->string('name');
+            $table->tinyInteger('period');
+            $table->unsignedBigInteger('created_user_id');
+            $table->unsignedBigInteger('dvice_id');
+            $table->boolean('is_active')->default(1);
+            $table->timestamps();
+
+            $table->foreign('created_user_id')->references('id')->on('users');
+            $table->foreign('dvice_id')->references('id')->on('devices');
+        });
     }
 
     /**
@@ -23,6 +34,7 @@ class DeviceReglament extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('device_reglament');
         //
     }
 }
