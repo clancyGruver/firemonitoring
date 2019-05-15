@@ -17,8 +17,12 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::middleware(['auth'])->group(function(){
+    Route::prefix('admin')->group(function(){
+        Route::get('/', 'admin\HomeController');
+    });
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+    Route::prefix('technician')->group(function(){
+        Route::get('/', 'technician\HomeController');
+    });
+});

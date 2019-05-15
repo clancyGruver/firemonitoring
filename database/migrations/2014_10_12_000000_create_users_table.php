@@ -19,8 +19,12 @@ class CreateUsersTable extends Migration
             $table->string('phone','11')->unique();
             $table->string('password');
             $table->boolean('is_active')->default(1);
+            $table->boolean('is_admin')->default(0);
             $table->rememberToken();
             $table->timestamps();
+            $table->unsignedBigInteger('raion_id');
+
+            $table->foreign('raion_id')->references('id')->on('raions');
         });
     }
 
