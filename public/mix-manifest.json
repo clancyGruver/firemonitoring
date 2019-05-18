@@ -1,5 +1,6 @@
 {
-    "/js/technician.js": "/js/technician.js",
+    "/js/admin.js": "/js/admin.js",
     "/css/app.css": "/css/app.css",
-    "/css/technician.css": "/css/technician.css"
+    "/css/technician.css": "/css/technician.css",
+    "/js/technician.js": "/js/technician.js"
 }
