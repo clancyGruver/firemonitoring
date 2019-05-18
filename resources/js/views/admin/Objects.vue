@@ -8,6 +8,9 @@
       </div>
     </div>
 
+    <p class="text-center alert alert-danger"
+    v-bind:class="{ hidden: hasError }">Please fill all fields!</p>
+
     <!-- Default Light Table -->
     <div class="row">
       <div class="col">
@@ -31,7 +34,7 @@
             </table>
           </div>          
             <h5 class="card-footer">
-              <a href="#" class="btn btn-lg">
+              <a href="#" class="btn btn-lg" @click.prevent="createItem()">
                 <span class="d-none d-md-inline-block">
                     <i class="material-icons text-primary">add</i> Добавить объект мониторинга
                 </span>
@@ -42,3 +45,29 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+    data: {
+        items: [],
+        hasError: true,
+        newItem: { 'name': '','age': '','profession': '' },
+    },
+    methods:{
+        createItem: function createItem() {
+            var _this = this;
+            var input = this.newItem;
+            
+            if (input['name'] == '' || input['age'] == '' || input['profession'] == '' ) {
+                this.hasError = false;
+            } else {
+                this.hasError = true;
+                axios.post('/vueitems', input).then(function (response) {
+                _this.newItem = { 'name': '' };
+                _this.getVueItems();
+                });
+            }
+        }
+    }
+}
+</script>

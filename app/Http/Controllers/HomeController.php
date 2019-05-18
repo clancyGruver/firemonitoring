@@ -31,4 +31,10 @@ class HomeController extends Controller
                 return redirect('technician/');
         }
     }
+
+
+    public function insertRaions()
+    {
+        
+    }
 }
