@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+import Objects from './views/admin/Objects.vue'
 /*import PersonalBlog from './views/PersonalBlog.vue';
 import UserProfileLite from './views/UserProfileLite.vue';
 import AddNewPost from './views/AddNewPost.vue';
@@ -27,7 +28,7 @@ export default new Router({
     {
       path: '/objects-overview',
       name: 'objects',
-      component: Objectss,
+      component: Objects,
     },
     /*{
       path: '/user-profile-lite',

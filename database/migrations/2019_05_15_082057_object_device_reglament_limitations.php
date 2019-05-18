@@ -16,8 +16,8 @@ class ObjectDeviceReglamentLimitations extends Migration
         Schema::create('object_device_reglament_limitations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('object_device_id');            
-            $table->unsignedBigInteger('object_device_reglament_id');
-            $table->unsignedSmallInteger('device_limitations_id');
+            $table->unsignedBigInteger('ODR_id');
+            $table->unsignedSmallInteger('DL_id');
             $table->unsignedBigInteger('created_user_id');
             $table->string('additional_limitation')->nullable();            
             $table->boolean('is_active')->default(1);
@@ -25,8 +25,8 @@ class ObjectDeviceReglamentLimitations extends Migration
 
             $table->foreign('created_user_id')->references('id')->on('users');
             $table->foreign('object_device_id')->references('id')->on('object_devices');
-            $table->foreign('object_device_reglament_id')->references('id')->on('object_device_reglament');
-            $table->foreign('device_limitations_id')->references('id')->on('device_limitations');
+            $table->foreign('ODR_id')->references('id')->on('object_device_reglament');
+            $table->foreign('DL_id')->references('id')->on('device_limitations');
         });
     }
 

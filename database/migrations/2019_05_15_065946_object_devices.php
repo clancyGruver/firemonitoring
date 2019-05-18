@@ -22,7 +22,7 @@ class ObjectDevices extends Migration
             $table->timestamps();
 
             $table->foreign('created_user_id')->references('id')->on('users');
-            $table->foreign('device_id')->references('id')->on('dvices');
+            $table->foreign('device_id')->references('id')->on('devices');
             $table->foreign('object_id')->references('id')->on('objects');
         });
     }

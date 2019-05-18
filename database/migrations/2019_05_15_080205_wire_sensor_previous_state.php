@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class WireSensor extends Migration
+class WireSensorPreviousState extends Migration
 {
     /**
      * Run the migrations.
@@ -19,7 +19,7 @@ class WireSensor extends Migration
             $table->unsignedBigInteger('wire_sensor_reglament_id');            
             $table->unsignedBigInteger('created_user_id');
             $table->string('name');
-            $table->tinyIntunsignedTinyIntegereger('floor');
+            $table->tinyInteger('floor');
             $table->string('cabinet_name');
             $table->boolean('SP5_valid')->default(1);
             $table->boolean('is_good')->default(1);
@@ -27,8 +27,7 @@ class WireSensor extends Migration
             $table->timestamps();
 
             $table->foreign('created_user_id')->references('id')->on('users');
-            $table->foreign('wire_id')->references('id')->on('wires');
-            $table->foreign('sensor_id')->references('id')->on('sensors');
+            $table->foreign('wire_sensor_id')->references('id')->on('wire_sensor');
         });
     }
 

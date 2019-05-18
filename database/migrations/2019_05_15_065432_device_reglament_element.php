@@ -22,7 +22,7 @@ class DeviceReglamentElement extends Migration
             $table->timestamps();
 
             $table->foreign('created_user_id')->references('id')->on('users');
-            $table->foreign('dvice_reglament_id')->references('id')->on('dvice_reglament');
+            $table->foreign('dvice_reglament_id')->references('id')->on('device_reglament');
         });
     }
 

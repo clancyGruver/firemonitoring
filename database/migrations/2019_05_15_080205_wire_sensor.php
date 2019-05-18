@@ -19,7 +19,7 @@ class WireSensor extends Migration
             $table->unsignedBigInteger('sensor_id');            
             $table->unsignedBigInteger('created_user_id');
             $table->string('name');
-            $table->tinyIntunsignedTinyIntegereger('floor');
+            $table->tinyInteger('floor');
             $table->string('cabinet_name');
             $table->boolean('SP5_valid')->default(1);
             $table->boolean('is_good')->default(1);

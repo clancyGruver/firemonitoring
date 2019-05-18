@@ -13,7 +13,7 @@
         <slot />
 
         <!-- Main Footer -->
-        <main-footer />
+        <!--main-footer /-->
       </d-col>
 
     </d-row>
