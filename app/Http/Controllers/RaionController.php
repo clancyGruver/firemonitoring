@@ -13,11 +13,7 @@ class RaionController extends Controller
     public function update($id, Request $request){
         
       $raion = Raion::find($id);
-
       $raion->update($request->all());
-
-      dd($request->all());
-
       return response()->json('successfully updated');
     }
 }

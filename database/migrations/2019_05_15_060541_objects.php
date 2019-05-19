@@ -25,7 +25,7 @@ class Objects extends Migration
             $table->string('contact_phone');
             $table->string('director_name');
             $table->string('director_phone');
-            $table->unsignedBigInteger('created_user_id');
+            $table->unsignedBigInteger('created_user_id')->nullable();
             $table->timestamps();
 
             $table->foreign('raion_id')->references('id')->on('raions');

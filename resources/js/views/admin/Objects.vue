@@ -8,9 +8,6 @@
       </div>
     </div>
 
-    <p class="text-center alert alert-danger"
-    v-bind:class="{ hidden: hasError }">Please fill all fields!</p>
-
     <!-- Default Light Table -->
     <div class="row">
       <div class="col">
@@ -29,7 +26,7 @@
                 </tr>
               </thead>
               <tbody>
-                
+                  <object-tr v-for="(item, index) in items" :RowData="item" :RowIndex="index" :key="index"/>
               </tbody>
             </table>
           </div>          
@@ -56,8 +53,8 @@
             </d-row>
 
             <d-row class="my-1">
-              <d-col sm="3"><label for="raion">Район</label></d-col>
-              <d-col sm="9"> <d-select id="raion" v-model="newItem.raion" :options="raions" /></d-col>
+              <d-col sm="3"><label for="raion_id">Район</label></d-col>
+              <d-col sm="9"> <d-select id="raion_id" v-model="newItem.raion_id" :options="raions" /></d-col>
             </d-row>
 
             <d-row class="my-1">
@@ -85,7 +82,7 @@
           </d-container>           
         </d-modal-body>
         <d-modal-footer>
-            <a href="#" class="btn btn-lg" @click.prevent="handleModal">
+            <a href="#" class="btn btn-lg" @click.prevent="handleSave">
               <span class="d-none d-md-inline-block">
                   <i class="material-icons text-primary">add</i> Добавить объект мониторинга
               </span>
@@ -96,7 +93,9 @@
 </template>
 
 <script>
+import ObjectTr from './components/ObjectTr';
 export default {
+    components: {'object-tr':ObjectTr},
     data: function(){ return{
         items: [],
         hasError: false,
@@ -104,7 +103,7 @@ export default {
         raions: [],
         newItem: { 
           'name': '',
-          'raion': '',
+          'raion_id': '',
           'address': '',
           'director_name': '',
           'director_phone': '',
@@ -114,7 +113,27 @@ export default {
     }},
     methods:{
       handleModal() {this.showModal = !this.showModal},
-        createItem: function createItem() {
+      handleSave() {
+        axios
+          .post('/api/objects/create', this.newItem)
+          .then(
+            response => {
+              this.items.push(response.data); 
+              this.newItem = { 
+                'name': '',
+                'raion_id': '',
+                'address': '',
+                'director_name': '',
+                'director_phone': '',
+                'contact_name': '',
+                'contact_phone': '',
+              };
+              handleModal();
+            }
+          )
+          .catch();
+      },
+      createItem: function createItem() {
             var _this = this;
             var input = this.newItem;
             
@@ -134,7 +153,10 @@ export default {
       this.$nextTick(function () {
         axios
         .get('/api/raions')
-        .then( response => response.data.map( v => { if (v.is_active == 1) self.raions.push({'value': v.id, 'text': v.name }) } ) );
+        .then( response => response.data.map( v => { if (v.is_active == 1) self.raions.push({'value': v.id, 'text': v.name }) } ) );        
+        axios
+        .get('/api/objects')
+        .then(response => this.items = response.data);
         })
     }
 }
