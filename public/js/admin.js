@@ -2055,17 +2055,77 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  data: {
-    items: [],
-    hasError: true,
-    newItem: {
-      'name': '',
-      'age': '',
-      'profession': ''
-    }
+  data: function data() {
+    return {
+      items: [],
+      hasError: false,
+      showModal: true,
+      raions: [],
+      newItem: {
+        'name': '',
+        'raion': '',
+        'address': '',
+        'director_name': '',
+        'director_phone': '',
+        'contact_name': '',
+        'contact_phone': ''
+      }
+    };
   },
   methods: {
+    handleModal: function handleModal() {
+      this.showModal = !this.showModal;
+    },
     createItem: function createItem() {
       var _this = this;
 
@@ -2084,6 +2144,103 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
     }
+  },
+  mounted: function mounted() {
+    var self = this;
+    this.$nextTick(function () {
+      axios.get('/api/raions').then(function (response) {
+        return response.data.map(function (v) {
+          if (v.is_active == 1) self.raions.push({
+            'value': v.id,
+            'text': v.name
+          });
+        });
+      });
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/admin/Raions.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/admin/Raions.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      items: []
+    };
+  },
+  methods: {
+    changeVisible: function changeVisible(id, is_active) {
+      var self = this;
+      this.items.map(function (v, i) {
+        if (v.id == id) self.items[i]['is_active'] = is_active;
+      });
+      axios.post("/api/raions/".concat(id), {
+        is_active: is_active ? 1 : 0
+      }).then(function (response) {
+        return console.log(response);
+      })["catch"]();
+    }
+  },
+  mounted: function mounted() {
+    var self = this;
+    this.$nextTick(function () {
+      axios.get('/api/raions').then(function (response) {
+        return response.data.map(function (v) {
+          return self.items.push(v);
+        });
+      });
+    });
   }
 });
 
@@ -74108,7 +74265,7 @@ var render = function() {
                   on: {
                     click: function($event) {
                       $event.preventDefault()
-                      return _vm.createItem()
+                      return _vm.handleModal($event)
                     }
                   }
                 },
@@ -74117,8 +74274,282 @@ var render = function() {
             ])
           ])
         ])
-      ])
-    ]
+      ]),
+      _vm._v(" "),
+      _vm.showModal
+        ? _c(
+            "d-modal",
+            { on: { close: _vm.handleModal } },
+            [
+              _c(
+                "d-modal-header",
+                [
+                  _c("d-modal-title", [
+                    _vm._v("Добавление объекта мониторинга")
+                  ])
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "d-modal-body",
+                [
+                  _c(
+                    "d-container",
+                    { attrs: { fluid: "" } },
+                    [
+                      _c(
+                        "d-row",
+                        { staticClass: "my-1" },
+                        [
+                          _c("d-col", { attrs: { sm: "3" } }, [
+                            _c("label", { attrs: { for: "name" } }, [
+                              _vm._v("Название")
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "d-col",
+                            { attrs: { sm: "9" } },
+                            [
+                              _c("d-input", {
+                                attrs: { id: "name", type: "text" },
+                                model: {
+                                  value: _vm.newItem.name,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.newItem, "name", $$v)
+                                  },
+                                  expression: "newItem.name"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "d-row",
+                        { staticClass: "my-1" },
+                        [
+                          _c("d-col", { attrs: { sm: "3" } }, [
+                            _c("label", { attrs: { for: "raion" } }, [
+                              _vm._v("Район")
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "d-col",
+                            { attrs: { sm: "9" } },
+                            [
+                              _c("d-select", {
+                                attrs: { id: "raion", options: _vm.raions },
+                                model: {
+                                  value: _vm.newItem.raion,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.newItem, "raion", $$v)
+                                  },
+                                  expression: "newItem.raion"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "d-row",
+                        { staticClass: "my-1" },
+                        [
+                          _c("d-col", { attrs: { sm: "3" } }, [
+                            _c("label", { attrs: { for: "address" } }, [
+                              _vm._v("Адрес")
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "d-col",
+                            { attrs: { sm: "9" } },
+                            [
+                              _c("d-input", {
+                                attrs: { id: "address", type: "text" },
+                                model: {
+                                  value: _vm.newItem.address,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.newItem, "address", $$v)
+                                  },
+                                  expression: "newItem.address"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "d-row",
+                        { staticClass: "my-1" },
+                        [
+                          _c("d-col", { attrs: { sm: "3" } }, [
+                            _c("label", { attrs: { for: "director_name" } }, [
+                              _vm._v("ФИО директора")
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "d-col",
+                            { attrs: { sm: "9" } },
+                            [
+                              _c("d-input", {
+                                attrs: { id: "director_name", type: "text" },
+                                model: {
+                                  value: _vm.newItem.director_name,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.newItem, "director_name", $$v)
+                                  },
+                                  expression: "newItem.director_name"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "d-row",
+                        { staticClass: "my-1" },
+                        [
+                          _c("d-col", { attrs: { sm: "3" } }, [
+                            _c("label", { attrs: { for: "director_phone" } }, [
+                              _vm._v("Телефон директора")
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "d-col",
+                            { attrs: { sm: "9" } },
+                            [
+                              _c("d-input", {
+                                attrs: { id: "director_phone", type: "tel" },
+                                model: {
+                                  value: _vm.newItem.director_phone,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.newItem, "director_phone", $$v)
+                                  },
+                                  expression: "newItem.director_phone"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "d-row",
+                        { staticClass: "my-1" },
+                        [
+                          _c("d-col", { attrs: { sm: "3" } }, [
+                            _c("label", { attrs: { for: "contact_name" } }, [
+                              _vm._v("ФИО ответственного")
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "d-col",
+                            { attrs: { sm: "9" } },
+                            [
+                              _c("d-input", {
+                                attrs: { id: "contact_name", type: "text" },
+                                model: {
+                                  value: _vm.newItem.contact_name,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.newItem, "contact_name", $$v)
+                                  },
+                                  expression: "newItem.contact_name"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "d-row",
+                        { staticClass: "my-1" },
+                        [
+                          _c("d-col", { attrs: { sm: "3" } }, [
+                            _c("label", { attrs: { for: "contact_phone" } }, [
+                              _vm._v("Телефон ответственного")
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "d-col",
+                            { attrs: { sm: "9" } },
+                            [
+                              _c("d-input", {
+                                attrs: { id: "contact_phone", type: "tel" },
+                                model: {
+                                  value: _vm.newItem.contact_phone,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.newItem, "contact_phone", $$v)
+                                  },
+                                  expression: "newItem.contact_phone"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("d-modal-footer", [
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-lg",
+                    attrs: { href: "#" },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.handleModal($event)
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { staticClass: "d-none d-md-inline-block" }, [
+                      _c("i", { staticClass: "material-icons text-primary" }, [
+                        _vm._v("add")
+                      ]),
+                      _vm._v(" Добавить объект мониторинга\n            ")
+                    ])
+                  ]
+                )
+              ])
+            ],
+            1
+          )
+        : _vm._e()
+    ],
+    1
   )
 }
 var staticRenderFns = [
@@ -74189,6 +74620,125 @@ var staticRenderFns = [
     return _c("span", { staticClass: "d-none d-md-inline-block" }, [
       _c("i", { staticClass: "material-icons text-primary" }, [_vm._v("add")]),
       _vm._v(" Добавить объект мониторинга\n              ")
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/admin/Raions.vue?vue&type=template&id=2dffa279&":
+/*!**********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/admin/Raions.vue?vue&type=template&id=2dffa279& ***!
+  \**********************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "main-content-container container-fluid px-4" },
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col" }, [
+          _c("div", { staticClass: "card card-small mb-4" }, [
+            _c("div", { staticClass: "card-body p-0 pb-3 text-center" }, [
+              _c("table", { staticClass: "table mb-0" }, [
+                _vm._m(1),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  [
+                    _vm._l(_vm.items, function(item, index) {
+                      return [
+                        _c("tr", { key: index }, [
+                          _c("td", [_vm._v(_vm._s(index))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(item.name))]),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            [
+                              _c("d-checkbox", {
+                                staticClass: "custom-toggle-sm",
+                                attrs: {
+                                  toggle: "",
+                                  checked: !!+item.is_active
+                                },
+                                on: {
+                                  change: function($event) {
+                                    return _vm.changeVisible(
+                                      item.id,
+                                      !+item.is_active
+                                    )
+                                  }
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ])
+                      ]
+                    })
+                  ],
+                  2
+                )
+              ])
+            ])
+          ])
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "page-header row no-gutters py-4" }, [
+      _c(
+        "div",
+        { staticClass: "col-12 col-sm-4 text-center text-sm-left mb-0" },
+        [
+          _c("span", { staticClass: "text-uppercase page-subtitle" }, [
+            _vm._v("Администрирование")
+          ]),
+          _vm._v(" "),
+          _c("h3", { staticClass: "page-title" }, [_vm._v("Районы")])
+        ]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", { staticClass: "bg-light" }, [
+      _c("tr", [
+        _c("th", { staticClass: "border-0", attrs: { scope: "col" } }, [
+          _vm._v("#")
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-0", attrs: { scope: "col" } }, [
+          _vm._v("Наименование")
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-0", attrs: { scope: "col" } }, [
+          _vm._v("Отображать")
+        ])
+      ])
     ])
   }
 ]
@@ -90525,6 +91075,13 @@ module.exports = function(module) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function () {
   return [{
+    title: 'Районы',
+    to: {
+      name: 'raions'
+    },
+    htmlBefore: '<i class="material-icons">public</i>',
+    htmlAfter: ''
+  }, {
     title: 'Объекты',
     to: {
       name: 'objects'
@@ -90609,6 +91166,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _views_admin_Objects_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./views/admin/Objects.vue */ "./resources/js/views/admin/Objects.vue");
+/* harmony import */ var _views_admin_Raions_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./views/admin/Raions.vue */ "./resources/js/views/admin/Raions.vue");
+
 
 
 
@@ -90641,6 +91200,10 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
     path: '/objects-overview',
     name: 'objects',
     component: _views_admin_Objects_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  }, {
+    path: '/raions-overview',
+    name: 'raions',
+    component: _views_admin_Raions_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   }]
 }));
 
@@ -91160,15 +91723,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************************************!*\
   !*** ./resources/js/views/admin/Objects.vue ***!
   \**********************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Objects_vue_vue_type_template_id_0c84a1c5___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Objects.vue?vue&type=template&id=0c84a1c5& */ "./resources/js/views/admin/Objects.vue?vue&type=template&id=0c84a1c5&");
 /* harmony import */ var _Objects_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Objects.vue?vue&type=script&lang=js& */ "./resources/js/views/admin/Objects.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Objects_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Objects_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -91198,7 +91760,7 @@ component.options.__file = "resources/js/views/admin/Objects.vue"
 /*!***********************************************************************!*\
   !*** ./resources/js/views/admin/Objects.vue?vue&type=script&lang=js& ***!
   \***********************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -91221,6 +91783,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Objects_vue_vue_type_template_id_0c84a1c5___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Objects_vue_vue_type_template_id_0c84a1c5___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/views/admin/Raions.vue":
+/*!*********************************************!*\
+  !*** ./resources/js/views/admin/Raions.vue ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Raions_vue_vue_type_template_id_2dffa279___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Raions.vue?vue&type=template&id=2dffa279& */ "./resources/js/views/admin/Raions.vue?vue&type=template&id=2dffa279&");
+/* harmony import */ var _Raions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Raions.vue?vue&type=script&lang=js& */ "./resources/js/views/admin/Raions.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Raions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Raions_vue_vue_type_template_id_2dffa279___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Raions_vue_vue_type_template_id_2dffa279___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/admin/Raions.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/admin/Raions.vue?vue&type=script&lang=js&":
+/*!**********************************************************************!*\
+  !*** ./resources/js/views/admin/Raions.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Raions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Raions.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/admin/Raions.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Raions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/views/admin/Raions.vue?vue&type=template&id=2dffa279&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/views/admin/Raions.vue?vue&type=template&id=2dffa279& ***!
+  \****************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Raions_vue_vue_type_template_id_2dffa279___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Raions.vue?vue&type=template&id=2dffa279& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/admin/Raions.vue?vue&type=template&id=2dffa279&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Raions_vue_vue_type_template_id_2dffa279___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Raions_vue_vue_type_template_id_2dffa279___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

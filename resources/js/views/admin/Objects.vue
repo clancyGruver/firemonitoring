@@ -34,7 +34,7 @@
             </table>
           </div>          
             <h5 class="card-footer">
-              <a href="#" class="btn btn-lg" @click.prevent="createItem()">
+              <a href="#" class="btn btn-lg" @click.prevent="handleModal">
                 <span class="d-none d-md-inline-block">
                     <i class="material-icons text-primary">add</i> Добавить объект мониторинга
                 </span>
@@ -43,17 +43,77 @@
         </div>
       </div>
     </div>
+
+    <d-modal v-if="showModal" @close="handleModal">
+        <d-modal-header>
+            <d-modal-title>Добавление объекта мониторинга</d-modal-title>
+        </d-modal-header>
+        <d-modal-body>
+          <d-container fluid>
+            <d-row class="my-1">
+              <d-col sm="3"><label for="name">Название</label></d-col>
+              <d-col sm="9"><d-input id="name" v-model="newItem.name" type="text" > </d-input></d-col>
+            </d-row>
+
+            <d-row class="my-1">
+              <d-col sm="3"><label for="raion">Район</label></d-col>
+              <d-col sm="9"> <d-select id="raion" v-model="newItem.raion" :options="raions" /></d-col>
+            </d-row>
+
+            <d-row class="my-1">
+              <d-col sm="3"><label for="address">Адрес</label></d-col>
+              <d-col sm="9"><d-input id="address" v-model="newItem.address" type="text" > </d-input></d-col>
+            </d-row>
+
+            <d-row class="my-1">
+              <d-col sm="3"><label for="director_name">ФИО директора</label></d-col>
+              <d-col sm="9"><d-input id="director_name" v-model="newItem.director_name" type="text" > </d-input></d-col>
+            </d-row>
+            <d-row class="my-1">
+              <d-col sm="3"><label for="director_phone">Телефон директора</label></d-col>
+              <d-col sm="9"><d-input id="director_phone" v-model="newItem.director_phone" type="tel" > </d-input></d-col>
+            </d-row>
+
+            <d-row class="my-1">
+              <d-col sm="3"><label for="contact_name">ФИО ответственного</label></d-col>
+              <d-col sm="9"><d-input id="contact_name" v-model="newItem.contact_name" type="text" > </d-input></d-col>
+            </d-row>
+            <d-row class="my-1">
+              <d-col sm="3"><label for="contact_phone">Телефон ответственного</label></d-col>
+              <d-col sm="9"><d-input id="contact_phone" v-model="newItem.contact_phone" type="tel" > </d-input></d-col>
+            </d-row>
+          </d-container>           
+        </d-modal-body>
+        <d-modal-footer>
+            <a href="#" class="btn btn-lg" @click.prevent="handleModal">
+              <span class="d-none d-md-inline-block">
+                  <i class="material-icons text-primary">add</i> Добавить объект мониторинга
+              </span>
+            </a>
+        </d-modal-footer>
+    </d-modal>
   </div>
 </template>
 
 <script>
 export default {
-    data: {
+    data: function(){ return{
         items: [],
-        hasError: true,
-        newItem: { 'name': '','age': '','profession': '' },
-    },
+        hasError: false,
+        showModal: true,
+        raions: [],
+        newItem: { 
+          'name': '',
+          'raion': '',
+          'address': '',
+          'director_name': '',
+          'director_phone': '',
+          'contact_name': '',
+          'contact_phone': '',
+        },
+    }},
     methods:{
+      handleModal() {this.showModal = !this.showModal},
         createItem: function createItem() {
             var _this = this;
             var input = this.newItem;
@@ -68,6 +128,14 @@ export default {
                 });
             }
         }
+    },
+    mounted: function () {
+      const self = this;
+      this.$nextTick(function () {
+        axios
+        .get('/api/raions')
+        .then( response => response.data.map( v => { if (v.is_active == 1) self.raions.push({'value': v.id, 'text': v.name }) } ) );
+        })
     }
 }
 </script>

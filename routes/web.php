@@ -19,7 +19,7 @@ Auth::routes();
 
 Route::middleware(['auth'])->group(function(){
     Route::prefix('admin')->group(function(){
-        Route::get('/', 'admin\HomeController');
+        Route::get('/{any}', 'admin\HomeController');
     });
 
     Route::prefix('technician')->group(function(){

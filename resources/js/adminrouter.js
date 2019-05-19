@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Objects from './views/admin/Objects.vue'
+import Objects from './views/admin/Objects.vue';
+import Raions from './views/admin/Raions.vue';
 /*import PersonalBlog from './views/PersonalBlog.vue';
 import UserProfileLite from './views/UserProfileLite.vue';
 import AddNewPost from './views/AddNewPost.vue';
@@ -13,55 +14,63 @@ import BlogPosts from './views/BlogPosts.vue';*/
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
-  base: '/admin/',
-  linkActiveClass: 'active',
-  linkExactActiveClass: 'exact-active',
-  scrollBehavior() {
-    return { x: 0, y: 0 };
-  },
-  routes: [
-    /*{
-      path: '/',
-      redirect: '/blog-overview',
-    },*/
-    {
-      path: '/objects-overview',
-      name: 'objects',
-      component: Objects,
+    mode: 'history',
+    base: '/admin/',
+    linkActiveClass: 'active',
+    linkExactActiveClass: 'exact-active',
+    scrollBehavior() {
+        return {
+            x: 0,
+            y: 0
+        };
     },
-    /*{
-      path: '/user-profile-lite',
-      name: 'user-profile-lite',
-      component: UserProfileLite,
-    },
-    {
-      path: '/add-new-post',
-      name: 'add-new-post',
-      component: AddNewPost,
-    },
-    {
-      path: '/errors',
-      name: 'errors',
-      component: Errors,
-    },
-    {
-      path: '/components-overview',
-      name: 'components-overview',
-      component: ComponentsOverview,
-    },
-    {
-      path: '/tables',
-      name: 'tables',
-      component: Tables,
-    },
-    {
-      path: '/blog-posts',
-      name: 'blog-posts',
-      component: BlogPosts,
-    }, {
-      path: '*',
-      redirect: '/errors',
-    },*/
-  ],
+    routes: [
+        /*{
+          path: '/',
+          redirect: '/blog-overview',
+        },*/
+        {
+            path: '/objects-overview',
+            name: 'objects',
+            component: Objects,
+        },
+        {
+            path: '/raions-overview',
+            name: 'raions',
+            component: Raions,
+        },
+        /*{
+          path: '/user-profile-lite',
+          name: 'user-profile-lite',
+          component: UserProfileLite,
+        },
+        {
+          path: '/add-new-post',
+          name: 'add-new-post',
+          component: AddNewPost,
+        },
+        {
+          path: '/errors',
+          name: 'errors',
+          component: Errors,
+        },
+        {
+          path: '/components-overview',
+          name: 'components-overview',
+          component: ComponentsOverview,
+        },
+        {
+          path: '/tables',
+          name: 'tables',
+          component: Tables,
+        },
+        {
+          path: '/blog-posts',
+          name: 'blog-posts',
+          component: BlogPosts,
+        }, {
+          path: '*',
+          redirect: '/errors',
+        },*/
+    ],
 });
