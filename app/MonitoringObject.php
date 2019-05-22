@@ -29,7 +29,7 @@ class MonitoringObject extends Model
 
     public function raion()
     {
-        return $this->hasOne('Raion', 'id', 'raion_id');
+        return $this->hasOne('App\Raion', 'id', 'raion_id');
     }
 
     public function get_coords($ll, $addr){

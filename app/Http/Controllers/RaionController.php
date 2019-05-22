@@ -8,7 +8,9 @@ use App\Raion;
 class RaionController extends Controller
 {
     public function index(){
-        return response(Raion::all()->jsonSerialize());
+        $raions = Raion::all();
+        return view('admin.raions',['raions' => $raions]);
+
     }
     public function update($id, Request $request){
         

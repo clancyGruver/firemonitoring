@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Raion;
-
 class HomeController extends Controller
 {
     /**
@@ -21,15 +17,10 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function index()
     {
-        if (Auth::check()) {
-            if(Auth::user()->is_admin())
-                return redirect('admin/');
-            else
-                return redirect('technician/');
-        }
+        return view('dashboard');
     }
 }

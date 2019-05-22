@@ -10,11 +10,24 @@ use App\Raion;
 class ObjectsController extends Controller
 {
     public function index(){
-        return response(MO::all()->jsonSerialize());
+        $items = MO::where('is_active',1)->get();
+        return view('admin.objects.index',['items' => $items]);
     }
 
-    public function getOne($id, Request $request){        
-      return response(MO::find($id)->jsonSerialize());
+    public function detail($id, Request $request){        
+        $item = MO::find($id);
+        return view('admin.objects',['item' => $item]);
+    }
+
+    public function delete($id, Request $request){        
+        $item = MO::find($id);
+        $item->is_active = 0;
+        $item->save();
+    }
+
+    public function add(Request $request){
+        $raions = Raion::where('is_active',1)->get();
+        return view('admin.objects.add',['raions'=>$raions]);
     }
 
     public function update($id, Request $request){
@@ -25,18 +38,22 @@ class ObjectsController extends Controller
         return response()->json('successfully updated');
     }
 
-    public function create( Request $request){
-        $obj = new MO;  
-        foreach($request->all() as $k=>$v)
-            $obj[$k] = $v;
+    public function store( Request $request){
+        $validatedData = $request->validate([
+            'lat' => 'required',//|unique:posts|max:255
+            'lng' => 'required',
+            'name' => 'required',
+            'raion_id' => 'required',
+            'address' => 'required|max:255',
+            'director_name' => 'required|max:255',
+            'director_phone' => 'required|max:255',
+            'contact_name' => 'required|max:255',
+            'contact_phone' => 'required|max:255',
+        ]);
+        $obj = new MO($request->except('_token'));  
         $raion = Raion::find($obj['raion_id']);
-        $coords = $obj->get_coords("{$raion->lng} {$raion->lat}", "{$raion->name}, {$obj['address']}");
-        foreach($coords as $k=>$v){
-            $obj[$k] = $v;
-        }
-        //dd(Auth::user());
-        //$obj->created_user_id = Auth::user()->id;
+        $obj->created_user_id = Auth::user()->id;
         $obj->save();
-        return response($obj->jsonSerialize());
+        return redirect('admin/objects');
     }
 }
