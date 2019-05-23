@@ -11,7 +11,7 @@
         <div id="mapid"></div>
     </div>
     <div class="row">
-        <form action="{{ route('objects.store') }}" method="POST" class="col-md-6 col-md-offset-3">
+        <form action="{{ route('objects.store') }}" method="POST" class="col-md-6 offset-md-3">
             @csrf
             <input type="hidden" name="lat" id="lat">
             <input type="hidden" name="lng" id="lng">
@@ -90,37 +90,40 @@
 @push('js')
 <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
 <script>
-    var mymap = L.map('mapid').setView([55.173736, 61.407359], 13);
-    var myIcon = L.icon({
-        iconUrl: '{{ asset('images') }}/map/marker-icon-red.png',
-        shadowUrl: '{{ asset('images') }}/map/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
-    var marker = 
-        L.marker([55.173736, 61.407359],{
-            icon:myIcon,
-            draggable:true,
-        })
-        .addTo(mymap)
-        .on('dragend', function() {
-            var coord = marker.getLatLng();
-            $('#lat').val(coord.lat);
-            $('#lng').val(coord.lng);
+    
+    $(document).ready(function(){
+        var mymap = L.map('mapid').setView([55.173736, 61.407359], 13);
+        var myIcon = L.icon({
+            iconUrl: '{{ asset('images') }}/map/marker-icon-red.png',
+            shadowUrl: '{{ asset('images') }}/map/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
         });
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-    }).addTo(mymap);
+        var marker = 
+            L.marker([55.173736, 61.407359],{
+                icon:myIcon,
+                draggable:true,
+            })
+            .addTo(mymap)
+            .on('dragend', function() {
+                var coord = marker.getLatLng();
+                $('#lat').val(coord.lat);
+                $('#lng').val(coord.lng);
+            });
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+        }).addTo(mymap);
 
-    $('#raion_id').on('change',function(e){        
-        var option = $(this).find('option:selected');
-        var data = option.data();
-        marker.setLatLng(L.latLng(data.lat, data.lng));
-        mymap.setView([data.lat, data.lng], 13)
-        console.log(data);
-    })
+        $('#raion_id').on('change',function(e){        
+            var option = $(this).find('option:selected');
+            var data = option.data();
+            marker.setLatLng(L.latLng(data.lat, data.lng));
+            mymap.setView([data.lat, data.lng], 13)
+            console.log(data);
+        })
+    })    
 </script>
 @endpush

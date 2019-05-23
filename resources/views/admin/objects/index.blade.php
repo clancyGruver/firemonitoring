@@ -38,8 +38,8 @@
                     <td>{{$item->director_name}}, {{$item->director_phone}}</td>
                     <td>{{$item->contact_name}}, {{$item->contact_phone}}</td>
                     <td>
-                        <!--a href="{{ route('objects.detail', ['id'=>$item->id]) }}" class="btn" data-toggle="tooltip" data-placement="top" title="Карточка объекта"><i class="fas fa-search  text-primary"></i></a-->
-                        <!--a href="{{ route('objects.edit', ['id'=>$item->id]) }}" class="btn" data-toggle="tooltip" data-placement="top" title="Редактировать"><i class="fas fa-edit text-warning"></i></a-->
+                        <a href="{{ route('objects.detail', ['id'=>$item->id]) }}" class="btn" data-toggle="tooltip" data-placement="top" title="Карточка объекта"><i class="fas fa-search  text-primary"></i></a>
+                        <a href="{{ route('objects.edit', ['id'=>$item->id]) }}" class="btn" data-toggle="tooltip" data-placement="top" title="Редактировать"><i class="fas fa-edit text-warning"></i></a>
                         <a href="#" class="btn delete-btn" data-toggle="tooltip" data-placement="top" title="Удалить"><i class="fas fa-trash-alt text-danger"></i></a>
                     </td>
                 </tr>

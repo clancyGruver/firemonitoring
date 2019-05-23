@@ -23,6 +23,7 @@ Route::middleware(['auth'])->group(function(){
             Route::get('/', 'ObjectsController@index')->name('objects');
             Route::get('/detail/{id}', 'ObjectsController@detail')->name('objects.detail');            
             Route::get('/edit/{id}', 'ObjectsController@edit')->name('objects.edit');
+            Route::post('/update/{id}', 'ObjectsController@update')->name('objects.update');
             Route::get('/add', 'ObjectsController@add')->name('objects.add');
             Route::post('/store', 'ObjectsController@store')->name('objects.store');
         });

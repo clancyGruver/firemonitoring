@@ -14,9 +14,15 @@ class ObjectsController extends Controller
         return view('admin.objects.index',['items' => $items]);
     }
 
+    public function edit($id, Request $request){
+        $item = MO::find($id);
+        $raions = Raion::where('is_active',1)->get();
+        return view('admin.objects.edit',['item' => $item,'raions'=>$raions]);
+    }
+
     public function detail($id, Request $request){        
         $item = MO::find($id);
-        return view('admin.objects',['item' => $item]);
+        return view('admin.objects.detail',['item' => $item]);
     }
 
     public function delete($id, Request $request){        
@@ -35,7 +41,7 @@ class ObjectsController extends Controller
         $params = $request->all();
         $param['created_user_id'] = Auth::user()->id;
         $obj->update($params);
-        return response()->json('successfully updated');
+        return redirect('admin/objects');
     }
 
     public function store( Request $request){
