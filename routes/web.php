@@ -30,9 +30,19 @@ Route::middleware(['auth'])->group(function(){
             Route::get('/', 'DevicesController@index')->name('devices');
             Route::get('/detail/{id}', 'DevicesController@detail')->name('devices.detail');
             Route::get('/edit/{id}', 'DevicesController@edit')->name('devices.edit');
+            Route::post('/update/{id}', 'DevicesController@update')->name('devices.update');
             Route::get('/add', 'DevicesController@add')->name('devices.add');
             Route::post('/store', 'DevicesController@store')->name('devices.store');
         });
+        Route::prefix('devicesClasses')->group(function(){
+            Route::get('/', 'DevicesClassesController@index')->name('devicesClasses');
+            Route::get('/detail/{id}', 'DevicesClassesController@detail')->name('devicesClasses.detail');
+            Route::get('/edit/{id}', 'DevicesClassesController@edit')->name('devicesClasses.edit');
+            Route::get('/add', 'DevicesClassesController@add')->name('devicesClasses.add');
+            Route::post('/store', 'DevicesClassesController@store')->name('devicesClasses.store');
+        });
+
+        
     });
 
     Route::prefix('technician')->group(function(){
