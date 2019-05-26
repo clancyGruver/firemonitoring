@@ -24,6 +24,9 @@ class MonitoringObject extends Model
         'director_phone',
         'raion_id',
         'created_user_id',
+        'project_isset',
+        'project_cipher',
+        'project_year',
     ];
 
 

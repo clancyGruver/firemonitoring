@@ -64,6 +64,26 @@
             </div>
 
             <div class="form-row">
+                <div class="form-group col custom-control custom-control-alternative custom-checkbox">
+                    <input class="custom-control-input" id="project_isset" name="project_isset" type="checkbox">
+                    <label class="custom-control-label" for="project_isset">Наличие проекта</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="project_cipher">Шифр проекта</label>
+                    <input id="project_cipher" name="project_cipher" type="text" class="form-control" placeholder="Шифр проекта">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="project_year">Год проекта</label>
+                    <input id="project_year" name="project_year" type="number" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-row">
                 <div class="form-group col">
                     <button class="btn btn-icon btn-3 btn-success" type="submit">
                         <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>

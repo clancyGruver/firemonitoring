@@ -2,9 +2,18 @@
 
 @section('content')
 <div class="header bg-gradient-primary pb-3 pt-5">
+
+@if ($errors->any())
     <div class="container-fluid">
-        
+        <div class="alert alert-danger" role="alert">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>            
+        </div>
     </div>
+@endif
 </div>
 <div class="container-fluid mt-3">
     <div class="row">    
@@ -60,6 +69,25 @@
                 <div class="form-group col">
                     <label for="contact_phone">Телефон ответственного</label>
                     <input id="contact_phone" name="contact_phone" type="text" class="form-control" placeholder="Телефон ответственного"  value="{{ $item->contact_phone }}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col custom-control custom-control-alternative custom-checkbox">
+                    <input class="custom-control-input" id="project_isset" name="project_isset" type="checkbox" @if( $item->project_isset ) checked value="1" @else value="0" @endif >
+                    <label class="custom-control-label" for="project_isset">Наличие проекта</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="project_cipher">Шифр проекта</label>
+                    <input id="project_cipher" name="project_cipher" type="text" class="form-control" placeholder="Шифр проекта" value="{{$item->project_cipher}}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="project_year">Год проекта</label>
+                    <input id="project_year" name="project_year" type="number" class="form-control" value="{{ $item->project_year }}">
                 </div>
             </div>
 
