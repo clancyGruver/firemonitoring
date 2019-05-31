@@ -3,23 +3,23 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Device;
 
-class DeviceClass extends Model
+class Object_Device extends Model
 {
-    
-    protected $table = 'device_class';
+    protected $table = 'object_devices';
     protected $primaryKey = 'id';
     protected $attributes = [
         'is_active' => true,
     ];
     protected $fillable = [
         'is_active',
-        'name',
+        'created_user_id',
+        'object_id',
+        'device_id',
     ];
 
-    public function devices(){
-        return $this->hasMany('App\Device', 'class_id', 'id')->where('is_active',1);
-    }
 
+    public function devices(){
+        return $this->hasMany('App\Device', 'id', 'device_id');
+    }
 }

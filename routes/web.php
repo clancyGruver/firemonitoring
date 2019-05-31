@@ -42,6 +42,13 @@ Route::middleware(['auth'])->group(function(){
             Route::get('/add', 'DevicesClassesController@add')->name('devicesClasses.add');
             Route::post('/store', 'DevicesClassesController@store')->name('devicesClasses.store');
         });
+        Route::prefix('object-devices')->group(function(){
+            Route::get('/', 'ObjectdevicesController@index')->name('od');
+            Route::get('/edit/{id}', 'ObjectdevicesController@edit')->name('od.edit');
+            Route::post('/update/{id}', 'ObjectdevicesController@update')->name('od.update');
+            Route::get('/add', 'ObjectdevicesController@add')->name('od.add');
+            Route::post('/store', 'ObjectdevicesController@store')->name('od.store');
+        });
 
         
     });

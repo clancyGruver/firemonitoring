@@ -22,3 +22,4 @@ Route::middleware('auth:api')->group(function(){
 Route::post('/raions/{id}', 'RaionController@update');
 Route::post('/devices/delete/{id}', 'DevicesController@delete')->name('devices.delete');
 Route::post('/objects/delete/{id}', 'ObjectsController@delete')->name('objects.delete');
+Route::post('/objectdevice/add', 'ObjectdevicesController@add')->name('od.add');

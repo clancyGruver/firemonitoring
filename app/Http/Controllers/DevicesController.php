@@ -67,10 +67,12 @@ class DevicesController extends Controller
             'wires_count' => 'required',
         ]);
         $obj = new Device($request->except('_token'));
-        $obj->instruction = $request->instruction->getClientOriginalName();
+        if($request->instruction){
+            $obj->instruction = $request->instruction->getClientOriginalName();
+            $request->instruction->storeAs('instructions/'.$obj->id, $request->instruction->getClientOriginalName());
+        }
         $obj->created_user_id = Auth::user()->id;
-        $obj->save();
-        $request->instruction->storeAs('instructions/'.$obj->id, $request->instruction->getClientOriginalName());
+        $obj->save();        
         return redirect('admin/devices');
     }
 }

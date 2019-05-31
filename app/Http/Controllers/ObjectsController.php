@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\MonitoringObject as MO;
 use Illuminate\Support\Facades\Auth;
 use App\Raion;
+use App\DeviceClass;
+use App\Object_Device as OD;
 
 class ObjectsController extends Controller
 {
@@ -17,7 +19,14 @@ class ObjectsController extends Controller
     public function edit($id, Request $request){
         $item = MO::find($id);
         $raions = Raion::where('is_active',1)->get();
-        return view('admin.objects.edit',['item' => $item,'raions'=>$raions]);
+        $dev_categories = DeviceClass::where('is_active',1)->with('devices')->get();
+        $installed_dev_categories = OD::where('is_active',1)->where('object_id',$id)->with('devices')->get() ?? null;
+        return view('admin.objects.edit',[
+            'item' => $item,
+            'raions'=>$raions, 
+            'dev_categories' => $dev_categories,
+            'installed_dev_categories' => $installed_dev_categories,
+        ]);
     }
 
     public function detail($id, Request $request){        
