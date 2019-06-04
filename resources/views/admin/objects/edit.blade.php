@@ -36,6 +36,9 @@
             @include('admin.objects._objectForm')
         </div>
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <div id="devices">
+                <devices :objectid="{{ $item->id }}"></devices>
+            </div>            
             <div class="row">
                 <div class="card card-stats mb-4 mb-lg-0 col-3">
                     <div class="card-body">
@@ -124,6 +127,7 @@
 @endpush
 @push('js')
 <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+<script src="{{ asset('js/app.js') }}"></script>
 <script>
     const added_devices = {};
     $(document).ready(function(){

@@ -22,4 +22,9 @@ class ObjectdevicesController extends Controller
         }
         return redirect("admin/objects/edit/{$obj_id}");
     }
+
+    public function getJson($id, Request $request){
+        $installed_dev_categories = OD::where('is_active',1)->where('object_id',$id)->with('device')->get() ?? null;
+        return response()->json($installed_dev_categories);
+    }
 }

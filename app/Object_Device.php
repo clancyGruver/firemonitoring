@@ -22,4 +22,8 @@ class Object_Device extends Model
     public function devices(){
         return $this->hasMany('App\Device', 'id', 'device_id');
     }
+
+    public function device(){
+        return $this->hasOne('App\Device', 'id', 'device_id');
+    }
 }

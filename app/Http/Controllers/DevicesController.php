@@ -19,6 +19,14 @@ class DevicesController extends Controller
         return view('admin.devices.index',['items' => $items]);
     }
 
+    public function getJson(){
+        $items = Device::where('is_active',1)->get();
+        for($i =0; $i < count($items); $i++){
+            $items[$i]->url = Storage::url('instructions/'.$items[$i]->id.'/'.$items[$i]->instruction);
+        }
+        return response()->json($items);
+    }
+
     public function detail($id, Request $request){        
         $item = Device::find($id);
         return view('admin.devices',['item' => $item]);
