@@ -23,8 +23,27 @@ class ObjectdevicesController extends Controller
         return redirect("admin/objects/edit/{$obj_id}");
     }
 
+    public function storeJson(Request $request){
+        $data = $request->all();
+        $params = [];
+
+        $params['created_user_id'] = $data['user_id'];
+        $params['object_id'] = $data['object_id'];
+        $params['device_id'] = $data['device_id'];
+
+        $obj = new OD($params);
+        $obj->save();
+
+        return response()->json($obj);
+    }
+
     public function getJson($id, Request $request){
-        $installed_dev_categories = OD::where('is_active',1)->where('object_id',$id)->with('device')->get() ?? null;
+        $installed_dev_categories = OD::where('is_active',1)
+                                    ->where('object_id',$id)
+                                    ->with('wires')
+                                    ->with('device')
+                                    ->get()
+                                    ?? null;
         return response()->json($installed_dev_categories);
     }
 }

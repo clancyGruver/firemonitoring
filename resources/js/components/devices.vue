@@ -1,9 +1,10 @@
-<template>
-	<device-component></device-component>
+<template>	
+    <tree-view />
 </template>
 
 <script>
 import deviceComponent from './device-component.vue';
+import TreeView from './treeView/treeview'
 
 export default {
 	props:[
@@ -15,51 +16,42 @@ export default {
 		}
 	},
 	components:{
-		deviceComponent
+		deviceComponent,
+		TreeView
 	},
 	mounted: function(){
 		const oid = this.objectid;		
+
 		axios
 			.post(`/api/objectdevice/get/${oid}`)
-			.then( response => this.crateTree(response.data) )
+			.then( response => this.createTree(response.data) );
+
+		axios
+			.post(`/api/devices/getbyclass`)
+			.then( response => this.$store.commit('SET_AVAILABLE_DEVICES', response.data) )
+			this.$store.commit('SET_OBJECT_ID', oid);
+
+		this.$store.commit('FILL_SENSORS');
 	},
 
 	methods:{
-		crateTree: function (devices) {
+		createTree: function (devices) {
 			const tree = [];
 			devices.map(val => {
-				const childrenEl = [];
-				/*for(let i = 0; i < val.device.wires_count; i++ ){				
-					childrenEl.push({
-						name: `Шлейф ${val.id}-${i}`,
-		                id: 2,
-		                isLeaf: true,
-		                pid: 1	
-					});	                
-				};*/
+				const wireEl = [];
+				val.wires.forEach( el => {el.isShow=false; wireEl.push(el)} );
 				const treeEl = {
 					name: val.device.name,
-					pid: 0,
-		            dragDisabled: true,
-		            addTreeNodeDisabled: false,
-		            addLeafNodeDisabled: true,
-		            editNodeDisabled: true,
-		            delNodeDisabled: true,
-		            children: childrenEl,
-		            max_wires: val.device.wires_count,
+					isShow: false,
+					id: val.id,
+		            wires: wireEl,
+		            wires_count: val.device.wires_count,
 				};	
 				val.device
 				this.tree.push(treeEl);
 			})	
-			console.log(this.$store, this.tree);
 			this.$store.commit('SET_DEVICES', this.tree);
-		}		
-
-		/*
-            name: 'Node 1',
-            id: 1,
-            pid: 0,
-		*/
+		}	
 	}
 }
 	

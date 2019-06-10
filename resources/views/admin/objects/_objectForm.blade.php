@@ -50,7 +50,7 @@
                         <input id="contact_phone" name="contact_phone" type="text" class="form-control" placeholder="Телефон ответственного"  value="{{ $item->contact_phone }}">
                     </div>
                 </div>
-                <div class="form-row">
+                <div class="">
                     <div class="form-group col custom-control custom-control-alternative custom-checkbox">
                         <input class="custom-control-input" id="project_isset" name="project_isset" type="checkbox" @if( $item->project_isset ) checked value="1" @else value="0" @endif >
                         <label class="custom-control-label" for="project_isset">Наличие проекта</label>

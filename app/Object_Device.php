@@ -26,4 +26,8 @@ class Object_Device extends Model
     public function device(){
         return $this->hasOne('App\Device', 'id', 'device_id');
     }
+
+    public function wires(){
+        return $this->hasMany('App\Wire', 'object_device_id', 'id')->with('sensors');   
+    }
 }

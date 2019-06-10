@@ -19,8 +19,8 @@ class Wires extends Migration
             $table->unsignedBigInteger('created_user_id');
             $table->boolean('is_good')->default(1);
             $table->string('description');
-            $table->string('sertificate');
-            $table->boolean('is_fire_safety')->default(1);
+            $table->string('sertificate')->nullable;
+            $table->boolean('is_fire_safety')->default(0);
             $table->boolean('is_active')->default(1);
             $table->timestamps();
 

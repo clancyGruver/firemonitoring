@@ -36,7 +36,7 @@
             @include('admin.objects._objectForm')
         </div>
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-            <div id="devices">
+            <div id="app">
                 <devices :objectid="{{ $item->id }}"></devices>
             </div>            
             <div class="row">

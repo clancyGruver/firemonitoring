@@ -27,6 +27,11 @@ class DevicesController extends Controller
         return response()->json($items);
     }
 
+    public function getByClassJson(){
+        $items = DeviceClass::where('is_active',1)->with('devices')->get();
+        return response()->json($items);
+    }    
+
     public function detail($id, Request $request){        
         $item = Device::find($id);
         return view('admin.devices',['item' => $item]);

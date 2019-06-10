@@ -3,15 +3,15 @@
 @section('content')
 <div class="header bg-gradient-primary pb-3 pt-5">
     <div class="container-fluid">
-        <a class="btn btn-icon btn-3 btn-success" type="button" href="{{ route('devices.add') }}">
-            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>
-            
-            <span class="btn-inner--text">Добавить оборудование</span>
-            
-        </a>
     </div>
 </div>
 <div class="container-fluid mt-3">
+    <div class="row">        
+        <a class="btn btn-icon btn-3 btn-success" type="button" href="{{ route('devices.add') }}">
+            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>            
+            <span class="btn-inner--text">Добавить оборудование</span>            
+        </a>
+    </div>
     <div class="row">
         <div class="table-responsive">
             <table class="table align-items-center">

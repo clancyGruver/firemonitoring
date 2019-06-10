@@ -15,6 +15,10 @@ Route::get('/', function () {
     return view('auth/login');
 });
 
+Route::get('/sessionStatus', function() {
+        return ['user' => Auth::user() ? Auth::user() : null];
+});
+
 Route::middleware(['auth'])->group(function(){
     Route::prefix('admin')->group(function(){
         Route::get('/', 'admin\HomeController')->name('admin');        
@@ -48,6 +52,9 @@ Route::middleware(['auth'])->group(function(){
             Route::post('/update/{id}', 'ObjectdevicesController@update')->name('od.update');
             Route::get('/add', 'ObjectdevicesController@add')->name('od.add');
             Route::post('/store', 'ObjectdevicesController@store')->name('od.store');
+        });
+        Route::prefix('sensors')->group(function(){
+            Route::get('/', 'SensorController@index')->name('sensors');
         });
 
         
