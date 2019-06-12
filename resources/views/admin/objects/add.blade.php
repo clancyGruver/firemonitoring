@@ -11,14 +11,23 @@
         <div id="mapid"></div>
     </div>
     <div class="row">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form action="{{ route('objects.store') }}" method="POST" class="col-md-6 offset-md-3">
             @csrf
-            <input type="hidden" name="lat" id="lat">
-            <input type="hidden" name="lng" id="lng">
+            <input type="hidden" name="lat" id="lat" value="{{ old('lat') }}">
+            <input type="hidden" name="lng" id="lng" value="{{ old('lng') }}">
             <div class="form-row">
                 <div class="form-group col">
                     <label for="name">Название объекта мониторинга</label>
-                    <input id="name" name="name" type="text" class="form-control" placeholder="Название объекта мониторинга">
+                    <input id="name" name="name" type="text" class="form-control" placeholder="Название объекта мониторинга"  value="{{ old('name') }}">
                 </div>
             </div>
 
@@ -28,7 +37,13 @@
                     <select id="raion_id" name="raion_id" class="form-control">
                         <option>Выберите муниципальное образование</option>
                         @foreach ($raions as $raion)
-                        <option data-name="{{ $raion->name }}" data-lat="{{ $raion->lat }}" data-lng="{{ $raion->lng }}" value="{{ $raion->id }}">{{ $raion->name }}</option>
+                        <option 
+                            data-name="{{ $raion->name }}" 
+                            data-lat="{{ $raion->lat }}" 
+                            data-lng="{{ $raion->lng }}" 
+                            value="{{ $raion->id }}"
+                            @if(old('raion_id') == $raion->id) selected @endif
+                        >{{ $raion->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -37,35 +52,41 @@
             <div class="form-row">
                 <div class="form-group col">
                     <label for="address">Адрес объекта мониторинга</label>
-                    <input id="address" name="address" type="text" class="form-control" placeholder="Адрес объекта мониторинга">
+                    <input id="address" name="address" type="text" class="form-control" placeholder="Адрес объекта мониторинга" value="{{ old('address') }}">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col">
                     <label for="director_name">ФИО директора</label>
-                    <input id="director_name" name="director_name" type="text" class="form-control" placeholder="ФИО директора">
+                    <input id="director_name" name="director_name" type="text" class="form-control" placeholder="ФИО директора" value="{{ old('director_name') }}">
                 </div>
                 <div class="form-group col">
                     <label for="director_phone">Телефон директора</label>
-                    <input id="director_phone" name="director_phone" type="text" class="form-control" placeholder="Телефон директора">
+                    <input id="director_phone" name="director_phone" type="text" class="form-control" placeholder="Телефон директора" value="{{ old('director_phone') }}">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col">
                     <label for="contact_name">ФИО ответственного</label>
-                    <input id="contact_name" name="contact_name" type="text" class="form-control" placeholder="ФИО ответственного">
+                    <input id="contact_name" name="contact_name" type="text" class="form-control" placeholder="ФИО ответственного" value="{{ old('contact_name') }}">
                 </div>
                 <div class="form-group col">
                     <label for="contact_phone">Телефон ответственного</label>
-                    <input id="contact_phone" name="contact_phone" type="text" class="form-control" placeholder="Телефон ответственного">
+                    <input id="contact_phone" name="contact_phone" type="text" class="form-control" placeholder="Телефон ответственного" value="{{ old('contact_phone') }}">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col custom-control custom-control-alternative custom-checkbox">
-                    <input class="custom-control-input" id="project_isset" name="project_isset" type="checkbox">
+                    <input 
+                        class="custom-control-input" 
+                        id="project_isset" 
+                        name="project_isset" 
+                        type="checkbox" 
+                        @if(old('project_isset')) checked @endif
+                    >
                     <label class="custom-control-label" for="project_isset">Наличие проекта</label>
                 </div>
             </div>
@@ -73,13 +94,13 @@
             <div class="form-row">
                 <div class="form-group col">
                     <label for="project_cipher">Шифр проекта</label>
-                    <input id="project_cipher" name="project_cipher" type="text" class="form-control" placeholder="Шифр проекта">
+                    <input id="project_cipher" name="project_cipher" type="text" class="form-control" placeholder="Шифр проекта"  value="{{ old('project_cipher') }}">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col">
                     <label for="project_year">Год проекта</label>
-                    <input id="project_year" name="project_year" type="number" class="form-control">
+                    <input id="project_year" name="project_year" type="number" class="form-control" value="{{ old('project_year') }}">
                 </div>
             </div>
 
@@ -132,6 +153,14 @@
                 $('#lat').val(coord.lat);
                 $('#lng').val(coord.lng);
             });
+
+        mymap.on('click', (val) => {
+            ll = val.latlng;
+            marker.setLatLng(ll);
+            $('#lat').val(ll.lat);
+            $('#lng').val(ll.lng);
+        });
+        
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             maxZoom: 18,

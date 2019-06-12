@@ -38,73 +38,7 @@
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
             <div id="app">
                 <devices :objectid="{{ $item->id }}"></devices>
-            </div>            
-            <div class="row">
-                <div class="card card-stats mb-4 mb-lg-0 col-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Установленное оборудование</h5>
-                        @foreach ($installed_dev_categories as $installed_dev_category)
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="card-title text-uppercase text-muted mb-0">{{$installed_dev_category->name}}</h5>
-                                <ul class="list-unstyled">
-                                    @foreach ($installed_dev_category->devices as $installed_dev)
-                                    <li>
-                                        <span class="h2 font-weight-bold mb-0">{{$installed_dev->name}}</span>
-                                    </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="card card-stats mb-4 mb-lg-0 col-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Добавленное оборудование</h5>
-                        <div id="added_devices">
-                        </div>
-                        <form action="{{ route('od.store') }}" method="POST" class="invisible" id="add_device_form">
-                            @csrf
-                            <input type="hidden" name="object_id" value="{{ $item->id }}">
-                            <div class="hidden-inputs">
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col">
-                                    <button class="btn btn-icon btn-success" type="submit">
-                                        <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>
-                                        <span class="btn-inner--text">Добавить</span>
-                                    </button>
-                                </div>
-                            </div>                        
-                        </form>
-                    </div>
-                </div>
-                
-                <div class="card card-stats mb-4 mb-lg-0 col-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Доступное оборудование</h5>
-                        @foreach ($dev_categories as $dev_category)
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="card-title text-uppercase text-muted mb-0">{{$dev_category->name}}</h5>
-                                <ul class="list-unstyled">
-                                    @foreach ($dev_category->devices as $dev)
-                                    <li>
-                                        <span class="h2 font-weight-bold mb-0">{{$dev->name}}</span>
-                                        <button data-object="{{ $item->id }}" data-category_name="{{ $dev_category->name }}" data-device_name="{{ $dev->name }}" data-device="{{ $dev->id }}" class="btn btn-icon btn-outline-success add_device btn-sm" type="button">
-                                            <span class="btn-inner--icon"><i class="fas fa-plus-circle fa-2x"></i></span>
-                                        </button>
-                                    </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
+            </div>     
         </div>
         <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
     </div>
@@ -151,6 +85,12 @@
                 $('#lat').val(coord.lat);
                 $('#lng').val(coord.lng);
             });
+        mymap.on('click', (val) => {
+            ll = val.latlng;
+            marker.setLatLng(ll);
+            $('#lat').val(ll.lat);
+            $('#lng').val(ll.lng);
+        });
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             maxZoom: 18,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
+use App\Raion;
 
 class UserController extends Controller
 {
@@ -26,7 +27,10 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        $raions = Raion::where('is_active',1)->get();
+        return view('users.create',[
+            'raions'=>$raions, 
+        ]);
     }
 
     /**
@@ -38,9 +42,10 @@ class UserController extends Controller
      */
     public function store(UserRequest $request, User $model)
     {
-        $model->create($request->merge(['password' => Hash::make($request->get('password'))])->all());
-
-        return redirect()->route('user.index')->withStatus(__('User successfully created.'));
+        $data = $request->merge(['password' => Hash::make($request->get('password'))])->all();
+        $data['is_admin'] = isset($data['is_admin']) && $data['is_admin'] == 'on' ? true : false;
+        $model->create($data);
+        return redirect()->route('user.index')->withStatus(__('Пользователь усешно добавлен.'));
     }
 
     /**
@@ -51,7 +56,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('users.edit', compact('user'));
+        $raions = Raion::where('is_active',1)->get();
+        return view('users.edit', compact('user','raions'));
     }
 
     /**
@@ -63,12 +69,13 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User  $user)
     {
-        $user->update(
-            $request->merge(['password' => Hash::make($request->get('password'))])
-                ->except([$request->get('password') ? '' : 'password']
-        ));
+        $data = $request
+                ->merge(['password' => Hash::make($request->get('password'))])
+                ->except([$request->get('password') ? '' : 'password']);
+        $data['is_admin'] = isset($data['is_admin']) && $data['is_admin'] == 'on' ? true : false;
+        $user->update($data);
 
-        return redirect()->route('user.index')->withStatus(__('User successfully updated.'));
+        return redirect()->route('user.index')->withStatus(__('Пользователь успешно обновлен.'));
     }
 
     /**
@@ -82,5 +89,12 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('user.index')->withStatus(__('User successfully deleted.'));
+    }
+
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('/');
     }
 }

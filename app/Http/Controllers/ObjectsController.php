@@ -19,13 +19,13 @@ class ObjectsController extends Controller
     public function edit($id, Request $request){
         $item = MO::find($id);
         $raions = Raion::where('is_active',1)->get();
-        $dev_categories = DeviceClass::where('is_active',1)->with('devices')->get();
-        $installed_dev_categories = OD::where('is_active',1)->where('object_id',$id)->with('devices')->get() ?? null;
+        /*$dev_categories = DeviceClass::where('is_active',1)->with('devices')->get();
+        $installed_dev_categories = OD::where('is_active',1)->where('object_id',$id)->with('devices')->get() ?? null;*/ 
         return view('admin.objects.edit',[
             'item' => $item,
             'raions'=>$raions, 
-            'dev_categories' => $dev_categories,
-            'installed_dev_categories' => $installed_dev_categories,
+            /*'dev_categories' => $dev_categories,
+            'installed_dev_categories' => $installed_dev_categories,*/
         ]);
     }
 
@@ -79,8 +79,9 @@ class ObjectsController extends Controller
             'contact_phone' => 'required|max:255',
             'project_year'=>'digits:4',
         ]);
-        $obj = new MO($request->except('_token'));  
+        $params = $request->except('_token');
         $params['project_isset'] = isset($params['project_isset']) ? 1 : 0;
+        $obj = new MO($params);
         $obj->created_user_id = Auth::user()->id;
         $obj->save();
         return redirect('admin/objects');

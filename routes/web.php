@@ -13,7 +13,7 @@
 
 Route::get('/', function () {
     return view('auth/login');
-});
+})->name('home');
 
 Route::get('/sessionStatus', function() {
         return ['user' => Auth::user() ? Auth::user() : null];
@@ -56,6 +56,13 @@ Route::middleware(['auth'])->group(function(){
         Route::prefix('sensors')->group(function(){
             Route::get('/', 'SensorController@index')->name('sensors');
         });
+        /*Route::prefix('users')->group(function(){
+            Route::get('/', 'UserController@index')->name('users');
+            Route::get('/edit/{id}', 'UserController@edit')->name('users.edit');
+            Route::post('/update/{id}', 'UserController@update')->name('users.update');
+            Route::get('/add', 'UserController@add')->name('users.add');
+            Route::post('/store', 'UserController@store')->name('users.store');
+        });*/
 
         
     });
@@ -64,12 +71,11 @@ Route::middleware(['auth'])->group(function(){
         Route::get('/', 'technician\HomeController');
     });
 });
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+//Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
-	Route::resource('user', 'UserController', ['except' => ['show']]);
+	Route::resource('user', 'UserController', ['except' => ['show']]);    
+    Route::get('user/logout', 'UserController@logout')->name('logout');
 	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'ProfileController@edit']);
 	Route::put('profile', ['as' => 'profile.update', 'uses' => 'ProfileController@update']);
 	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'ProfileController@password']);

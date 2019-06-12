@@ -3,8 +3,14 @@
 		<add-wire :creating="addWireShow" v-on:end-adding="addWire" :odid="ObjectDeviceId" />
 		<add-device :creating="addDeviceShow" v-on:end-adding="addDeviceShow = !addDeviceShow" />
 		<addSensor 
-			:creating="addSensorShow" 
-			v-on:end-adding="addSensorShow = !addSensorShow" 
+			:creating="sensorFormShow"
+			:method="sensorFormMethod"
+			v-on:end-adding="sensorEndAdding"
+			:sensorData="sensorData"
+		/>
+		<sensorCard 
+			:edit ="sensorCardShow"
+			v-on:end-adding="sensorCardShow = !sensorCardShow"
 			:sensorData="sensorData"
 		/>
 
@@ -21,11 +27,15 @@
 							<span v-if="wire.isShow">-</span> 
 							<span v-else>+</span> 
 							{{ wire.description }}
+							<span class="badge badge-pill badge-info">{{ wire.sensors.length }}</span>
 						</h3>
 						<ul v-show="wire.isShow"  class="list-unstyled">
-							<li v-for="(sensor, sensorIdx) in wire.sensors">
-								<h3 class="pl-5" @cilck="showSensorInfo(sensor)">
+							<li v-for="(sensor, sensorIdx) in wire.sensors" key="sensor.id">
+								<h3 class="pl-5">
 									{{ sensor.name }}
+									<i class="fas fa-search text-info pointer" @click="
+									sensorData = sensor; sensorCardShow = true"></i>
+									<i class="fas fa-edit text-warning pointer"@click="editSensor(device.id, sensor)"></i>
 								</h3>								
 							</li>
 							<li>
@@ -50,12 +60,15 @@
 	import addDevice from '../add-device';
 	import addWire from '../add-wire';
 	import addSensor from '../add-sensor';
+	import sensorCard from '../sensors/card';
+
 	export default
 	{
 		components: {
 			addDevice,
 			addWire,
-			addSensor
+			addSensor,
+			sensorCard,
 		},
 		props: {
 		},
@@ -64,12 +77,16 @@
 				isShow: true,
 				addDeviceShow: false,
 				addWireShow: false,
-				addSensorShow: false,
+				sensorFormShow: false,
+				sensorFormMethod: 'new',
+				sensorFormMethodAllowed: ['new','edit'],
 				ObjectDeviceId: null,				
+				sensorCardShow: false,
 				sensorData:{
 					name: null,
 					deviceId: null,
-					wireId: null,
+					wire_id: null,
+					sensor_id: null,
 				},
 			}
 		},
@@ -85,15 +102,35 @@
 				this.treeData[idx].wires[wireIdx].isShow = !this.treeData[idx].wires[wireIdx].isShow;	
 			},
 			addSensor(did, wid, sensorsCount){
-				this.sensorData = {
-					deviceId: did,
-					wireId:   wid,
-					name:     ++sensorsCount
+				if(this.sensorFormMethod == this.sensorFormMethodAllowed[1])
+					this.sensorData = {
+						deviceId: did,
+						wire_id: wid,
+						name: ++sensorsCount,
+					}
+				else{
+					Vue.set(this.sensorData, 'deviceId', did);
+					Vue.set(this.sensorData, 'wire_id', wid);
+					Vue.set(this.sensorData, 'name', ++sensorsCount);					
 				}
-				this.addSensorShow = true;
+				this.sensorFormShow = true;
+				this.sensorFormMethod = this.sensorFormMethodAllowed[0];
 			},
 			showSensorInfo(sensor){
-				console.log(sensor);
+				console.log('showSensorInfo', sensor);
+			},
+			editSensor(did, sensor){				
+				this.sensorFormShow = true;
+				this.sensorFormMethod = this.sensorFormMethodAllowed[1];
+				this.sensorData = sensor;
+				Vue.set(this.sensorData, 'deviceId', did);
+			},
+			sensorEndAdding: function (params) {
+				Vue.set(this.sensorData, 'cabinetName', params.cabinetName);
+				Vue.set(this.sensorData, 'floor', params.floor);
+				Vue.set(this.sensorData, 'isGood', params.isGood);
+				Vue.set(this.sensorData, 'SP5Valid', params.SP5Valid);
+				this.sensorFormShow = !this.sensorFormShow;
 			},
 		},
 		computed: {

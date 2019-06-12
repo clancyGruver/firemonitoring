@@ -105,15 +105,30 @@ export const store = new Vuex.Store({
     },
     ADD_SENSOR_TO_WIRE: (state, payload) => {
       axios.post('/api/sensorwire/add',{
-              device: payload.deviceId,
-              wire: payload.wireId,
-              sensor: payload.sensor.id
-            })
-            .then(
-              resonse => {
-                console.log(resonse.data);
-              }
-            )
+        payload,
+        user_id: state.user.id,
+      })
+      .then(
+        resonse => {
+          const device_idx = state.devices.findIndex(el => el.id == payload.sensorData.deviceId);
+          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.sensorData.wireId);
+          state.devices[device_idx].wires[wire_idx].sensors.push(resonse.data);
+        }
+      )
+    },
+    UPDATE_SENSOR_TO_WIRE: (state, payload) => {
+      axios.post('/api/sensorwire/update',{
+        payload,
+        user_id: state.user.id,
+      })
+      .then(
+        resonse => {
+          const device_idx = state.devices.findIndex(el => el.id == payload.sensorData.deviceId);
+          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.sensorData.wire_id);
+          const sensor_idx = state.devices[device_idx].wires[wire_idx].sensors.findIndex(el => el.id == payload.sensorData.id);
+          Vue.set(state.devices[device_idx].wires[wire_idx].sensors, sensor_idx, resonse.data);
+        }
+      )
     }
   },
 
@@ -121,5 +136,6 @@ export const store = new Vuex.Store({
 	  DEVICES: state => state.devices,
     AVAILABLE_DEVICES: state => state.availabledevices,
     ALL_SENSORS: state => state.sensors,
+    SENSOR: (state, getters) => (id) => state.sensors.find( el => el.id == id ),
 	}
-});
+});   

@@ -1875,6 +1875,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     sensorData: {
@@ -1882,8 +1893,9 @@ __webpack_require__.r(__webpack_exports__);
       "default": function _default() {
         return {
           name: '',
+          id: null,
           deviceId: -1,
-          wireId: -1,
+          wire_id: -1,
           floor: '',
           cabinet_name: '',
           SP5_valid: '',
@@ -1894,24 +1906,67 @@ __webpack_require__.r(__webpack_exports__);
     creating: {
       type: Boolean,
       "default": false
+    },
+    method: {
+      type: String,
+      "default": 'new',
+      validator: function validator(value) {
+        return ['new', 'edit'].indexOf(value) > -1;
+      }
     }
   },
   data: function data() {
     return {
-      searchString: ''
+      searchString: '',
+      errors: []
     };
   },
   methods: {
     cancel: function cancel() {
-      this.$emit('end-adding');
+      this.$emit('end-adding', this.sensorData);
     },
     addSensor: function addSensor(sensor) {
-      this.$store.commit('ADD_SENSOR_TO_WIRE', {
+      if (!this.validate()) return false;
+      var data = {
         sensor: sensor,
-        deviceId: this.deviceId,
-        wireId: this.wireId
-      });
+        sensorData: this.sensorData
+      };
+      if (this.method == 'new') this.$store.commit('ADD_SENSOR_TO_WIRE', data);else this.$store.commit('UPDATE_SENSOR_TO_WIRE', data);
       this.cancel();
+    },
+    validate: function validate() {
+      this.errors = [];
+      var checked = true;
+
+      if (!Number.isInteger(this.sensorData.floor)) {
+        this.errors.push('Этаж должен быть числом');
+        checked = false;
+      } else if (this.sensorData.floor === '') {
+        this.errors.push('Этаж не заплнен');
+        checked = false;
+      }
+
+      if (this.sensorData.name === '') {
+        this.errors.push('Не введено наименование');
+        checked = false;
+      }
+
+      if (this.sensorData.cabinet_name === '' || !('cabinet_name' in this.sensorData)) {
+        this.errors.push('Не введено наименование помещения');
+        checked = false;
+      }
+
+      if (this.sensorData.deviceId < 0) {
+        this.errors.push('Устройство не определено');
+        checked = false;
+      }
+
+      if (this.sensorData.wire_id < 0) {
+        this.errors.push('Шлейф не определен');
+        checked = false;
+      }
+
+      return checked;
     }
   },
   computed: {
@@ -2137,6 +2192,80 @@ __webpack_require__.r(__webpack_exports__);
         _this2.tree.push(treeEl);
       });
       this.$store.commit('SET_DEVICES', this.tree);
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/sensors/card.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/sensors/card.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    edit: {
+      type: Boolean,
+      "default": false
+    },
+    sensorData: {
+      type: Object,
+      "default": function _default() {}
+    }
+  },
+  mounted: function mounted() {},
+  data: function data() {
+    return {};
+  },
+  methods: {
+    cancel: function cancel() {
+      this.$emit('end-adding');
+    }
+  },
+  computed: {
+    sensor: function sensor() {
+      return this.sensorData.sensor_id ? this.$store.getters.SENSOR(this.sensorData.sensor_id) : '';
     }
   }
 });
@@ -2447,6 +2576,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _add_device__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../add-device */ "./resources/js/components/add-device.vue");
 /* harmony import */ var _add_wire__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../add-wire */ "./resources/js/components/add-wire.vue");
 /* harmony import */ var _add_sensor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../add-sensor */ "./resources/js/components/add-sensor.vue");
+/* harmony import */ var _sensors_card__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../sensors/card */ "./resources/js/components/sensors/card.vue");
 //
 //
 //
@@ -2495,6 +2625,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -2502,7 +2643,8 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     addDevice: _add_device__WEBPACK_IMPORTED_MODULE_0__["default"],
     addWire: _add_wire__WEBPACK_IMPORTED_MODULE_1__["default"],
-    addSensor: _add_sensor__WEBPACK_IMPORTED_MODULE_2__["default"]
+    addSensor: _add_sensor__WEBPACK_IMPORTED_MODULE_2__["default"],
+    sensorCard: _sensors_card__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   props: {},
   data: function data() {
@@ -2510,12 +2652,16 @@ __webpack_require__.r(__webpack_exports__);
       isShow: true,
       addDeviceShow: false,
       addWireShow: false,
-      addSensorShow: false,
+      sensorFormShow: false,
+      sensorFormMethod: 'new',
+      sensorFormMethodAllowed: ['new', 'edit'],
       ObjectDeviceId: null,
+      sensorCardShow: false,
       sensorData: {
         name: null,
         deviceId: null,
-        wireId: null
+        wire_id: null,
+        sensor_id: null
       }
     };
   },
@@ -2531,15 +2677,33 @@ __webpack_require__.r(__webpack_exports__);
       this.treeData[idx].wires[wireIdx].isShow = !this.treeData[idx].wires[wireIdx].isShow;
     },
     addSensor: function addSensor(did, wid, sensorsCount) {
-      this.sensorData = {
+      if (this.sensorFormMethod == this.sensorFormMethodAllowed[1]) this.sensorData = {
         deviceId: did,
-        wireId: wid,
+        wire_id: wid,
         name: ++sensorsCount
-      };
-      this.addSensorShow = true;
+      };else {
+        Vue.set(this.sensorData, 'deviceId', did);
+        Vue.set(this.sensorData, 'wire_id', wid);
+        Vue.set(this.sensorData, 'name', ++sensorsCount);
+      }
+      this.sensorFormShow = true;
+      this.sensorFormMethod = this.sensorFormMethodAllowed[0];
     },
     showSensorInfo: function showSensorInfo(sensor) {
-      console.log(sensor);
+      console.log('showSensorInfo', sensor);
+    },
+    editSensor: function editSensor(did, sensor) {
+      this.sensorFormShow = true;
+      this.sensorFormMethod = this.sensorFormMethodAllowed[1];
+      this.sensorData = sensor;
+      Vue.set(this.sensorData, 'deviceId', did);
+    },
+    sensorEndAdding: function sensorEndAdding(params) {
+      Vue.set(this.sensorData, 'cabinetName', params.cabinetName);
+      Vue.set(this.sensorData, 'floor', params.floor);
+      Vue.set(this.sensorData, 'isGood', params.isGood);
+      Vue.set(this.sensorData, 'SP5Valid', params.SP5Valid);
+      this.sensorFormShow = !this.sensorFormShow;
     }
   },
   computed: {
@@ -7047,6 +7211,25 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 // module
 exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/sensors/card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/sensors/card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n\t\n", ""]);
 
 // exports
 
@@ -38003,6 +38186,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/sensors/card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/sensors/card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/sensors/card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/treeview.vue?vue&type=style&index=0&id=62028b98&scoped=true&lang=css&":
 /*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/treeview.vue?vue&type=style&index=0&id=62028b98&scoped=true&lang=css& ***!
@@ -38756,6 +38969,30 @@ var render = function() {
               _vm._v("Добавить сенсор")
             ]),
             _vm._v(" "),
+            _c(
+              "div",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.errors.length > 0,
+                    expression: "errors.length > 0"
+                  }
+                ],
+                staticClass: "alert alert-danger"
+              },
+              [
+                _c(
+                  "ul",
+                  _vm._l(_vm.errors, function(error, index) {
+                    return _c("li", [_vm._v(_vm._s(error))])
+                  }),
+                  0
+                )
+              ]
+            ),
+            _vm._v(" "),
             _c("div", { staticClass: "row" }, [
               _c("div", { staticClass: "col" }, [
                 _c("div", { staticClass: "form-group" }, [
@@ -38798,14 +39035,18 @@ var render = function() {
                       _c(
                         "span",
                         {
-                          staticClass: "h2 font-weight-bold mb-0",
+                          staticClass: "mb-0",
                           on: {
                             click: function($event) {
                               return _vm.addSensor(sensor)
                             }
                           }
                         },
-                        [_vm._v(_vm._s(sensor.name))]
+                        [
+                          sensor.id == _vm.sensorData.sensor_id
+                            ? _c("strong", [_vm._v(_vm._s(sensor.name))])
+                            : _c("span", [_vm._v(_vm._s(sensor.name))])
+                        ]
                       )
                     ])
                   }),
@@ -38824,9 +39065,10 @@ var render = function() {
                       directives: [
                         {
                           name: "model",
-                          rawName: "v-model",
+                          rawName: "v-model.trim",
                           value: _vm.sensorData.name,
-                          expression: "sensorData.name"
+                          expression: "sensorData.name",
+                          modifiers: { trim: true }
                         }
                       ],
                       staticClass: "form-control",
@@ -38842,7 +39084,14 @@ var render = function() {
                           if ($event.target.composing) {
                             return
                           }
-                          _vm.$set(_vm.sensorData, "name", $event.target.value)
+                          _vm.$set(
+                            _vm.sensorData,
+                            "name",
+                            $event.target.value.trim()
+                          )
+                        },
+                        blur: function($event) {
+                          return _vm.$forceUpdate()
                         }
                       }
                     })
@@ -38855,16 +39104,17 @@ var render = function() {
                       directives: [
                         {
                           name: "model",
-                          rawName: "v-model",
+                          rawName: "v-model.number",
                           value: _vm.sensorData.floor,
-                          expression: "sensorData.floor"
+                          expression: "sensorData.floor",
+                          modifiers: { number: true }
                         }
                       ],
                       staticClass: "form-control",
                       attrs: {
                         id: "floor",
                         name: "floor",
-                        type: "text",
+                        type: "number",
                         placeholder: "Этаж"
                       },
                       domProps: { value: _vm.sensorData.floor },
@@ -38873,14 +39123,21 @@ var render = function() {
                           if ($event.target.composing) {
                             return
                           }
-                          _vm.$set(_vm.sensorData, "floor", $event.target.value)
+                          _vm.$set(
+                            _vm.sensorData,
+                            "floor",
+                            _vm._n($event.target.value)
+                          )
+                        },
+                        blur: function($event) {
+                          return _vm.$forceUpdate()
                         }
                       }
                     })
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group col" }, [
-                    _c("label", { attrs: { for: "cabinetName" } }, [
+                    _c("label", { attrs: { for: "cabinet_name" } }, [
                       _vm._v("Нименование помещения")
                     ]),
                     _vm._v(" "),
@@ -38888,19 +39145,20 @@ var render = function() {
                       directives: [
                         {
                           name: "model",
-                          rawName: "v-model",
-                          value: _vm.sensorData.cabinetName,
-                          expression: "sensorData.cabinetName"
+                          rawName: "v-model.trim",
+                          value: _vm.sensorData.cabinet_name,
+                          expression: "sensorData.cabinet_name",
+                          modifiers: { trim: true }
                         }
                       ],
                       staticClass: "form-control",
                       attrs: {
-                        id: "cabinetName",
-                        name: "cabinetName",
+                        id: "cabinet_name",
+                        name: "cabinet_name",
                         type: "text",
-                        placeholder: "Нименование помещения"
+                        placeholder: "Наименование помещения"
                       },
-                      domProps: { value: _vm.sensorData.cabinetName },
+                      domProps: { value: _vm.sensorData.cabinet_name },
                       on: {
                         input: function($event) {
                           if ($event.target.composing) {
@@ -38908,9 +39166,12 @@ var render = function() {
                           }
                           _vm.$set(
                             _vm.sensorData,
-                            "cabinetName",
-                            $event.target.value
+                            "cabinet_name",
+                            $event.target.value.trim()
                           )
+                        },
+                        blur: function($event) {
+                          return _vm.$forceUpdate()
                         }
                       }
                     })
@@ -38928,24 +39189,24 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.sensorData.SP5Valid,
-                            expression: "sensorData.SP5Valid"
+                            value: _vm.sensorData.SP5_valid,
+                            expression: "sensorData.SP5_valid"
                           }
                         ],
                         staticClass: "custom-control-input",
                         attrs: {
-                          id: "SP5Valid",
-                          name: "SP5Valid",
+                          id: "SP5_valid",
+                          name: "SP5_valid",
                           type: "checkbox"
                         },
                         domProps: {
-                          checked: Array.isArray(_vm.sensorData.SP5Valid)
-                            ? _vm._i(_vm.sensorData.SP5Valid, null) > -1
-                            : _vm.sensorData.SP5Valid
+                          checked: Array.isArray(_vm.sensorData.SP5_valid)
+                            ? _vm._i(_vm.sensorData.SP5_valid, null) > -1
+                            : _vm.sensorData.SP5_valid
                         },
                         on: {
                           change: function($event) {
-                            var $$a = _vm.sensorData.SP5Valid,
+                            var $$a = _vm.sensorData.SP5_valid,
                               $$el = $event.target,
                               $$c = $$el.checked ? true : false
                             if (Array.isArray($$a)) {
@@ -38955,19 +39216,19 @@ var render = function() {
                                 $$i < 0 &&
                                   _vm.$set(
                                     _vm.sensorData,
-                                    "SP5Valid",
+                                    "SP5_valid",
                                     $$a.concat([$$v])
                                   )
                               } else {
                                 $$i > -1 &&
                                   _vm.$set(
                                     _vm.sensorData,
-                                    "SP5Valid",
+                                    "SP5_valid",
                                     $$a.slice(0, $$i).concat($$a.slice($$i + 1))
                                   )
                               }
                             } else {
-                              _vm.$set(_vm.sensorData, "SP5Valid", $$c)
+                              _vm.$set(_vm.sensorData, "SP5_valid", $$c)
                             }
                           }
                         }
@@ -38977,9 +39238,21 @@ var render = function() {
                         "label",
                         {
                           staticClass: "custom-control-label",
-                          attrs: { for: "SP5Valid" }
+                          attrs: { for: "SP5_valid" }
                         },
                         [_vm._v("Соостетсвует СП5")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        {
+                          staticClass: "badge badge-info",
+                          attrs: {
+                            href: "/uploads/documents/sp5.pdf",
+                            target: "_blank"
+                          }
+                        },
+                        [_vm._v("СП5")]
                       )
                     ]
                   ),
@@ -38996,24 +39269,24 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.sensorData.isGood,
-                            expression: "sensorData.isGood"
+                            value: _vm.sensorData.is_good,
+                            expression: "sensorData.is_good"
                           }
                         ],
                         staticClass: "custom-control-input",
                         attrs: {
-                          id: "isGood",
-                          name: "isGood",
+                          id: "is_good",
+                          name: "is_good",
                           type: "checkbox"
                         },
                         domProps: {
-                          checked: Array.isArray(_vm.sensorData.isGood)
-                            ? _vm._i(_vm.sensorData.isGood, null) > -1
-                            : _vm.sensorData.isGood
+                          checked: Array.isArray(_vm.sensorData.is_good)
+                            ? _vm._i(_vm.sensorData.is_good, null) > -1
+                            : _vm.sensorData.is_good
                         },
                         on: {
                           change: function($event) {
-                            var $$a = _vm.sensorData.isGood,
+                            var $$a = _vm.sensorData.is_good,
                               $$el = $event.target,
                               $$c = $$el.checked ? true : false
                             if (Array.isArray($$a)) {
@@ -39023,19 +39296,19 @@ var render = function() {
                                 $$i < 0 &&
                                   _vm.$set(
                                     _vm.sensorData,
-                                    "isGood",
+                                    "is_good",
                                     $$a.concat([$$v])
                                   )
                               } else {
                                 $$i > -1 &&
                                   _vm.$set(
                                     _vm.sensorData,
-                                    "isGood",
+                                    "is_good",
                                     $$a.slice(0, $$i).concat($$a.slice($$i + 1))
                                   )
                               }
                             } else {
-                              _vm.$set(_vm.sensorData, "isGood", $$c)
+                              _vm.$set(_vm.sensorData, "is_good", $$c)
                             }
                           }
                         }
@@ -39045,7 +39318,7 @@ var render = function() {
                         "label",
                         {
                           staticClass: "custom-control-label",
-                          attrs: { for: "isGood" }
+                          attrs: { for: "is_good" }
                         },
                         [_vm._v("В рабочем состоянии")]
                       )
@@ -39463,6 +39736,153 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("tree-view")
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/sensors/card.vue?vue&type=template&id=30364831&scoped=true&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/sensors/card.vue?vue&type=template&id=30364831&scoped=true& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("transition", { attrs: { name: "modal" } }, [
+    _c(
+      "div",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.edit,
+            expression: "edit"
+          }
+        ],
+        staticClass: "modal-mask mb-4 ",
+        on: {
+          click: function($event) {
+            if ($event.target !== $event.currentTarget) {
+              return null
+            }
+            return _vm.cancel($event)
+          }
+        }
+      },
+      [
+        _c("div", { staticClass: "modal-container card card-stats" }, [
+          _c("div", { staticClass: "modal-content card-body" }, [
+            _c("h5", { staticClass: "card-title" }, [
+              _vm._v(_vm._s(_vm.sensorData.name))
+            ]),
+            _vm._v(" "),
+            _c("p", { staticClass: "card-text" }),
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-6" }, [_vm._v("Cенсор")]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-6" }, [
+                _vm._v(_vm._s(_vm.sensor.name))
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-6" }, [_vm._v("Этаж")]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-6" }, [
+                _vm._v(_vm._s(_vm.sensorData.floor))
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row" }, [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "custom-control custom-control-alternative custom-checkbox mb-3"
+                },
+                [
+                  _c("input", {
+                    staticClass: "custom-control-input",
+                    attrs: {
+                      id: "customCheck8",
+                      type: "checkbox",
+                      disabled: ""
+                    },
+                    domProps: { checked: _vm.sensorData.SP5_valid }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "label",
+                    {
+                      staticClass: "custom-control-label",
+                      attrs: { for: "customCheck8" }
+                    },
+                    [_vm._v("Соостетсвие СП5")]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  staticClass: "badge badge-info",
+                  attrs: {
+                    href: "/uploads/documents/sp5.pdf",
+                    target: "_blank"
+                  }
+                },
+                [_vm._v("СП5")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row" }, [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "custom-control custom-control-alternative custom-checkbox mb-3"
+                },
+                [
+                  _c("input", {
+                    staticClass: "custom-control-input",
+                    attrs: {
+                      id: "customCheck8",
+                      type: "checkbox",
+                      disabled: ""
+                    },
+                    domProps: { checked: _vm.sensorData.is_good }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "label",
+                    {
+                      staticClass: "custom-control-label",
+                      attrs: { for: "customCheck8" }
+                    },
+                    [_vm._v("В рабочем состоянии")]
+                  )
+                ]
+              )
+            ]),
+            _vm._v(" "),
+            _c("p")
+          ])
+        ])
+      ]
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -40447,10 +40867,19 @@ var render = function() {
       }),
       _vm._v(" "),
       _c("addSensor", {
-        attrs: { creating: _vm.addSensorShow, sensorData: _vm.sensorData },
+        attrs: {
+          creating: _vm.sensorFormShow,
+          method: _vm.sensorFormMethod,
+          sensorData: _vm.sensorData
+        },
+        on: { "end-adding": _vm.sensorEndAdding }
+      }),
+      _vm._v(" "),
+      _c("sensorCard", {
+        attrs: { edit: _vm.sensorCardShow, sensorData: _vm.sensorData },
         on: {
           "end-adding": function($event) {
-            _vm.addSensorShow = !_vm.addSensorShow
+            _vm.sensorCardShow = !_vm.sensorCardShow
           }
         }
       }),
@@ -40512,7 +40941,12 @@ var render = function() {
                           _vm._v(
                             " \n\t\t\t\t\t\t" +
                               _vm._s(wire.description) +
-                              "\n\t\t\t\t\t"
+                              "\n\t\t\t\t\t\t"
+                          ),
+                          _c(
+                            "span",
+                            { staticClass: "badge badge-pill badge-info" },
+                            [_vm._v(_vm._s(wire.sensors.length))]
                           )
                         ]
                       ),
@@ -40532,25 +40966,34 @@ var render = function() {
                         },
                         [
                           _vm._l(wire.sensors, function(sensor, sensorIdx) {
-                            return _c("li", [
-                              _c(
-                                "h3",
-                                {
-                                  staticClass: "pl-5",
+                            return _c("li", { key: "sensor.id" }, [
+                              _c("h3", { staticClass: "pl-5" }, [
+                                _vm._v(
+                                  "\n\t\t\t\t\t\t\t\t" +
+                                    _vm._s(sensor.name) +
+                                    "\n\t\t\t\t\t\t\t\t"
+                                ),
+                                _c("i", {
+                                  staticClass:
+                                    "fas fa-search text-info pointer",
                                   on: {
-                                    cilck: function($event) {
-                                      return _vm.showSensorInfo(sensor)
+                                    click: function($event) {
+                                      _vm.sensorData = sensor
+                                      _vm.sensorCardShow = true
                                     }
                                   }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n\t\t\t\t\t\t\t\t" +
-                                      _vm._s(sensor.name) +
-                                      "\n\t\t\t\t\t\t\t"
-                                  )
-                                ]
-                              )
+                                }),
+                                _vm._v(" "),
+                                _c("i", {
+                                  staticClass:
+                                    "fas fa-edit text-warning pointer",
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.editSensor(device.id, sensor)
+                                    }
+                                  }
+                                })
+                              ])
                             ])
                           }),
                           _vm._v(" "),
@@ -54297,6 +54740,93 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/sensors/card.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/sensors/card.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _card_vue_vue_type_template_id_30364831_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./card.vue?vue&type=template&id=30364831&scoped=true& */ "./resources/js/components/sensors/card.vue?vue&type=template&id=30364831&scoped=true&");
+/* harmony import */ var _card_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./card.vue?vue&type=script&lang=js& */ "./resources/js/components/sensors/card.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _card_vue_vue_type_style_index_0_id_30364831_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css& */ "./resources/js/components/sensors/card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _card_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _card_vue_vue_type_template_id_30364831_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _card_vue_vue_type_template_id_30364831_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "30364831",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/sensors/card.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/sensors/card.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/sensors/card.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./card.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/sensors/card.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/sensors/card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css&":
+/*!***********************************************************************************************************!*\
+  !*** ./resources/js/components/sensors/card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css& ***!
+  \***********************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_style_index_0_id_30364831_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/sensors/card.vue?vue&type=style&index=0&id=30364831&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_style_index_0_id_30364831_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_style_index_0_id_30364831_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_style_index_0_id_30364831_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_style_index_0_id_30364831_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_style_index_0_id_30364831_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/sensors/card.vue?vue&type=template&id=30364831&scoped=true&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/sensors/card.vue?vue&type=template&id=30364831&scoped=true& ***!
+  \*********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_template_id_30364831_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./card.vue?vue&type=template&id=30364831&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/sensors/card.vue?vue&type=template&id=30364831&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_template_id_30364831_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_card_vue_vue_type_template_id_30364831_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/sensors/form.vue":
 /*!**************************************************!*\
   !*** ./resources/js/components/sensors/form.vue ***!
@@ -54651,11 +55181,33 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     ADD_SENSOR_TO_WIRE: function ADD_SENSOR_TO_WIRE(state, payload) {
       axios.post('/api/sensorwire/add', {
-        device: payload.deviceId,
-        wire: payload.wireId,
-        sensor: payload.sensor.id
+        payload: payload,
+        user_id: state.user.id
       }).then(function (resonse) {
-        console.log(resonse.data);
+        var device_idx = state.devices.findIndex(function (el) {
+          return el.id == payload.sensorData.deviceId;
+        });
+        var wire_idx = state.devices[device_idx].wires.findIndex(function (el) {
+          return el.id == payload.sensorData.wireId;
+        });
+        state.devices[device_idx].wires[wire_idx].sensors.push(resonse.data);
+      });
+    },
+    UPDATE_SENSOR_TO_WIRE: function UPDATE_SENSOR_TO_WIRE(state, payload) {
+      axios.post('/api/sensorwire/update', {
+        payload: payload,
+        user_id: state.user.id
+      }).then(function (resonse) {
+        var device_idx = state.devices.findIndex(function (el) {
+          return el.id == payload.sensorData.deviceId;
+        });
+        var wire_idx = state.devices[device_idx].wires.findIndex(function (el) {
+          return el.id == payload.sensorData.wire_id;
+        });
+        var sensor_idx = state.devices[device_idx].wires[wire_idx].sensors.findIndex(function (el) {
+          return el.id == payload.sensorData.id;
+        });
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.devices[device_idx].wires[wire_idx].sensors, sensor_idx, resonse.data);
       });
     }
   },
@@ -54668,6 +55220,13 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     ALL_SENSORS: function ALL_SENSORS(state) {
       return state.sensors;
+    },
+    SENSOR: function SENSOR(state, getters) {
+      return function (id) {
+        return state.sensors.find(function (el) {
+          return el.id == id;
+        });
+      };
     }
   }
 });

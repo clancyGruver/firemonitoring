@@ -4,6 +4,13 @@
 			<div class="modal-container card card-stats">
 				<div class="modal-content card-body">
 					<h5 class="card-title">Добавить сенсор</h5> 
+
+          <div class="alert alert-danger" v-show="errors.length > 0">
+              <ul>
+                  <li v-for="(error, index) in errors ">{{ error }}</li>
+              </ul>
+          </div>
+
           <div class="row">
             <div class="col">        
               <div class="form-group">                  
@@ -16,7 +23,10 @@
               </div>
               <ul class="list-unstyled">
                 <li v-for="sensor in availSensors">
-                  <span class="h2 font-weight-bold mb-0" @click="addSensor(sensor)">{{sensor.name}}</span>
+                  <span class="mb-0" @click="addSensor(sensor)">
+                    <strong v-if="sensor.id == sensorData.sensor_id">{{sensor.name}}</strong>
+                    <span v-else>{{sensor.name}}</span>                    
+                  </span>
                 </li>
               </ul>  
             </div>
@@ -24,23 +34,24 @@
               <form>
                 <div class="form-group col">
                   <label for="name">Наименование</label>
-                  <input id="name" name="name" type="text" class="form-control" placeholder="Наименование" v-model="sensorData.name">
+                  <input id="name" name="name" type="text" class="form-control" placeholder="Наименование" v-model.trim="sensorData.name">
                 </div>
                 <div class="form-group col">
                   <label for="floor">Этаж</label>
-                  <input id="floor" name="floor" type="text" class="form-control" placeholder="Этаж" v-model="sensorData.floor">
+                  <input id="floor" name="floor" type="number" class="form-control" placeholder="Этаж" v-model.number="sensorData.floor">
                 </div>
                 <div class="form-group col">
-                  <label for="cabinetName">Нименование помещения</label>
-                  <input id="cabinetName" name="cabinetName" type="text" class="form-control" placeholder="Нименование помещения" v-model="sensorData.cabinetName">
+                  <label for="cabinet_name">Нименование помещения</label>
+                  <input id="cabinet_name" name="cabinet_name" type="text" class="form-control" placeholder="Наименование помещения" v-model.trim="sensorData.cabinet_name">
                 </div>                
                 <div class="form-group col custom-control custom-checkbox">
-                  <input class="custom-control-input" id="SP5Valid" name="SP5Valid" type="checkbox"v-model="sensorData.SP5Valid">
-                  <label class="custom-control-label" for="SP5Valid">Соостетсвует СП5</label>
+                  <input class="custom-control-input" id="SP5_valid" name="SP5_valid" type="checkbox"v-model="sensorData.SP5_valid">
+                  <label class="custom-control-label" for="SP5_valid">Соостетсвует СП5</label>
+                  <a href="/uploads/documents/sp5.pdf" target="_blank" class="badge badge-info">СП5</a>
                 </div>                
                 <div class="form-group col custom-control custom-checkbox">
-                  <input class="custom-control-input" id="isGood" name="isGood" type="checkbox"v-model="sensorData.isGood">
-                  <label class="custom-control-label" for="isGood">В рабочем состоянии</label>
+                  <input class="custom-control-input" id="is_good" name="is_good" type="checkbox"v-model="sensorData.is_good">
+                  <label class="custom-control-label" for="is_good">В рабочем состоянии</label>
                 </div>
               </form>
             </div>
@@ -58,8 +69,9 @@
         type: Object,
         default: function() { return {
             name: '',
+            id: null,
             deviceId: -1,
-            wireId: -1,
+            wire_id: -1,
             floor: '',
             cabinet_name: '',
             SP5_valid: '',
@@ -70,25 +82,73 @@
 			creating: {
 				type: Boolean,
 				default: false
-			}
+			},
+      method:{
+        type: String,
+        default: 'new',
+        validator: function (value) {
+          return ['new','edit'].indexOf(value) > -1
+        },
+      }
 		},		
 		data: function () {
 			return {
         searchString: '',
+        errors: [],
 			}
 		},
 		methods: {		
       cancel () {
-        this.$emit('end-adding')
+        this.$emit('end-adding',this.sensorData)
       },
 			addSensor(sensor){
-				this.$store.commit('ADD_SENSOR_TO_WIRE', {
+        if(!this.validate()) return false;
+        const data = {
           sensor:   sensor, 
-          deviceId: this.deviceId,
-          wireId:   this.wireId
-        });
+          sensorData: this.sensorData
+        };
+        if(this.method == 'new')
+				  this.$store.commit('ADD_SENSOR_TO_WIRE', data);
+        else
+          this.$store.commit('UPDATE_SENSOR_TO_WIRE', data);
 				this.cancel();
 			},
+
+      validate(){
+        this.errors = [];
+        let checked = true;
+
+        if(!Number.isInteger(this.sensorData.floor)){
+          this.errors.push('Этаж должен быть числом');
+          checked = false;
+        } 
+        else if(this.sensorData.floor === ''){
+          this.errors.push('Этаж не заплнен');
+          checked = false;
+        }
+
+        if(this.sensorData.name === ''){
+          this.errors.push('Не введено наименование');
+          checked = false;
+        }
+
+        if(this.sensorData.cabinet_name === '' || !('cabinet_name' in this.sensorData)){
+          this.errors.push('Не введено наименование помещения');
+          checked = false;
+        }
+
+        if(this.sensorData.deviceId < 0){
+          this.errors.push('Устройство не определено');
+          checked = false;
+        }
+
+        if(this.sensorData.wire_id < 0){
+          this.errors.push('Шлейф не определен');
+          checked = false;
+        }
+
+        return checked;
+      }
 		},
 		computed:{
 			availSensors: function () {
