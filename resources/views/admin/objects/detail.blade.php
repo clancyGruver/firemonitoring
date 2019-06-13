@@ -80,8 +80,27 @@
 
         </form>
     </div>
-    <div class="row">
-    
+    <hr class="mt-4 mb-4"/>
+
+    <div class="container-fluid">
+        <h3 class="text-center text-capitalize">Медиафайлы</h3>
+        <ul id="mediafiles-list" class="col-md-6 offset-md-3">
+            @foreach($item->mediafiles as $mediafile)
+            <li>
+                <a 
+                    href="{{ asset( '/uploads/objectMedia/'.$item->id.'/'.$mediafile->filename ) }}"
+                    target="_blank"
+
+                >
+                    @if($mediafile->description) 
+                        {{ $mediafile->description }}
+                    @else
+                        {{ $mediafile->filename }}
+                    @endif
+                </a>
+            </li>
+            @endforeach
+        </ul>
     </div>
 </div>
 

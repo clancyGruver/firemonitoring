@@ -80,3 +80,104 @@
                 </div>
 
             </form>
+
+            <hr class="mt-4 mb-4"/>
+
+            <div class="container-fluid">
+                <h3 class="text-center text-capitalize">Медиафайлы</h3>
+                <ul id="mediafiles-list" class="col-md-6 offset-md-3">
+                    @foreach($item->mediafiles as $mediafile)
+                    <li>
+                        <a 
+                            href="{{ asset( '/uploads/objectMedia/'.$item->id.'/'.$mediafile->filename ) }}"
+                            target="_blank"
+
+                        >
+                            @if($mediafile->description) 
+                                {{ $mediafile->description }}
+                            @else
+                                {{ $mediafile->filename }}
+                            @endif
+                        </a>
+                        <i 
+                            class="fas fa-times text-danger delete-mediafile pointer ml-4" 
+                            data-id="{{ $mediafile->id }}"
+                        ></i>
+                    </li>
+                    @endforeach
+                </ul>
+                <form action="" id="mediafileupload"  class="col-md-6 offset-md-3">
+                    <input type="hidden" name="object_id" id="object_id" value="{{ $item->id }}">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="project_year">Медиафайл</label>
+                            <input type="file" id="file" name="file" class="form-control-file" >
+                        </div>
+                    </div>    
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="project_year">Описание</label>
+                            <input type="text" id="description" name="description" class="form-control">
+                        </div>
+                    </div>    
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <button class="btn btn-icon btn-3 btn-success" type="button" id="mediafiflesend">
+                                <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>
+                                <span class="btn-inner--text">Загрузить</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>                
+            </div>
+@push('js')
+<script>
+    $(document).ready(function(){
+        $('.delete-mediafile').on('click',function(){
+            var parentLi = $(this).parent('li')
+                id = $(this).data('id'),
+                file = $(this).siblings('a').text();
+            if(confirm(`Вы действительно хотите удалить файл ${file}`)){
+                $.post(
+                    `/api/objects/fileDelete/${id}`,
+                    {},
+                    function(){
+                        parentLi.remove();
+                        alert('Файл удален.');
+                    }
+                );
+            } 
+        })
+        $('#mediafiflesend').on('click',function(e){
+            e.preventDefault();
+            var fd = new FormData();
+            fd.append('file',$('#file')[0].files[0]);
+            fd.append('description',$('#description').val());
+            fd.append('object_id',$('#object_id').val());
+            $.ajax({
+                url: '/api/objects/fileUpload',
+                type: "POST",
+                data : fd,
+                processData: false,
+                contentType: false,
+                success: function(response){
+                    $('#description').val('');
+                    $('#file').val('');
+                    console.log(response);
+                    var mfl = $('#mediafiles-list');
+                    var li = $('<li />').appendTo(mfl);
+                    var a = $('<a />',{
+                        href: `/uploads/objectMedia/${response.object_id}/${response.filename}`,
+                        text: response.description,
+                    }).appendTo(li);
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    //if fails     
+                    alert('Во время загрузки произошла ошибка');
+                }
+            });
+            console.log(fd);
+        })
+    })
+</script>
+@endpush

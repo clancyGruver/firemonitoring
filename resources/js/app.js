@@ -8,6 +8,7 @@ Vue.component('sensors', require('./components/sensors/sensors.vue').default);
 import { store } from './store';
 import isLoggedMixin from './mixins/auth.js';
 
+
 const app = new Vue({
     el: '#app',
     store,

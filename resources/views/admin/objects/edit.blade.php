@@ -57,6 +57,9 @@
         height: 400px;
         width: 100%;
     }
+    .pointer{
+        cursor: pointer;
+    }
 </style>
 @endpush
 @push('js')

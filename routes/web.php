@@ -15,6 +15,9 @@ Route::get('/', function () {
     return view('auth/login');
 })->name('home');
 
+Route::post('/login', 'Auth\LoginController@login')->name('login');
+Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
+
 Route::get('/sessionStatus', function() {
         return ['user' => Auth::user() ? Auth::user() : null];
 });

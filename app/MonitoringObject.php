@@ -30,9 +30,12 @@ class MonitoringObject extends Model
     ];
 
 
-    public function raion()
-    {
+    public function raion(){
         return $this->hasOne('App\Raion', 'id', 'raion_id');
+    }
+
+    public function mediafiles(){
+        return $this->hasMany('App\ObjectMediafile', 'object_id', 'id');
     }
 
     public function get_coords($ll, $addr){

@@ -9,6 +9,10 @@ php-cli:##Runs php-cli artisan migrate
 
 # Backup
 docker exec CONTAINER /usr/bin/mysqldump -u root --password=root DATABASE > backup.sql
+docker exec app_db_1 /usr/bin/mysqldump -u root --password=secret app > backup.sql
 
 # Restore
 cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root DATABASE
+
+# delete symlinks
+find -type l -delete

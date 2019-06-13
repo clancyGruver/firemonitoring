@@ -28,14 +28,18 @@
 			                    </div>
 			                </div>
 
-			                <div class="">
-			                    <div class="form-group col custom-control custom-control-alternative custom-checkbox">
-			                        <input class="custom-control-input" id="is_fire_safety" name="is_fire_safety" type="checkbox"v-model="newWire.is_fire_safety">
-			                        <label class="custom-control-label" for="is_fire_safety">Пожаробезопасный</label>
-			                    </div>
-			                </div>
+				            <div class="">      
+				                <div class="form-group col">
+				                    <label for="type">Тип шлейфа</label>
+				                    <select id="type" name="type" class="form-control" v-model="newWire.type">
+				                        <option value="unsafe" selected>Пожароопасный</option>
+				                        <option value="safe">Пожаробезопасный</option>
+				                        <option value="radio">Радиоканал</option>
+				                    </select>
+				                </div>
+				            </div>
 
-							<div class="" v-show="newWire.is_fire_safety">
+							<div class="">
 			                    <div class="form-group col">
 			                    <label for="sertificate">Сертификат</label>
 			                        <input id="sertificate" name="sertificate" type="text" class="form-control" placeholder="Сертификат" v-model="newWire.sertificate">
@@ -59,6 +63,13 @@
 <script>
 	export default{
 		props: {
+			mode:{
+				type: String,
+		        default: 'new',
+		        validator: function (value) {
+		          return ['new','edit'].indexOf(value) > -1
+		        },
+			},
 			odid:{
 				type: Number,
 				default: null
@@ -66,14 +77,24 @@
 			creating: {
 				type: Boolean,
 				default: false
-			}
+			},
+			newWire: {
+				type: Object,
+				default: function () {
+					return {
+						description:'',
+						is_fire_safety: '',
+						sertificate: '',
+						is_good: true,
+						type: 'unsafe',
+					}
+				}	
+				
+			},
 		},		
 		data: function () {
 			return {
 				errors: [],
-				newWire: {
-					is_good: true,
-				},
 			}
 		},
 		methods: {		
@@ -90,7 +111,13 @@
 					return false;
 				}				
 				console.log(this.newWire);
-				this.$store.commit('ADD_WIRE', {odid:this.odid, wire:this.newWire});
+				if(this.mode == 'new'){
+					this.$store.commit('ADD_WIRE', {odid:this.odid, wire:this.newWire});	
+				}
+				else{
+					this.$store.commit('EDIT_WIRE', this.newWire);		
+				}
+				
 				this.cancel();
 			},
 		},

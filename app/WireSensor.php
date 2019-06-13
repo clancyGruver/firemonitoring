@@ -21,5 +21,6 @@ class WireSensor extends Model
 		'SP5_valid',
 		'is_good',
 		'is_active',
+		'comment',
 	];
 }

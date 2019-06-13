@@ -66,7 +66,7 @@
 <script>
 	export default{
 		props: {
-      sensorData:{
+      deviceData:{
         type: Object,
         default: function() { return {
             name: '',

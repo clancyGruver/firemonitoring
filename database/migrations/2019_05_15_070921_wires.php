@@ -21,6 +21,7 @@ class Wires extends Migration
             $table->string('description');
             $table->string('sertificate')->nullable;
             $table->boolean('is_fire_safety')->default(0);
+            $table->set('type', ['safe', 'unsafe', 'radio'])->default('unsafe');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
 

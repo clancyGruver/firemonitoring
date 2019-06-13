@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Raion;
 use App\DeviceClass;
 use App\Object_Device as OD;
+use App\ObjectMediafile as OMedia;
 
 class ObjectsController extends Controller
 {
@@ -17,20 +18,17 @@ class ObjectsController extends Controller
     }
 
     public function edit($id, Request $request){
-        $item = MO::find($id);
+        $item = MO::where('id',$id)->with('mediafiles')->first();
         $raions = Raion::where('is_active',1)->get();
-        /*$dev_categories = DeviceClass::where('is_active',1)->with('devices')->get();
-        $installed_dev_categories = OD::where('is_active',1)->where('object_id',$id)->with('devices')->get() ?? null;*/ 
         return view('admin.objects.edit',[
             'item' => $item,
             'raions'=>$raions, 
-            /*'dev_categories' => $dev_categories,
-            'installed_dev_categories' => $installed_dev_categories,*/
         ]);
     }
 
     public function detail($id, Request $request){        
-        $item = MO::find($id);
+        //$item = MO::find($id)->with('mediafiles');
+        $item = MO::where('id',$id)->with('mediafiles')->first();
         return view('admin.objects.detail',['item' => $item]);
     }
 
@@ -85,5 +83,25 @@ class ObjectsController extends Controller
         $obj->created_user_id = Auth::user()->id;
         $obj->save();
         return redirect('admin/objects');
+    }
+
+    public function fileUpload( Request $request){
+        if($request->file){
+            $params = [];
+            $params['filename'] = $request->file->getClientOriginalName();
+            $params['description'] = $request->description ? $request->description : $params['filename'];            
+            $params['object_id'] = $request->object_id;
+            $request->file->storeAs('objectMedia/'.$request->obj_id, $request->file->getClientOriginalName());    
+            $obj = new OMedia($params);
+            $obj->save();
+            return response()->json($obj);
+        }
+        return response(403);
+    }
+
+    public function fileDelete($id, Request $request){   
+        $obj = OMedia::find($id);
+        $obj->delete();
+        return response()->json(200);
     }
 }

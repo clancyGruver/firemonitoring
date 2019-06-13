@@ -39,8 +39,16 @@ export const store = new Vuex.Store({
           wires: [],
           wires_count: payload.wires_count,
         })
+      );      
+    },
+    DELETE_DEVICE: (state, payload) => {
+      axios.post(`/api/objectdevice/delete/${payload}`)
+      .then(
+        response => {
+          const idx = state.devices.findIndex(obj => obj.id == payload );  
+          Vue.delete(state.devices,idx)
+        }
       );
-      
     },
     ADD_WIRE: (state, payload) => {
       const idx = state.devices.findIndex(obj => obj.id == payload.odid );            
@@ -52,11 +60,34 @@ export const store = new Vuex.Store({
       .then(
         response => {
           payload.wire.id = response.data.id;
+          payload.wire.sensors = [];
           state.devices[idx].wires.push(
             payload.wire
           );
         }
           
+      );
+    },
+    EDIT_WIRE:(state, payload) => {
+      payload.user_id = state.user.id;
+      axios.post(`/api/wire/update/${payload.id}`,payload)
+      .then(
+        response => {
+          const device_idx = state.devices.findIndex(obj => obj.id == payload.object_device_id );
+          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.id);
+          Vue.set(state.devices[device_idx].wires, wire_idx, payload);
+        }
+          
+      );
+    },
+    DELETE_WIRE: (state, payload) => {
+      axios.post(`/api/wire/delete/${payload}`)
+      .then(
+        response => {
+          const device_idx = state.devices.findIndex(obj => obj.id == payload.object_device_id );
+          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.id);
+          Vue.delete(state.devices[idx].wires, wire_idx)
+        }
       );
     },
     FILL_SENSORS: (state) => {
@@ -111,7 +142,7 @@ export const store = new Vuex.Store({
       .then(
         resonse => {
           const device_idx = state.devices.findIndex(el => el.id == payload.sensorData.deviceId);
-          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.sensorData.wireId);
+          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.sensorData.wire_id);
           state.devices[device_idx].wires[wire_idx].sensors.push(resonse.data);
         }
       )

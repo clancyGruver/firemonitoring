@@ -70,7 +70,7 @@ CREATE TABLE `device_class` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -79,7 +79,7 @@ CREATE TABLE `device_class` (
 
 LOCK TABLES `device_class` WRITE;
 /*!40000 ALTER TABLE `device_class` DISABLE KEYS */;
-INSERT INTO `device_class` VALUES (1,'РСПИ',1,'2019-05-22 09:44:41','2019-05-22 09:47:50'),(2,'Охранно-пожарная сигнализация',1,'2019-05-22 18:19:26','2019-05-22 18:19:26');
+INSERT INTO `device_class` VALUES (1,'РСПИ',1,'2019-05-22 09:44:41','2019-05-22 09:47:50'),(2,'Охранно-пожарная сигнализация',1,'2019-05-22 18:19:26','2019-05-22 18:19:26'),(3,'Антенна',1,'2019-05-27 05:16:49','2019-05-27 05:16:49');
 /*!40000 ALTER TABLE `device_class` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,7 +191,7 @@ CREATE TABLE `devices` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `wires_count` tinyint(4) NOT NULL,
-  `instruction` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `instruction` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_user_id` bigint(20) unsigned NOT NULL,
   `class_id` tinyint(3) unsigned NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
@@ -202,7 +202,7 @@ CREATE TABLE `devices` (
   KEY `devices_class_id_foreign` (`class_id`),
   CONSTRAINT `devices_class_id_foreign` FOREIGN KEY (`class_id`) REFERENCES `device_class` (`id`),
   CONSTRAINT `devices_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -211,7 +211,7 @@ CREATE TABLE `devices` (
 
 LOCK TABLES `devices` WRITE;
 /*!40000 ALTER TABLE `devices` DISABLE KEYS */;
-INSERT INTO `devices` VALUES (1,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-22 19:02:19','2019-05-22 19:31:22'),(2,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-22 19:11:52','2019-05-22 19:31:26'),(3,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-22 19:14:15','2019-05-22 19:31:31'),(4,'АМП-4',4,'amp4.pdf',3,1,0,'2019-05-22 19:31:45','2019-05-23 04:34:01'),(5,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-23 04:34:18','2019-05-23 04:36:21'),(6,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-23 04:36:31','2019-05-23 04:47:52'),(7,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-23 04:46:04','2019-05-23 04:47:53'),(8,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-23 04:47:00','2019-05-23 04:47:55'),(9,'АМП-4',4,'amp4.pdf',3,2,1,'2019-05-23 04:47:39','2019-05-23 08:59:27');
+INSERT INTO `devices` VALUES (1,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-22 19:02:19','2019-05-22 19:31:22'),(2,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-22 19:11:52','2019-05-22 19:31:26'),(3,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-22 19:14:15','2019-05-22 19:31:31'),(4,'АМП-4',4,'amp4.pdf',3,1,0,'2019-05-22 19:31:45','2019-05-23 04:34:01'),(5,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-23 04:34:18','2019-05-23 04:36:21'),(6,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-23 04:36:31','2019-05-23 04:47:52'),(7,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-23 04:46:04','2019-05-23 04:47:53'),(8,'АМП-4',4,'amp4.pdf',3,2,0,'2019-05-23 04:47:00','2019-05-23 04:47:55'),(9,'АМП-4',4,'amp4.pdf',3,2,1,'2019-05-23 04:47:39','2019-05-23 08:59:27'),(10,'АМП-20',20,NULL,3,2,1,'2019-05-27 16:47:37','2019-05-27 16:47:37');
 /*!40000 ALTER TABLE `devices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -227,7 +227,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -236,7 +236,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'2014_10_12_000000_create_users_table',1),(2,'2014_10_12_100000_create_password_resets_table',1),(3,'2019_05_15_055415_raions',2),(4,'2019_05_15_060541_objects',2),(7,'2019_05_15_060035_device_class',3),(8,'2019_05_15_061317_devices',4),(9,'2019_05_15_061835_device_reglament',4),(10,'2019_05_15_065432_device_reglament_element',5),(11,'2019_05_15_065712_device_limitations',6),(12,'2019_05_15_065946_object_devices',7),(13,'2019_05_15_070921_wires',7),(15,'2019_05_15_071538_sensors',8),(16,'2019_05_15_080205_wire_sensor',9),(17,'2019_05_15_080205_wire_sensor_previous_state',10),(18,'2019_05_15_081024_wire_sensor_reglament',10),(19,'2019_05_15_081306_wire_previous_state',10),(20,'2019_05_15_082055_object_device_reglament',11),(21,'2019_05_15_082057_object_device_reglament_limitations',12),(22,'2019_05_15_083012_object_repair_queue',12),(23,'2019_05_15_084106_calendar',12),(24,'2019_05_19_121046_user',13),(25,'2016_06_01_000001_create_oauth_auth_codes_table',14),(26,'2016_06_01_000002_create_oauth_access_tokens_table',14),(27,'2016_06_01_000003_create_oauth_refresh_tokens_table',14),(28,'2016_06_01_000004_create_oauth_clients_table',14),(29,'2016_06_01_000005_create_oauth_personal_access_clients_table',14);
+INSERT INTO `migrations` VALUES (1,'2014_10_12_000000_create_users_table',1),(2,'2014_10_12_100000_create_password_resets_table',1),(3,'2019_05_15_055415_raions',2),(4,'2019_05_15_060541_objects',2),(7,'2019_05_15_060035_device_class',3),(8,'2019_05_15_061317_devices',4),(9,'2019_05_15_061835_device_reglament',4),(10,'2019_05_15_065432_device_reglament_element',5),(11,'2019_05_15_065712_device_limitations',6),(12,'2019_05_15_065946_object_devices',7),(13,'2019_05_15_070921_wires',7),(15,'2019_05_15_071538_sensors',8),(16,'2019_05_15_080205_wire_sensor',9),(17,'2019_05_15_080205_wire_sensor_previous_state',10),(18,'2019_05_15_081024_wire_sensor_reglament',10),(19,'2019_05_15_081306_wire_previous_state',10),(20,'2019_05_15_082055_object_device_reglament',11),(21,'2019_05_15_082057_object_device_reglament_limitations',12),(22,'2019_05_15_083012_object_repair_queue',12),(23,'2019_05_15_084106_calendar',12),(24,'2019_05_19_121046_user',13),(25,'2016_06_01_000001_create_oauth_auth_codes_table',14),(26,'2016_06_01_000002_create_oauth_access_tokens_table',14),(27,'2016_06_01_000003_create_oauth_refresh_tokens_table',14),(28,'2016_06_01_000004_create_oauth_clients_table',14),(29,'2016_06_01_000005_create_oauth_personal_access_clients_table',14),(31,'2019_05_26_091713_add_objects_documentation',15),(32,'2019_05_27_110628_change_device',16),(33,'2019_06_07_110528_add_sensor_name',17),(34,'2019_06_10_080205_wire_sensor_previous_state_change',18),(35,'2019_06_10_225405_user_add_raion',19),(36,'2019_06_12_091544_wire_sensor_add_comment',19),(37,'2019_06_12_151353_mediafiles_for_object',20),(38,'2019_06_13_064804_add_setup_place_device',21);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -472,6 +472,7 @@ CREATE TABLE `object_devices` (
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `setup_place` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `object_devices_created_user_id_foreign` (`created_user_id`),
   KEY `object_devices_device_id_foreign` (`device_id`),
@@ -479,7 +480,7 @@ CREATE TABLE `object_devices` (
   CONSTRAINT `object_devices_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `object_devices_device_id_foreign` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`),
   CONSTRAINT `object_devices_object_id_foreign` FOREIGN KEY (`object_id`) REFERENCES `objects` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -488,6 +489,7 @@ CREATE TABLE `object_devices` (
 
 LOCK TABLES `object_devices` WRITE;
 /*!40000 ALTER TABLE `object_devices` DISABLE KEYS */;
+INSERT INTO `object_devices` VALUES (1,6,9,3,1,'2019-05-27 17:05:27','2019-05-27 17:05:27',''),(2,6,10,3,1,'2019-05-27 17:05:27','2019-05-27 17:05:27',''),(3,6,9,3,1,'2019-05-27 17:05:27','2019-05-27 17:05:27',''),(4,6,9,3,1,'2019-05-27 17:07:38','2019-05-27 17:07:38',''),(5,6,10,3,1,'2019-05-27 17:07:38','2019-05-27 17:07:38',''),(6,6,9,3,1,'2019-05-27 17:07:38','2019-05-27 17:07:38',''),(7,6,9,3,1,'2019-05-27 17:07:59','2019-05-27 17:07:59',''),(8,6,10,3,1,'2019-05-27 17:07:59','2019-05-27 17:07:59',''),(9,6,9,3,1,'2019-05-27 17:07:59','2019-05-27 17:07:59',''),(10,6,9,3,1,'2019-06-07 10:02:43','2019-06-07 10:02:43',''),(11,6,10,3,1,'2019-06-07 10:22:25','2019-06-07 10:22:25',''),(12,6,10,3,1,'2019-06-07 10:54:12','2019-06-07 10:54:12','');
 /*!40000 ALTER TABLE `object_devices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -554,12 +556,15 @@ CREATE TABLE `objects` (
   `created_user_id` bigint(20) unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `project_isset` tinyint(1) DEFAULT '0',
+  `project_cipher` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `project_year` year(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `objects_raion_id_foreign` (`raion_id`),
   KEY `objects_created_user_id_foreign` (`created_user_id`),
   CONSTRAINT `objects_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `objects_raion_id_foreign` FOREIGN KEY (`raion_id`) REFERENCES `raions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -568,8 +573,38 @@ CREATE TABLE `objects` (
 
 LOCK TABLES `objects` WRITE;
 /*!40000 ALTER TABLE `objects` DISABLE KEYS */;
-INSERT INTO `objects` VALUES (1,'Детский сад',42,'Сталеваров 16',61.4012139,55.2661825,1,'Петров','654321','Иванов','123456',NULL,'2019-05-19 17:18:00','2019-05-23 10:00:57'),(2,'ТЕст2',42,'Сталеваров, 15',61.4034160,55.2575960,0,'ПППП','456','ИИИ','123',NULL,'2019-05-19 17:51:42','2019-05-22 06:05:58'),(3,'Ntcn 3',42,'Худякова 15',61.3739600,55.1473250,0,'ЙЙЙЙ','654','ККК','123',NULL,'2019-05-19 17:52:40','2019-05-22 19:27:19'),(4,'кккк',42,'Пушкина 68',61.4096140,55.1567490,1,'ЕЕЕ','645','РРР','123',NULL,'2019-05-19 17:54:28','2019-05-19 17:54:28'),(5,'Иванов Иван',11,'erwer',58.2225649,54.6835573,1,'qwerea','2342','werw','23423',3,'2019-05-22 08:49:40','2019-05-22 08:49:40');
+INSERT INTO `objects` VALUES (1,'Детский сад',42,'Сталеваров 16',61.4012139,55.2661825,1,'Петров','654321','Иванов','123456',NULL,'2019-05-19 17:18:00','2019-05-23 10:00:57',0,NULL,NULL),(2,'ТЕст2',42,'Сталеваров, 15',61.4034160,55.2575960,0,'ПППП','456','ИИИ','123',NULL,'2019-05-19 17:51:42','2019-05-22 06:05:58',0,NULL,NULL),(3,'Ntcn 3',42,'Худякова 15',61.3739600,55.1473250,0,'ЙЙЙЙ','654','ККК','123',NULL,'2019-05-19 17:52:40','2019-05-22 19:27:19',0,NULL,NULL),(4,'кккк',42,'Пушкина 68',61.4096140,55.1567490,1,'ЕЕЕ','645','РРР','123',NULL,'2019-05-19 17:54:28','2019-05-19 17:54:28',0,NULL,NULL),(5,'Иванов Иван',11,'erwer',58.2225649,54.6835573,1,'qwerea','2342','werw','23423',3,'2019-05-22 08:49:40','2019-05-22 08:49:40',0,NULL,NULL),(6,'fdgdf',42,'прапврп',61.3965776,55.1754368,1,'аврвар','456456','првар','45645',3,'2019-05-26 11:23:19','2019-05-26 12:30:42',1,'ш-21б-56',2015);
 /*!40000 ALTER TABLE `objects` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `objects_mediafiles`
+--
+
+DROP TABLE IF EXISTS `objects_mediafiles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `objects_mediafiles` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `object_id` bigint(20) unsigned NOT NULL,
+  `filename` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `objects_mediafiles_object_id_foreign` (`object_id`),
+  CONSTRAINT `objects_mediafiles_object_id_foreign` FOREIGN KEY (`object_id`) REFERENCES `objects` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `objects_mediafiles`
+--
+
+LOCK TABLES `objects_mediafiles` WRITE;
+/*!40000 ALTER TABLE `objects_mediafiles` DISABLE KEYS */;
+INSERT INTO `objects_mediafiles` VALUES (2,6,'084-69-05-19-0012975.pdf','084-69-05-19-0012975.pdf','2019-06-13 05:32:29','2019-06-13 05:32:29'),(3,6,'084-69-05-19-0012975.pdf','Русский текст','2019-06-13 05:33:20','2019-06-13 05:33:20'),(4,6,'084-69-05-19-0012975.pdf','084-69-05-19-0012975.pdf','2019-06-13 05:40:34','2019-06-13 05:40:34');
+/*!40000 ALTER TABLE `objects_mediafiles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -621,7 +656,7 @@ CREATE TABLE `raions` (
 
 LOCK TABLES `raions` WRITE;
 /*!40000 ALTER TABLE `raions` DISABLE KEYS */;
-INSERT INTO `raions` VALUES (1,'Агаповский муниципальный район',59.2974060,53.2702650,0,'2019-05-18 14:51:15','2019-05-22 04:51:48'),(2,'Аргаяшский муниципальный район',60.7585870,55.4137190,0,'2019-05-18 14:51:15','2019-05-19 08:49:51'),(3,'Ашинский муниципальный район',57.5703410,55.0506640,0,'2019-05-18 14:51:16','2019-05-19 08:49:52'),(4,'Брединский муниципальный район',60.3067080,52.4326830,0,'2019-05-18 14:51:16','2019-05-19 08:49:53'),(5,'Варненский муниципальный район',61.3553920,53.1380460,0,'2019-05-18 14:51:17','2019-05-19 08:49:55'),(6,'Верхнеуральский муниципальный район',59.1980970,53.8143360,0,'2019-05-18 14:51:17','2019-05-19 08:49:57'),(7,'Еманжелинский муниципальный район',61.3269150,54.7427410,1,'2019-05-18 14:51:18','2019-05-18 14:51:18'),(8,'Еткульский муниципальный район',61.5793420,54.7634150,1,'2019-05-18 14:51:18','2019-05-18 14:51:18'),(9,'Карталинский муниципальный район',60.3992790,53.0443540,1,'2019-05-18 14:51:18','2019-05-18 14:51:18'),(10,'Каслинский муниципальный район',61.4167830,56.1570470,1,'2019-05-18 14:51:18','2019-05-18 14:51:18'),(11,'Катав-Ивановский муниципальный район',58.2114860,54.6961840,1,'2019-05-18 14:51:19','2019-05-18 14:51:19'),(12,'Кизильский муниципальный район',59.2993640,52.7499710,1,'2019-05-18 14:51:19','2019-05-18 14:51:19'),(13,'Коркинский муниципальный район',61.3768800,54.9151870,1,'2019-05-18 14:51:20','2019-05-18 14:51:20'),(14,'Красноармейский муниципальный район',62.0510920,55.4430210,1,'2019-05-18 14:51:20','2019-05-18 14:51:20'),(15,'Кунашакский муниципальный район',61.6226950,55.8362820,1,'2019-05-18 14:51:21','2019-05-18 14:51:21'),(16,'Кусинский муниципальный район',59.5826030,55.4120120,1,'2019-05-18 14:51:21','2019-05-18 14:51:21'),(17,'Нагайбакский муниципальный район',59.8283190,53.5595940,1,'2019-05-18 14:51:21','2019-05-18 14:51:21'),(18,'Нязепетровский муниципальный район ',59.5755150,55.9682770,1,'2019-05-18 14:51:22','2019-05-18 14:51:22'),(19,'Октябрьский муниципальный район',62.7072580,54.3837140,1,'2019-05-18 14:51:22','2019-05-18 14:51:22'),(20,'Пластовский муниципальный район',60.6766610,54.3747470,1,'2019-05-18 14:51:22','2019-05-18 14:51:22'),(21,'Саткинский муниципальный район',58.9971080,54.9784520,1,'2019-05-18 14:51:23','2019-05-18 14:51:23'),(22,'Сосновский муниципальный район',61.1986450,55.2309900,1,'2019-05-18 14:51:23','2019-05-18 14:51:23'),(23,'Троицкий муниципальный район',61.2930670,54.1754920,1,'2019-05-18 14:51:24','2019-05-18 14:51:24'),(24,'Увельский муниципальный район',61.4957540,54.4851620,1,'2019-05-18 14:51:24','2019-05-18 14:51:24'),(25,'Уйский муниципальный район',60.0910580,54.3855650,1,'2019-05-18 14:51:24','2019-05-18 14:51:24'),(26,'Чебаркульский муниципальный район',60.5207130,54.8279980,1,'2019-05-18 14:51:25','2019-05-18 14:51:25'),(27,'Чесменский муниципальный район',60.5706960,53.7258610,1,'2019-05-18 14:51:25','2019-05-18 14:51:25'),(28,'Верхнеуфалейский городской округ',60.2319500,56.0487210,1,'2019-05-18 14:58:20','2019-05-18 14:58:20'),(29,'Златоустовский городской округ',59.6724250,55.1731080,1,'2019-05-18 14:58:20','2019-05-18 14:58:20'),(30,'Карабашский городской округ',60.2030420,55.4907890,1,'2019-05-18 14:58:21','2019-05-18 14:58:21'),(31,'Копейский городской округ',61.6179700,55.1167320,1,'2019-05-18 14:58:21','2019-05-18 14:58:21'),(32,'Кыштымский городской округ',60.5389490,55.7078770,1,'2019-05-18 14:58:22','2019-05-18 14:58:22'),(33,'Локомотивный городской округ',60.6139230,53.0452210,1,'2019-05-18 14:58:22','2019-05-18 14:58:22'),(34,'Магнитогорский городской округ',58.9802820,53.4071580,1,'2019-05-18 14:58:23','2019-05-18 14:58:23'),(35,'Миасский городской округ',60.1080810,55.0464140,1,'2019-05-18 14:58:23','2019-05-18 14:58:23'),(36,'Озерский городской округ',60.7075990,55.7631840,1,'2019-05-18 14:58:23','2019-05-18 14:58:23'),(37,'Снежинский городской округ',60.7325360,56.0852090,1,'2019-05-18 14:58:24','2019-05-18 14:58:24'),(38,'Трехгорный городской округ',58.4464230,54.8178420,1,'2019-05-18 14:58:24','2019-05-18 14:58:24'),(39,'Троицкий городской округ',61.5597590,54.0832170,1,'2019-05-18 14:58:25','2019-05-18 14:58:25'),(40,'Усть-Катавский городской округ',58.1747000,54.9302890,1,'2019-05-18 14:58:25','2019-05-18 14:58:25'),(41,'Чебаркульский городской округ',60.3701200,54.9777850,1,'2019-05-18 14:58:25','2019-05-18 14:58:25'),(42,'Челябинский городской округ',61.4025540,55.1598970,1,'2019-05-18 14:58:26','2019-05-18 14:58:26'),(43,'Южноуральский городской округ',61.2682290,54.4424550,0,'2019-05-18 14:58:26','2019-05-22 04:51:51');
+INSERT INTO `raions` VALUES (1,'Агаповский муниципальный район',59.2974060,53.2702650,0,'2019-05-18 14:51:15','2019-05-22 04:51:48'),(2,'Аргаяшский муниципальный район',60.7585870,55.4137190,0,'2019-05-18 14:51:15','2019-05-19 08:49:51'),(3,'Ашинский муниципальный район',57.5703410,55.0506640,0,'2019-05-18 14:51:16','2019-05-19 08:49:52'),(4,'Брединский муниципальный район',60.3067080,52.4326830,0,'2019-05-18 14:51:16','2019-05-19 08:49:53'),(5,'Варненский муниципальный район',61.3553920,53.1380460,0,'2019-05-18 14:51:17','2019-05-19 08:49:55'),(6,'Верхнеуральский муниципальный район',59.1980970,53.8143360,0,'2019-05-18 14:51:17','2019-05-19 08:49:57'),(7,'Еманжелинский муниципальный район',61.3269150,54.7427410,0,'2019-05-18 14:51:18','2019-05-27 05:17:03'),(8,'Еткульский муниципальный район',61.5793420,54.7634150,0,'2019-05-18 14:51:18','2019-05-27 05:17:04'),(9,'Карталинский муниципальный район',60.3992790,53.0443540,0,'2019-05-18 14:51:18','2019-05-27 05:17:05'),(10,'Каслинский муниципальный район',61.4167830,56.1570470,0,'2019-05-18 14:51:18','2019-05-27 05:17:07'),(11,'Катав-Ивановский муниципальный район',58.2114860,54.6961840,0,'2019-05-18 14:51:19','2019-05-27 05:17:07'),(12,'Кизильский муниципальный район',59.2993640,52.7499710,0,'2019-05-18 14:51:19','2019-05-27 05:17:08'),(13,'Коркинский муниципальный район',61.3768800,54.9151870,0,'2019-05-18 14:51:20','2019-05-27 05:17:09'),(14,'Красноармейский муниципальный район',62.0510920,55.4430210,0,'2019-05-18 14:51:20','2019-05-27 05:17:10'),(15,'Кунашакский муниципальный район',61.6226950,55.8362820,0,'2019-05-18 14:51:21','2019-05-27 05:17:13'),(16,'Кусинский муниципальный район',59.5826030,55.4120120,0,'2019-05-18 14:51:21','2019-05-27 05:17:14'),(17,'Нагайбакский муниципальный район',59.8283190,53.5595940,0,'2019-05-18 14:51:21','2019-05-27 05:17:16'),(18,'Нязепетровский муниципальный район ',59.5755150,55.9682770,0,'2019-05-18 14:51:22','2019-05-27 05:17:16'),(19,'Октябрьский муниципальный район',62.7072580,54.3837140,0,'2019-05-18 14:51:22','2019-05-27 05:17:17'),(20,'Пластовский муниципальный район',60.6766610,54.3747470,0,'2019-05-18 14:51:22','2019-05-27 05:17:18'),(21,'Саткинский муниципальный район',58.9971080,54.9784520,0,'2019-05-18 14:51:23','2019-05-27 05:17:18'),(22,'Сосновский муниципальный район',61.1986450,55.2309900,0,'2019-05-18 14:51:23','2019-05-27 05:17:19'),(23,'Троицкий муниципальный район',61.2930670,54.1754920,0,'2019-05-18 14:51:24','2019-05-27 05:17:20'),(24,'Увельский муниципальный район',61.4957540,54.4851620,0,'2019-05-18 14:51:24','2019-05-27 05:17:20'),(25,'Уйский муниципальный район',60.0910580,54.3855650,0,'2019-05-18 14:51:24','2019-05-27 05:17:22'),(26,'Чебаркульский муниципальный район',60.5207130,54.8279980,0,'2019-05-18 14:51:25','2019-05-27 05:17:23'),(27,'Чесменский муниципальный район',60.5706960,53.7258610,0,'2019-05-18 14:51:25','2019-05-27 05:17:23'),(28,'Верхнеуфалейский городской округ',60.2319500,56.0487210,0,'2019-05-18 14:58:20','2019-05-27 05:17:26'),(29,'Златоустовский городской округ',59.6724250,55.1731080,0,'2019-05-18 14:58:20','2019-05-27 05:17:28'),(30,'Карабашский городской округ',60.2030420,55.4907890,0,'2019-05-18 14:58:21','2019-05-27 05:17:28'),(31,'Копейский городской округ',61.6179700,55.1167320,0,'2019-05-18 14:58:21','2019-05-27 05:17:29'),(32,'Кыштымский городской округ',60.5389490,55.7078770,0,'2019-05-18 14:58:22','2019-05-27 05:17:29'),(33,'Локомотивный городской округ',60.6139230,53.0452210,0,'2019-05-18 14:58:22','2019-05-27 05:17:30'),(34,'Магнитогорский городской округ',58.9802820,53.4071580,0,'2019-05-18 14:58:23','2019-05-27 05:17:31'),(35,'Миасский городской округ',60.1080810,55.0464140,0,'2019-05-18 14:58:23','2019-05-27 05:17:32'),(36,'Озерский городской округ',60.7075990,55.7631840,0,'2019-05-18 14:58:23','2019-05-27 05:17:33'),(37,'Снежинский городской округ',60.7325360,56.0852090,0,'2019-05-18 14:58:24','2019-05-27 05:17:41'),(38,'Трехгорный городской округ',58.4464230,54.8178420,0,'2019-05-18 14:58:24','2019-05-27 05:17:40'),(39,'Троицкий городской округ',61.5597590,54.0832170,0,'2019-05-18 14:58:25','2019-05-27 05:17:40'),(40,'Усть-Катавский городской округ',58.1747000,54.9302890,0,'2019-05-18 14:58:25','2019-05-27 05:17:39'),(41,'Чебаркульский городской округ',60.3701200,54.9777850,0,'2019-05-18 14:58:25','2019-05-27 05:17:38'),(42,'Челябинский городской округ',61.4025540,55.1598970,1,'2019-05-18 14:58:26','2019-05-18 14:58:26'),(43,'Южноуральский городской округ',61.2682290,54.4424550,0,'2019-05-18 14:58:26','2019-05-22 04:51:51');
 /*!40000 ALTER TABLE `raions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -645,10 +680,11 @@ CREATE TABLE `sensors` (
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `sensors_created_user_id_foreign` (`created_user_id`),
   CONSTRAINT `sensors_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -657,6 +693,7 @@ CREATE TABLE `sensors` (
 
 LOCK TABLES `sensors` WRITE;
 /*!40000 ALTER TABLE `sensors` DISABLE KEYS */;
+INSERT INTO `sensors` VALUES (1,0,'stand-alone',0,NULL,NULL,NULL,NULL,3,1,'2019-06-08 10:29:11','2019-06-08 10:29:11','asd'),(2,0,'separate wire',0,NULL,NULL,NULL,NULL,3,0,'2019-06-08 11:51:43','2019-06-08 11:52:48','dsa'),(3,0,'wire',0,NULL,NULL,NULL,NULL,3,0,'2019-06-08 11:55:02','2019-06-08 11:55:07','qwe'),(4,0,'wire',0,NULL,NULL,'combine','differincial',3,1,'2019-06-11 08:42:01','2019-06-11 08:42:01','qwe'),(5,0,'stand-alone',0,'smoke',0,NULL,NULL,3,1,'2019-06-11 08:44:36','2019-06-11 08:44:36','qwesd');
 /*!40000 ALTER TABLE `sensors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -678,10 +715,11 @@ CREATE TABLE `users` (
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `raion_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_phone_unique` (`phone`),
   UNIQUE KEY `users_api_token_unique` (`api_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -690,7 +728,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (3,'Иванов Иван','1234567890','$2y$10$UinZZ0DpOt3BKrrt3odbpeK9rsDXcMvfuU6tFO6VBT.Fg5dXDYRX.','i2buhDy4VFeAddHbaN9XtVGINHaBRnjUifqIxJQ4Q8x0UakU9CPDUj0zTTL0',1,1,NULL,'2019-05-19 12:52:18','2019-05-19 12:52:18');
+INSERT INTO `users` VALUES (3,'Иванов Иван','1234567890','$2y$10$UinZZ0DpOt3BKrrt3odbpeK9rsDXcMvfuU6tFO6VBT.Fg5dXDYRX.','i2buhDy4VFeAddHbaN9XtVGINHaBRnjUifqIxJQ4Q8x0UakU9CPDUj0zTTL0',1,1,NULL,'2019-05-19 12:52:18','2019-05-19 12:52:18',42),(5,'Simonov Sergey','1523456789','$2y$10$2ljpt1zqxF3ib95ATFJlc.CFrhbL0W07Wwm4CkHPRPDQpGVQISlv.',NULL,1,0,NULL,'2019-06-12 08:14:24','2019-06-12 08:40:33',42);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -749,6 +787,7 @@ CREATE TABLE `wire_sensor` (
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `comment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `wire_sensor_created_user_id_foreign` (`created_user_id`),
   KEY `wire_sensor_wire_id_foreign` (`wire_id`),
@@ -756,7 +795,7 @@ CREATE TABLE `wire_sensor` (
   CONSTRAINT `wire_sensor_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `wire_sensor_sensor_id_foreign` FOREIGN KEY (`sensor_id`) REFERENCES `sensors` (`id`),
   CONSTRAINT `wire_sensor_wire_id_foreign` FOREIGN KEY (`wire_id`) REFERENCES `wires` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -765,6 +804,7 @@ CREATE TABLE `wire_sensor` (
 
 LOCK TABLES `wire_sensor` WRITE;
 /*!40000 ALTER TABLE `wire_sensor` DISABLE KEYS */;
+INSERT INTO `wire_sensor` VALUES (1,1,5,3,'1',3,'32',1,1,1,'2019-06-11 07:56:34','2019-06-12 12:59:04',''),(2,1,1,3,'2',1,'11',0,1,1,'2019-06-12 12:48:39','2019-06-12 13:21:18','Перенесен из 12 кабинета'),(3,1,1,3,'3',1,'12',1,1,1,'2019-06-12 12:48:46','2019-06-12 13:21:36','После ремонта'),(4,1,1,3,'4',1,'14',1,1,1,'2019-06-12 12:52:20','2019-06-12 12:52:20',''),(5,1,1,3,'5',1,'15',1,1,1,'2019-06-12 12:54:23','2019-06-12 12:54:23',''),(6,1,1,3,'6',1,'16',1,1,1,'2019-06-12 12:56:01','2019-06-12 12:56:01','');
 /*!40000 ALTER TABLE `wire_sensor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -778,7 +818,6 @@ DROP TABLE IF EXISTS `wire_sensor_previous_state`;
 CREATE TABLE `wire_sensor_previous_state` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `wire_sensor_id` bigint(20) unsigned NOT NULL,
-  `wire_sensor_reglament_id` bigint(20) unsigned NOT NULL,
   `created_user_id` bigint(20) unsigned NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `floor` tinyint(4) NOT NULL,
@@ -788,12 +827,14 @@ CREATE TABLE `wire_sensor_previous_state` (
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `wire_id` bigint(20) unsigned NOT NULL,
+  `sensor_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `wire_sensor_previous_state_created_user_id_foreign` (`created_user_id`),
   KEY `wire_sensor_previous_state_wire_sensor_id_foreign` (`wire_sensor_id`),
   CONSTRAINT `wire_sensor_previous_state_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `wire_sensor_previous_state_wire_sensor_id_foreign` FOREIGN KEY (`wire_sensor_id`) REFERENCES `wire_sensor` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -802,6 +843,7 @@ CREATE TABLE `wire_sensor_previous_state` (
 
 LOCK TABLES `wire_sensor_previous_state` WRITE;
 /*!40000 ALTER TABLE `wire_sensor_previous_state` DISABLE KEYS */;
+INSERT INTO `wire_sensor_previous_state` VALUES (1,1,3,'1',12,'321',1,1,1,'2019-06-11 09:25:06','2019-06-11 09:25:06',1,1),(2,1,3,'1',12,'321',1,1,1,'2019-06-11 09:25:47','2019-06-11 09:25:47',1,1),(3,1,3,'1',12,'321',1,1,1,'2019-06-11 09:28:20','2019-06-11 09:28:20',1,1),(4,1,3,'1',12,'321',1,1,1,'2019-06-11 09:32:26','2019-06-11 09:32:26',1,1),(5,1,3,'1',12,'321',1,1,1,'2019-06-11 09:35:14','2019-06-11 09:35:14',1,1),(6,1,3,'1',12,'321',1,1,1,'2019-06-11 09:35:59','2019-06-11 09:35:59',1,1),(7,1,3,'1',12,'321',1,1,1,'2019-06-11 09:38:20','2019-06-11 09:38:20',1,1),(8,1,3,'1',12,'321',1,1,1,'2019-06-11 09:39:59','2019-06-11 09:39:59',1,1),(9,1,3,'15',126,'3217',1,1,1,'2019-06-11 09:40:51','2019-06-11 09:40:51',1,4),(10,1,3,'2',3,'32',1,1,1,'2019-06-12 12:59:04','2019-06-12 12:59:04',1,5),(11,3,3,'2',1,'12',1,1,1,'2019-06-12 13:00:14','2019-06-12 13:00:14',1,1),(12,2,3,'2',1,'11',0,1,1,'2019-06-12 13:19:21','2019-06-12 13:19:21',1,1),(13,2,3,'2',1,'11',0,1,1,'2019-06-12 13:21:18','2019-06-12 13:21:18',1,1),(14,3,3,'3',1,'12',1,1,1,'2019-06-12 13:21:36','2019-06-12 13:21:36',1,1);
 /*!40000 ALTER TABLE `wire_sensor_previous_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -849,8 +891,8 @@ CREATE TABLE `wires` (
   `created_user_id` bigint(20) unsigned NOT NULL,
   `is_good` tinyint(1) NOT NULL DEFAULT '1',
   `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sertificate` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `is_fire_safety` tinyint(1) NOT NULL DEFAULT '1',
+  `sertificate` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` set('safe','unsafe','radio') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'unsafe',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -859,7 +901,7 @@ CREATE TABLE `wires` (
   KEY `wires_object_device_id_foreign` (`object_device_id`),
   CONSTRAINT `wires_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `wires_object_device_id_foreign` FOREIGN KEY (`object_device_id`) REFERENCES `object_devices` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -868,6 +910,7 @@ CREATE TABLE `wires` (
 
 LOCK TABLES `wires` WRITE;
 /*!40000 ALTER TABLE `wires` DISABLE KEYS */;
+INSERT INTO `wires` VALUES (1,1,3,1,'ПБ','ПБ-12-1987','safe',1,'2019-06-07 11:38:47','2019-06-13 10:17:19'),(2,1,3,1,'Пожароопасный',NULL,'unsafe',1,'2019-06-13 08:07:07','2019-06-13 08:07:07'),(5,1,3,1,'radio',NULL,'radio',1,'2019-06-13 08:16:45','2019-06-13 08:16:45');
 /*!40000 ALTER TABLE `wires` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -880,4 +923,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-23 10:55:09
+-- Dump completed on 2019-06-13 10:19:39

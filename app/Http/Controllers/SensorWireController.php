@@ -22,6 +22,7 @@ class SensorWireController extends Controller
         $params['name'] = $data['payload']['sensorData']['name'];
         $params['floor'] = $data['payload']['sensorData']['floor'];
         $params['cabinet_name'] = $data['payload']['sensorData']['cabinet_name'];
+        $params['comment'] = $data['payload']['sensorData']['comment'];
         $params['SP5_valid'] = $SP5;
         $params['is_good'] = $is_good;
         $params['created_user_id'] = $data['user_id'];
@@ -46,6 +47,7 @@ class SensorWireController extends Controller
         $params['name'] = $data['payload']['sensorData']['name'];
         $params['floor'] = $data['payload']['sensorData']['floor'];
         $params['cabinet_name'] = $data['payload']['sensorData']['cabinet_name'];
+        $params['comment'] = $data['payload']['sensorData']['comment'];
         $params['SP5_valid'] = $SP5;
         $params['is_good'] = $is_good;
         $params['created_user_id'] = $data['user_id'];

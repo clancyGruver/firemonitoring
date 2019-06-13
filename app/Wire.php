@@ -18,7 +18,7 @@ class Wire extends Model
         'is_good',
         'description',
         'sertificate',
-        'is_fire_safety'
+        'type'
     ];
 
     public function sensors(){

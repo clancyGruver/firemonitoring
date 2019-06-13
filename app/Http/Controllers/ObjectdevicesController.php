@@ -46,4 +46,8 @@ class ObjectdevicesController extends Controller
                                     ?? null;
         return response()->json($installed_dev_categories);
     }
+
+    public function deleteJson($id, Request $request){
+        OD::find($id)->delete();
+    }
 }

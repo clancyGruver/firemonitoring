@@ -26,10 +26,13 @@ Route::post('/devices/get', 'DevicesController@getJson')->name('devices.getJson'
 Route::post('/devices/getbyclass', 'DevicesController@getByClassJson')->name('devices.getbyclassJson');
 
 Route::post('/objects/delete/{id}', 'ObjectsController@delete')->name('objects.delete');
+Route::post('/objects/fileUpload', 'ObjectsController@fileUpload')->name('objects.fileUpload');
+Route::post('/objects/fileDelete/{id}', 'ObjectsController@fileDelete')->name('objects.fileDelete');
 
 Route::post('/objectdevice/add', 'ObjectdevicesController@add')->name('od.add');
 Route::post('/objectdevice/get/{id}', 'ObjectdevicesController@getJson')->name('od.getJson');
 Route::post('/objectdevice/store', 'ObjectdevicesController@storeJson')->name('od.storeJson');
+Route::post('/objectdevice/delete/{id}', 'ObjectdevicesController@deleteJson')->name('od.deleteJson');
 
 Route::post('/sensors/getall', 'SensorController@getAllJson')->name('sensors.getAllJson');
 Route::post('/sensors/store', 'SensorController@storeJson')->name('sensors.storeJson');
@@ -40,3 +43,5 @@ Route::post('/sensorwire/add', 'SensorWireController@addJson')->name('sensorwire
 Route::post('/sensorwire/update', 'SensorWireController@updateJson')->name('sensorwire.updateJson');
 
 Route::post('/wire/store', 'WiresController@storeJson')->name('wires.storeJson');
+Route::post('/wire/update/{id}', 'WiresController@updateJson')->name('wires.updateJson');
+Route::post('/wire/delete/{id}', 'WiresController@deleteJson')->name('wires.deleteJson');
