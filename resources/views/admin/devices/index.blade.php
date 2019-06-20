@@ -6,10 +6,10 @@
     </div>
 </div>
 <div class="container-fluid mt-3">
-    <div class="row">        
+    <div class="row">
         <a class="btn btn-icon btn-3 btn-success" type="button" href="{{ route('devices.add') }}">
-            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>            
-            <span class="btn-inner--text">Добавить оборудование</span>            
+            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>
+            <span class="btn-inner--text">Добавить ОПС</span>
         </a>
     </div>
     <div class="row">
@@ -21,7 +21,6 @@
                   <th scope="col" class="border-0">Наименование</th>
                   <th scope="col" class="border-0">Количество шлейфов</th>
                   <th scope="col" class="border-0">Инструкция</th>
-                  <th scope="col" class="border-0">Класс</th>
                   <th scope="col" class="border-0"></th>
                 </tr>
             </thead>
@@ -34,7 +33,6 @@
                     <td>{{$item->name}}</td>
                     <td>{{$item->wires_count}}</td>
                     <td><a href="{{ $item->url }}">{{$item->instruction}}</a></td>
-                    <td>{{$item->class->name}}
                     <td>
                         <!--a href="{{ route('objects.detail', ['id'=>$item->id]) }}" class="btn" data-toggle="tooltip" data-placement="top" title="Карточка объекта"><i class="fas fa-search  text-primary"></i></a-->
                         <a href="{{ route('devices.edit', ['id'=>$item->id]) }}" class="btn" data-toggle="tooltip" data-placement="top" title="Редактировать"><i class="fas fa-edit text-warning"></i></a>

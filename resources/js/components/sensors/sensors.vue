@@ -4,7 +4,7 @@
 		<div class="row">
 			<a class="btn btn-icon btn-3 btn-success" type="button" @click="addSensor">
 	            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>            
-	            <span class="btn-inner--text">Добавить Сенсор</span>            
+	            <span class="btn-inner--text">Добавить извещатель</span>            
 	        </a>
 		</div>
 		<div class="row">

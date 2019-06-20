@@ -21,7 +21,7 @@ const app = new Vue({
             .then(response => {
                     this.user = response ? response : false;
                     this.$store.commit('SET_USER', this.user);
-                })                    
+                })
             .catch(error => console.log(error));
     }
 });

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ObjectDevices extends Migration
+class CreateDeviceSystemVoiceAlertsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class ObjectDevices extends Migration
      */
     public function up()
     {
-        Schema::create('object_devices', function (Blueprint $table) {
+        Schema::create('device_system_voice_alerts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('object_id');
-            $table->unsignedBigInteger('device_id');
+            $table->string('name');
             $table->unsignedBigInteger('created_user_id');
-            $table->boolean('is_active')->default(1);
-            $table->timestamps();
 
             $table->foreign('created_user_id')->references('id')->on('users');
-            $table->foreign('object_id')->references('id')->on('objects');
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 
@@ -33,7 +31,6 @@ class ObjectDevices extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('object_devices');
-        //
+        Schema::dropIfExists('device_system_voice_alerts');
     }
 }

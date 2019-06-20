@@ -66,8 +66,18 @@ Route::middleware(['auth'])->group(function(){
             Route::get('/add', 'UserController@add')->name('users.add');
             Route::post('/store', 'UserController@store')->name('users.store');
         });*/
-
-        
+        Route::prefix('antennas')->group(function(){
+            Route::get('/', 'DeviceAntennaController@index')->name('antennas');
+        });
+        Route::prefix('rspi')->group(function(){
+            Route::get('/', 'DeviceRspiController@index')->name('rspi');
+        });
+        Route::prefix('sys_alert')->group(function(){
+            Route::get('/', 'DeviceSystemVoiceAlertsDevController@index')->name('sys_alert');
+        });
+        Route::prefix('alert')->group(function(){
+            Route::get('/', 'DeviceSystemVoiceAlertController@index')->name('alert');
+        });
     });
 
     Route::prefix('technician')->group(function(){

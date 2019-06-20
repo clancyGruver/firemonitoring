@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Device;
 use App\DeviceClass;
+use App\device_aps;
+use App\device_antenna;
+use App\device_rspi;
+use App\device_alert;
+use App\device_system_voice_alert;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 class DevicesController extends Controller
 {
     public function index(){
-        $items = Device::where('is_active',1)->get();
+        $items = Device_aps::all();
         for($i =0; $i < count($items); $i++){
             $items[$i]->url = Storage::url('instructions/'.$items[$i]->id.'/'.$items[$i]->instruction);
         }
@@ -20,7 +24,7 @@ class DevicesController extends Controller
     }
 
     public function getJson(){
-        $items = Device::where('is_active',1)->get();
+        $items = Device_aps::all();
         for($i =0; $i < count($items); $i++){
             $items[$i]->url = Storage::url('instructions/'.$items[$i]->id.'/'.$items[$i]->instruction);
         }
@@ -28,45 +32,74 @@ class DevicesController extends Controller
     }
 
     public function getByClassJson(){
-        $items = DeviceClass::where('is_active',1)->with('devices')->get();
-        return response()->json($items);
-    }    
+        $antennas = device_antenna::all();
+        $rspi = device_rspi::all();
+        $alerts = device_alert::all();
+        $voice_alerts = device_system_voice_alert::all();
+        $aps = Device_aps::all();
+        $res = [
+            'antennas'=> [
+                'name' => 'Антенна',
+                'tbl_name' => 'App\device_antenna',
+                'devices' => $antennas,
+            ],
+            'rspi'=> [
+                'name' => 'Системы передачи извещений о пожаре',
+                'tbl_name' => 'App\device_rspi',
+                'devices' => $rspi,
+            ],
+            'aps'=> [
+                'name' => 'Охранно-пожарная сигнализация',
+                'tbl_name' => 'App\device_aps',
+                'devices' => $aps
+            ],
+            'alerts'=> [
+                'name' => 'Оповещатели',
+                'tbl_name' => 'App\device_alert',
+                'devices' => $alerts
+            ],
+            'voice_alerts'=> [
+                'name' =>'Система речевого оповещения',
+                'tbl_name' => 'App\device_system_voice_alert',
+                'devices' => $voice_alerts
+            ]
+        ];
 
-    public function detail($id, Request $request){        
-        $item = Device::find($id);
+        return response()->json($res);
+    }
+
+    public function detail($id, Request $request){
+        $item = Device_aps::find($id);
         return view('admin.devices',['item' => $item]);
     }
 
-    public function edit($id, Request $request){        
-        $item = Device::find($id);
-        $DC = DeviceClass::where('is_active',1)->get();
+    public function edit($id, Request $request){
+        $item = Device_aps::find($id);
         $item->url = Storage::url('instructions/'.$item->id.'/'.$item->instruction);
-        return view('admin.devices.edit',['item' => $item, 'classes'=>$DC]);
+        return view('admin.devices.edit',['item' => $item]);
     }
 
-    public function delete($id, Request $request){        
-        $item = Device::find($id);
+    public function delete($id, Request $request){
+        $item = Device_aps::find($id);
         $item->is_active = 0;
         $item->save();
     }
 
     public function add(Request $request){
-        $DC = DeviceClass::where('is_active',1)->get();
-        return view('admin.devices.add',['classes'=>$DC]);
+        return view('admin.devices.add');
     }
 
     public function update($id, Request $request){
         $request->validate([
             'fileToUpload' => 'file',
             'name' => 'required',
-            'class_id' => 'required',
             'wires_count' => 'required',
         ]);
-        $obj = Device::find($id);
+        $obj = Device_aps::find($id);
         $params = $request->except(['id','_token']);
         if($request->instruction){
             $params = $request->instruction->getClientOriginalName();
-            $request->instruction->storeAs('instructions/'.$obj->id, $request->instruction->getClientOriginalName());    
+            $request->instruction->storeAs('instructions/'.$obj->id, $request->instruction->getClientOriginalName());
         }
         $params['created_user_id'] = Auth::user()->id;
         $obj->update($params);
@@ -76,16 +109,15 @@ class DevicesController extends Controller
     public function store( Request $request){
         $validatedData = $request->validate([
             'name' => 'required',
-            'class_id' => 'required',
             'wires_count' => 'required',
         ]);
-        $obj = new Device($request->except('_token'));
+        $obj = new Device_aps($request->except('_token'));
         if($request->instruction){
             $obj->instruction = $request->instruction->getClientOriginalName();
             $request->instruction->storeAs('instructions/'.$obj->id, $request->instruction->getClientOriginalName());
         }
         $obj->created_user_id = Auth::user()->id;
-        $obj->save();        
+        $obj->save();
         return redirect('admin/devices');
     }
 }

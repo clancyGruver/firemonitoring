@@ -3,10 +3,19 @@
 @section('content')
 <div class="header bg-gradient-primary pb-3 pt-5">
     <div class="container-fluid">
-        
     </div>
 </div>
 <div class="container-fluid mt-3">
+    @if ($errors->any())
+        <div class="alert alert-danger" role="alert">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
     <div class="row">
         <form action="{{ route('devices.update',['id'=>$item->id]) }}" method="POST" class="col-md-6 col-md-offset-3" enctype="multipart/form-data">
             @csrf

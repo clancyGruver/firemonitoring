@@ -3,10 +3,19 @@
 @section('content')
 <div class="header bg-gradient-primary pb-3 pt-5">
     <div class="container-fluid">
-        
     </div>
 </div>
 <div class="container-fluid mt-3">
+    @if ($errors->any())
+        <div class="alert alert-danger" role="alert">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="row">
         <form action="{{ route('devices.store') }}" method="POST" class="col-md-6 col-md-offset-3" enctype="multipart/form-data">
             @csrf
@@ -14,18 +23,6 @@
                 <div class="form-group col">
                     <label for="name">Наименование оборудования</label>
                     <input id="name" name="name" type="text" class="form-control" placeholder="Наименование оборудования">
-                </div>
-            </div>
-
-            <div class="form-row">      
-                <div class="form-group col">
-                    <label for="class_id">Класс</label>
-                    <select id="class_id" name="class_id" class="form-control">
-                        <option>Выберите класс оборудования</option>
-                        @foreach ($classes as $class)
-                        <option data-name="{{ $class->name }}" value="{{ $class->id }}">{{ $class->name }}</option>
-                        @endforeach
-                    </select>
                 </div>
             </div>
 

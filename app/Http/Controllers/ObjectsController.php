@@ -22,17 +22,17 @@ class ObjectsController extends Controller
         $raions = Raion::where('is_active',1)->get();
         return view('admin.objects.edit',[
             'item' => $item,
-            'raions'=>$raions, 
+            'raions'=>$raions,
         ]);
     }
 
-    public function detail($id, Request $request){        
+    public function detail($id, Request $request){
         //$item = MO::find($id)->with('mediafiles');
         $item = MO::where('id',$id)->with('mediafiles')->first();
         return view('admin.objects.detail',['item' => $item]);
     }
 
-    public function delete($id, Request $request){        
+    public function delete($id, Request $request){
         $item = MO::find($id);
         $item->is_active = 0;
         $item->save();
@@ -89,9 +89,9 @@ class ObjectsController extends Controller
         if($request->file){
             $params = [];
             $params['filename'] = $request->file->getClientOriginalName();
-            $params['description'] = $request->description ? $request->description : $params['filename'];            
+            $params['description'] = $request->description ? $request->description : $params['filename'];
             $params['object_id'] = $request->object_id;
-            $request->file->storeAs('objectMedia/'.$request->obj_id, $request->file->getClientOriginalName());    
+            $request->file->storeAs('objectMedia/'.$request->object_id, $request->file->getClientOriginalName());
             $obj = new OMedia($params);
             $obj->save();
             return response()->json($obj);

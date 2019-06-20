@@ -6,7 +6,7 @@
                 	<div class="card bg-secondary shadow border-0">
 						<div class="card-header bg-transparent pb-5 modal-header">
 	                        <div class="text-muted text-center mt-2 mb-3">
-                        		<small v-if="mode == 'new'">Добавить сенсор</small>
+                        		<small v-if="mode == 'new'">Добавить извещатель</small>
                         		<small v-else>Корректировка сенсора</small>
                         	</div>
 							<div class="text-muted text-center mt-2 mb-3"  v-if="errors.length">

@@ -1,15 +1,15 @@
-<template>	
+<template>
 	<transition name="modal">
 		<div class="modal-mask mb-4 " v-show="creating" @click.self="cancel">
 			<div class="modal-container card card-stats">
 				<div class="modal-content card-body">
-					<h5 class="card-title">Добавить оборудование</h5> 
+					<h5 class="card-title">Добавить оборудование</h5>
                     <div class="row">
                         <div class="col" v-for="devClass in availDevs">
                             <h5 class="card-title text-uppercase text-muted mb-0">{{ devClass.name }}</h5>
                             <ul class="list-unstyled">
                                 <li v-for="device in devClass.devices">
-                                    <span class="h2 font-weight-bold mb-0" @click="addDevice(device)">{{device.name}}</span>
+                                    <span class="h2 font-weight-bold mb-0" @click="addDevice(device,devClass.tbl_name)">{{device.name}}</span>
                                 </li>
                             </ul>
                         </div>
@@ -27,13 +27,14 @@
 				type: Boolean,
 				default: false
 			}
-		},		
+		},
 		data: function () {
 			return {
 			}
 		},
-		methods: {		
-			addDevice(device){
+		methods: {
+			addDevice(device, tbl_name){
+        device.tbl_name = tbl_name
 				this.$store.commit('ADD_DEVICE', device);
 				this.$emit('end-adding')
 			},
@@ -48,7 +49,7 @@
 </script>
 
 <style scoped>
-	span{		
+	span{
 		cursor: pointer;
 	}
 .modal-mask {

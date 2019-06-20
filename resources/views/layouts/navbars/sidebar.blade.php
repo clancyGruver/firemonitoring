@@ -69,11 +69,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('sensors') }}">
-                        <i class="fas fa-bell text-primary"></i> {{ __('Сенсоры') }}
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{{ route('user.index') }}">
                         <i class="fas fa-users text-primary"></i> {{ __('Пользователи') }}
                     </a>
@@ -88,12 +83,32 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('devices') }}">
-                                    {{ __('Администрирование оборудования') }}
+                                    <i class="fas fa-gripfire text-primary"></i> {{ __('Охранно-пожарная сигнализация') }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('devicesClasses') }}">
-                                    {{ __('Типы оборудования') }}
+                                <a class="nav-link" href="{{ route('sensors') }}">
+                                    <i class="fas fa-bell text-primary"></i> {{ __('Извещатели') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('antennas') }}">
+                                    <i class="fas fa-broadcast-tower text-primary"></i> {{ __('Антенны') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('rspi') }}">
+                                    <i class="fas fa-broadcast-podcast text-primary"></i> {{ __('Пердача инфрмации') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('sys_alert') }}">
+                                    <i class="fas fa-microphone-alt text-primary"></i> {{ __('Системы речевого оповещения') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('alert') }}">
+                                    <i class="fas fa-bullhorn text-primary"></i> {{ __('Оповещатели') }}
                                 </a>
                             </li>
                         </ul>

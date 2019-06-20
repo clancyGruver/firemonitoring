@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
-  
+
   state: {
     user: null,
     object_id: null,
@@ -30,28 +30,31 @@ export const store = new Vuex.Store({
       axios.post('/api/objectdevice/store',{
         user_id: state.user.id,
         object_id: state.object_id,
-        device_id: payload.id
+        device_id: payload.id,
+        tbl_name: payload.tbl_name,
       })
       .then(
         response => state.devices.push({
           id: response.id,
           name: payload.name,
+          isShow:true,
+          tbl_name: payload.tbl_name,
           wires: [],
           wires_count: payload.wires_count,
         })
-      );      
+      );
     },
     DELETE_DEVICE: (state, payload) => {
       axios.post(`/api/objectdevice/delete/${payload}`)
       .then(
         response => {
-          const idx = state.devices.findIndex(obj => obj.id == payload );  
+          const idx = state.devices.findIndex(obj => obj.id == payload );
           Vue.delete(state.devices,idx)
         }
       );
     },
     ADD_WIRE: (state, payload) => {
-      const idx = state.devices.findIndex(obj => obj.id == payload.odid );            
+      const idx = state.devices.findIndex(obj => obj.id == payload.odid );
       axios.post('/api/wire/store',{
         user_id: state.user.id,
         object_device_id: payload.odid,
@@ -61,11 +64,11 @@ export const store = new Vuex.Store({
         response => {
           payload.wire.id = response.data.id;
           payload.wire.sensors = [];
+          isShow:true,
           state.devices[idx].wires.push(
             payload.wire
           );
         }
-          
       );
     },
     EDIT_WIRE:(state, payload) => {
@@ -77,7 +80,6 @@ export const store = new Vuex.Store({
           const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.id);
           Vue.set(state.devices[device_idx].wires, wire_idx, payload);
         }
-          
       );
     },
     DELETE_WIRE: (state, payload) => {
@@ -95,7 +97,7 @@ export const store = new Vuex.Store({
       .then(
         response => {
           state.sensors = response.data;
-        }          
+        }
       );
     },
     ADD_SENSOR: (state, payload) => {
@@ -106,7 +108,7 @@ export const store = new Vuex.Store({
             .then(
               response => {
                 state.sensors.push(response.data);
-              }          
+              }
             );
     },
     UPDATE_SENSOR: (state, payload) => {
@@ -119,7 +121,7 @@ export const store = new Vuex.Store({
                 const data = response.data;
                 const idx = state.sensors.findIndex(el => el.id == data.id);
                 state.sensors[idx] = data;
-              }          
+              }
             );
     },
     DELETE_SENSOR: (state, payload) => {
@@ -131,7 +133,7 @@ export const store = new Vuex.Store({
               response => {
                 const idx = state.sensors.findIndex(el => el.id == payload.id);
                 Vue.delete(state.sensors, idx);
-              }          
+              }
             );
     },
     ADD_SENSOR_TO_WIRE: (state, payload) => {

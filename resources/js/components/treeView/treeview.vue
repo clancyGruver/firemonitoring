@@ -8,42 +8,40 @@
 			:mode="wireMode"
 		/>
 		<add-device :creating="addDeviceShow" v-on:end-adding="addDeviceShow = !addDeviceShow" />
-		<addSensor 
+		<addSensor
 			:creating="sensorFormShow"
 			:method="sensorFormMethod"
 			v-on:end-adding="sensorEndAdding"
 			:sensorData="sensorData"
 		/>
-		<sensorCard 
+		<sensorCard
 			:edit ="sensorCardShow"
 			v-on:end-adding="sensorCardShow = !sensorCardShow"
 			:sensorData="sensorInfoData"
 		/>
 
-		<ul class="list-unstyled">		
+		<ul class="list-unstyled">
 			<li v-for="(device, index) in treeData" :key="device.id">
 				<h4 @click="toggle(index)" class="pointer">
-					<span v-if="device.isShow">-</span> 
-					<span v-else>+</span> 
+					<span v-if="device.isShow">-</span>
+					<span v-else>+</span>
 					{{ device.name }}
 					<span class="badge badge-pill badge-info">
 						{{ device.wires.length }} / {{ device.wires_count }}
-					</span>				
+					</span>
 					<i class="ml-4 fas fa-edit text-warning pointer" @click="editDevice(device)"></i>
 					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteDevice(device)"></i>
 				</h4>
 				<ul v-show="device.isShow"  class="list-unstyled">
 					<li v-for="wire, wireIndex in device.wires">
 						<h3 class="pl-4 pointer" @click="toggleWire(index, wireIndex)">
-							<span v-if="wire.isShow">-</span> 
-							<span v-else>+</span> 
+							<span v-if="wire.isShow">-</span>
+							<span v-else>+</span>
 							{{ wire.description }}
 							<span class="badge badge-pill badge-success" v-if="wire.type == 'safe'">ПБ</span>
 							<span class="badge badge-pill badge-danger" v-else-if="wire.type == 'unsafe'">ПО</span>
 							<span class="badge badge-pill badge-default" v-else-if="wire.type == 'radio'">Радио</span>
-							
 							<span class="badge badge-pill badge-info">{{ wire.sensors.length }}</span>
-							
 							<i class="ml-4 fas fa-edit text-warning pointer" @click="editWire(wire)"></i>
 							<i class="ml-2 fas fa-times text-danger pointer" @click="deleteWire(wire)"></i>
 						</h3>
@@ -101,7 +99,7 @@
 							</li>
 							<li>
 								<button type="button" class="ml-4 btn btn-success" @click="addSensor(device.id, wire.id, wire.sensors.length )">Добавить сенсор</button>
-							</li>		
+							</li>
 						</ul>
 					</li>
 					<li v-if="device.wires.length < device.wires_count" class="mt-2">
@@ -114,7 +112,7 @@
 				<button type="button" class="btn btn-success mt-4" @click="addDeviceShow = true">Добавить оборудование</button>
 			</li>
 		</ul>
-	</div>			
+	</div>
 </template>
 
 <script>
@@ -134,11 +132,9 @@
 		props: {
 		},
 		data: function () {
-			return {				
+			return {
 				isShow: true,
-
 				addDeviceShow: false,
-
 				addWireShow: false,
 				wireMode: 'new',
 				wireData:{
@@ -149,14 +145,14 @@
 				sensorFormShow: false,
 				sensorFormMethod: 'new',
 				FormMethodAllowed: ['new','edit'],
-				ObjectDeviceId: null,				
+				ObjectDeviceId: null,
 				sensorCardShow: false,
 				sensorData:{
 					name: null,
 					deviceId: null,
 					wire_id: null,
 					sensor_id: null,
-				},				
+				},
 
 				sensorInfoData:{},
 
@@ -168,28 +164,27 @@
 			}
 		},
 		methods: {
-			addWire(odid){ 
-				this.ObjectDeviceId= odid ? odid : null; 
+			addWire(odid){
+				this.ObjectDeviceId= odid ? odid : null;
 				this.addWireShow = !this.addWireShow;
 				this.wireMode = 'new';
 				this.wireData = wire;
 			},
 			editWire(wire){
-				this.addWireShow = true;				
+				this.addWireShow = true;
 				this.wireMode = 'edit';
 				this.wireData = wire;
 			},
 			deleteWire(wire){
 				if(confirm(`Вы действительно хотите удалить ${wire.description}`)){
-				  this.$store.commit('DELETE_WIRE', wire.id);					
+				  this.$store.commit('DELETE_WIRE', wire.id);
 				}
-
 			},
 			toggle(idx){
 				this.treeData[idx].isShow = !this.treeData[idx].isShow;
 			},
 			toggleWire(idx,wireIdx){
-				this.treeData[idx].wires[wireIdx].isShow = !this.treeData[idx].wires[wireIdx].isShow;	
+				this.treeData[idx].wires[wireIdx].isShow = !this.treeData[idx].wires[wireIdx].isShow;
 			},
 			addSensor(did, wid, sensorsCount){
 				if(this.sensorFormMethod == this.FormMethodAllowed[1])
@@ -201,7 +196,7 @@
 				else{
 					Vue.set(this.sensorData, 'deviceId', did);
 					Vue.set(this.sensorData, 'wire_id', wid);
-					Vue.set(this.sensorData, 'name', ++sensorsCount);					
+					Vue.set(this.sensorData, 'name', ++sensorsCount);
 				}
 				this.sensorFormShow = true;
 				this.sensorFormMethod = this.FormMethodAllowed[0];
@@ -209,7 +204,7 @@
 			showSensorInfo(sensor){
 				console.log('showSensorInfo', sensor);
 			},
-			editSensor(did, sensor){				
+			editSensor(did, sensor){
 				this.sensorFormShow = true;
 				this.sensorFormMethod = this.FormMethodAllowed[1];
 				this.sensorData = sensor;
@@ -222,7 +217,7 @@
 			},
 			deleteDevice(device){
 				if(confirm(`Вы действительно хотите удалить ${device.name}`)){
-				  this.$store.commit('DELETE_DEVICE', device.id);					
+				  this.$store.commit('DELETE_DEVICE', device.id);
 				}
 			},
 			sensorEndAdding: function (params) {
@@ -234,7 +229,7 @@
 			},
 		},
 		computed: {
-			treeData: function () {return this.$store.getters.DEVICES},			
+			treeData: function () {return this.$store.getters.DEVICES},
 		}
 	}
 </script>
