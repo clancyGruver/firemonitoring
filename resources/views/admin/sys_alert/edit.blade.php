@@ -17,25 +17,19 @@
     @endif
 
     <div class="row">
-        <form action="{{ route('devices.store') }}" method="POST" class="col-md-6 col-md-offset-3" enctype="multipart/form-data">
+        <form action="{{ route('sys_alert.update',['id'=>$item->id]) }}" method="POST" class="col-md-6 col-md-offset-3" enctype="multipart/form-data">
             @csrf
             <div class="form-row">
                 <div class="form-group col">
                     <label for="name">Наименование</label>
-                    <input id="name" name="name" type="text" class="form-control" placeholder="Наименование">
+                    <input id="name" name="name" type="text" class="form-control" placeholder="Наименование" value="{{ $item->name }}">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col">
-                    <label for="wires_count">Количество шлейфов</label>
-                    <input id="wires_count" name="wires_count" type="number" class="form-control" placeholder="0">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col">
-                    <label for="instruction">Инструкция</label>
+                    <label for="instruction">Инструкция</label><br/>
+                    <a href="{{ $item->get_instruction_path() }}" target="_blank">{{$item->instruction}}</a>
                     <input id="instruction" name="instruction" type="file" class="form-control-file" placeholder="Инструкция">
                 </div>
             </div>
@@ -44,7 +38,7 @@
                 <div class="form-group col">
                     <button class="btn btn-icon btn-3 btn-success" type="submit">
                         <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>
-                        <span class="btn-inner--text">Добавить</span>
+                        <span class="btn-inner--text">Обновить</span>
                     </button>
                 </div>
             </div>

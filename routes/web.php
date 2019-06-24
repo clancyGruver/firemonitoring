@@ -24,11 +24,11 @@ Route::get('/sessionStatus', function() {
 
 Route::middleware(['auth'])->group(function(){
     Route::prefix('admin')->group(function(){
-        Route::get('/', 'admin\HomeController')->name('admin');        
+        Route::get('/', 'admin\HomeController')->name('admin');
         Route::get('/raions', 'RaionController@index')->name('raions');
         Route::prefix('objects')->group(function(){
             Route::get('/', 'ObjectsController@index')->name('objects');
-            Route::get('/detail/{id}', 'ObjectsController@detail')->name('objects.detail');            
+            Route::get('/detail/{id}', 'ObjectsController@detail')->name('objects.detail');
             Route::get('/edit/{id}', 'ObjectsController@edit')->name('objects.edit');
             Route::post('/update/{id}', 'ObjectsController@update')->name('objects.update');
             Route::get('/add', 'ObjectsController@add')->name('objects.add');
@@ -68,15 +68,37 @@ Route::middleware(['auth'])->group(function(){
         });*/
         Route::prefix('antennas')->group(function(){
             Route::get('/', 'DeviceAntennaController@index')->name('antennas');
+            Route::get('/detail/{id}', 'DeviceAntennaController@detail')->name('antennas.detail');
+            Route::get('/edit/{id}', 'DeviceAntennaController@edit')->name('antennas.edit');
+            Route::post('/update/{id}', 'DeviceAntennaController@update')->name('antennas.update');
+            Route::get('/add', 'DeviceAntennaController@add')->name('antennas.add');
+            Route::post('/store', 'DeviceAntennaController@store')->name('antennas.store');
         });
+
         Route::prefix('rspi')->group(function(){
             Route::get('/', 'DeviceRspiController@index')->name('rspi');
+            Route::get('/detail/{id}', 'DeviceRspiController@detail')->name('rspi.detail');
+            Route::get('/edit/{id}', 'DeviceRspiController@edit')->name('rspi.edit');
+            Route::post('/update/{id}', 'DeviceRspiController@update')->name('rspi.update');
+            Route::get('/add', 'DeviceRspiController@add')->name('rspi.add');
+            Route::post('/store', 'DeviceRspiController@store')->name('rspi.store');
         });
+
         Route::prefix('sys_alert')->group(function(){
-            Route::get('/', 'DeviceSystemVoiceAlertsDevController@index')->name('sys_alert');
+            Route::get('/', 'DeviceSystemVoiceAlertController@index')->name('sys_alert');
+            Route::get('/detail/{id}', 'DeviceSystemVoiceAlertController@detail')->name('sys_alert.detail');
+            Route::get('/edit/{id}', 'DeviceSystemVoiceAlertController@edit')->name('sys_alert.edit');
+            Route::post('/update/{id}', 'DeviceSystemVoiceAlertController@update')->name('sys_alert.update');
+            Route::get('/add', 'DeviceSystemVoiceAlertController@add')->name('sys_alert.add');
+            Route::post('/store', 'DeviceSystemVoiceAlertController@store')->name('sys_alert.store');
         });
         Route::prefix('alert')->group(function(){
-            Route::get('/', 'DeviceSystemVoiceAlertController@index')->name('alert');
+            Route::get('/', 'DeviceAlertController@index')->name('alert');
+            Route::get('/detail/{id}', 'DeviceAlertController@detail')->name('alert.detail');
+            Route::get('/edit/{id}', 'DeviceAlertController@edit')->name('alert.edit');
+            Route::post('/update/{id}', 'DeviceAlertController@update')->name('alert.update');
+            Route::get('/add', 'DeviceAlertController@add')->name('alert.add');
+            Route::post('/store', 'DeviceAlertController@store')->name('alert.store');
         });
     });
 

@@ -80,9 +80,7 @@ class DevicesController extends Controller
     }
 
     public function delete($id, Request $request){
-        $item = Device_aps::find($id);
-        $item->is_active = 0;
-        $item->save();
+        $item = Device_aps::destroy($id);
     }
 
     public function add(Request $request){
@@ -98,8 +96,8 @@ class DevicesController extends Controller
         $obj = Device_aps::find($id);
         $params = $request->except(['id','_token']);
         if($request->instruction){
-            $params = $request->instruction->getClientOriginalName();
-            $request->instruction->storeAs('instructions/'.$obj->id, $request->instruction->getClientOriginalName());
+            $params['instruction'] = $request->instruction->getClientOriginalName();
+            $request->instruction->storeAs('instructions/ops/'.$obj->id, $request->instruction->getClientOriginalName());
         }
         $params['created_user_id'] = Auth::user()->id;
         $obj->update($params);
@@ -112,11 +110,12 @@ class DevicesController extends Controller
             'wires_count' => 'required',
         ]);
         $obj = new Device_aps($request->except('_token'));
+        $obj->created_user_id = Auth::user()->id;
+        $obj->save();
         if($request->instruction){
             $obj->instruction = $request->instruction->getClientOriginalName();
-            $request->instruction->storeAs('instructions/'.$obj->id, $request->instruction->getClientOriginalName());
+            $request->instruction->storeAs('instructions/ops/'.$obj->id, $request->instruction->getClientOriginalName());
         }
-        $obj->created_user_id = Auth::user()->id;
         $obj->save();
         return redirect('admin/devices');
     }

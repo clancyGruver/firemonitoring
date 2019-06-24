@@ -83,7 +83,7 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('devices') }}">
-                                    <i class="fas fa-gripfire text-primary"></i> {{ __('Охранно-пожарная сигнализация') }}
+                                    <i class="fas fa-fire text-primary"></i> {{ __('Охранно-пожарная сигнализация') }}
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -98,7 +98,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('rspi') }}">
-                                    <i class="fas fa-broadcast-podcast text-primary"></i> {{ __('Пердача инфрмации') }}
+                                    <i class="fas fa-podcast text-primary"></i> {{ __('Системы передачи извещений') }}
                                 </a>
                             </li>
                             <li class="nav-item">

@@ -15,7 +15,7 @@
             </ul>
         </div>
     @endif
-    
+
     <div class="row">
         <form action="{{ route('devices.update',['id'=>$item->id]) }}" method="POST" class="col-md-6 col-md-offset-3" enctype="multipart/form-data">
             @csrf
@@ -23,18 +23,6 @@
                 <div class="form-group col">
                     <label for="name">Наименование оборудования</label>
                     <input id="name" name="name" type="text" class="form-control" placeholder="Наименование оборудования" value="{{ $item->name }}">
-                </div>
-            </div>
-
-            <div class="form-row">      
-                <div class="form-group col">
-                    <label for="class_id">Класс</label>
-                    <select id="class_id" name="class_id" class="form-control">
-                        <option>Выберите класс оборудования</option>
-                        @foreach ($classes as $class)
-                        <option data-name="{{ $class->name }}" value="{{ $class->id }}" @if($class->id == $item->class_id) selected @endif>{{ $class->name }}</option>
-                        @endforeach
-                    </select>
                 </div>
             </div>
 

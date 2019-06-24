@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
+//$request->header('x-user')
+
 Route::middleware('auth:api')->group(function(){
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -24,6 +26,13 @@ Route::post('/raions/{id}', 'RaionController@update');
 Route::post('/devices/delete/{id}', 'DevicesController@delete')->name('devices.delete');
 Route::post('/devices/get', 'DevicesController@getJson')->name('devices.getJson');
 Route::post('/devices/getbyclass', 'DevicesController@getByClassJson')->name('devices.getbyclassJson');
+
+Route::post('/antennas/delete/{id}', 'DeviceAntennaController@delete')->name('antennas.delete');
+
+Route::post('/rspi/delete/{id}', 'DeviceRspiController@delete')->name('rspi.delete');
+
+Route::post('/sys_alert/delete/{id}', 'DeviceSystemVoiceAlertController@delete')->name('sys_alert.delete');
+Route::post('/alert/delete/{id}', 'DeviceAlertController@delete')->name('alert.delete');
 
 Route::post('/objects/delete/{id}', 'ObjectsController@delete')->name('objects.delete');
 Route::post('/objects/fileUpload', 'ObjectsController@fileUpload')->name('objects.fileUpload');

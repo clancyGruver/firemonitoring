@@ -34,7 +34,7 @@ class SensorController extends Controller
         		$value = false;
         	$params[$key] = $value;
         }
-        
+
         $params['created_user_id'] = $data['user_id'];
 
         $obj = new Sensor($params);
@@ -44,7 +44,7 @@ class SensorController extends Controller
     }
     public function deleteJson(Request $request){
         $data = $request->all();
-		
+
 		$obj = Sensor::find($data['sensor_id']);
         $obj->is_active = 0;
         $obj->created_user_id = $data['user_id'];

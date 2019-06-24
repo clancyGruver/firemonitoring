@@ -16,7 +16,7 @@ class MonitoringObject extends Model
         'is_active',
         'name',
         'lng',
-        'lat', 
+        'lat',
         'address',
         'contact_name',
         'contact_phone',
@@ -27,6 +27,7 @@ class MonitoringObject extends Model
         'project_isset',
         'project_cipher',
         'project_year',
+        'soue_type',
     ];
 
 
@@ -36,6 +37,10 @@ class MonitoringObject extends Model
 
     public function mediafiles(){
         return $this->hasMany('App\ObjectMediafile', 'object_id', 'id');
+    }
+
+    public function btifiles(){
+        return $this->hasMany('App\bti_files', 'object_id', 'id');
     }
 
     public function get_coords($ll, $addr){

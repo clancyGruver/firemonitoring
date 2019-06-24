@@ -1,5 +1,5 @@
 
-            <form action="{{ route('objects.update',['id'=>$item->id]) }}" method="POST" class="col-md-6 offset-md-3">
+            <form action="{{ route('objects.update',['id'=>$item->id]) }}" method="POST" class="col-md-6 offset-md-3" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="lat" id="lat" value="{{ $item->lat }}">
                 <input type="hidden" name="lng" id="lng" value="{{ $item->lng }}">
@@ -10,7 +10,7 @@
                     </div>
                 </div>
 
-                <div class="form-row">      
+                <div class="form-row">
                     <div class="form-group col">
                         <label for="raion_id">Район</label>
                         <select id="raion_id" name="raion_id" class="form-control">
@@ -50,6 +50,23 @@
                         <input id="contact_phone" name="contact_phone" type="text" class="form-control" placeholder="Телефон ответственного"  value="{{ $item->contact_phone }}">
                     </div>
                 </div>
+
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label for="soue_type">Тип системы оповещения и управления эвакуацией людей при пожаре</label>
+                        <select id="soue_type" name="soue_type" class="form-control">
+                            <option>Выберите тип</option>
+                            @foreach ($raions as $raion)
+                            <option value="1" @if($item->soue_type == 1) selected @endif>1</option>
+                            <option value="2" @if($item->soue_type == 2) selected @endif>2</option>
+                            <option value="3" @if($item->soue_type == 3) selected @endif>3</option>
+                            <option value="4" @if($item->soue_type == 4) selected @endif>4</option>
+                            <option value="5" @if($item->soue_type == 5) selected @endif>5</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
                 <div class="">
                     <div class="form-group col custom-control custom-control-alternative custom-checkbox">
                         <input class="custom-control-input" id="project_isset" name="project_isset" type="checkbox" @if( $item->project_isset ) checked value="1" @else value="0" @endif >
@@ -67,6 +84,18 @@
                     <div class="form-group col">
                         <label for="project_year">Год проекта</label>
                         <input id="project_year" name="project_year" type="number" class="form-control" value="{{ $item->project_year }}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label for="bti_files">Планы БТИ</label>
+                        <ul>
+                            @foreach($item->btifiles as $bti_file)
+                            <li><a href="{{$bti_file->path()}}" target="_blank">{{$bti_file->name}}</a></li>
+                            @endforeach
+                        </ul>
+                        <input type="file" id="file" name="bti_files[]" class="form-control-file"  multiple>
                     </div>
                 </div>
 

@@ -1,10 +1,14 @@
-<template>	
-    <tree-view />
+<template>
+	<div class="row">
+		<div class="col"><tree-view /></div>
+		<div class="col"><bti-map /></div>
+	</div>
 </template>
 
 <script>
 import deviceComponent from './device-component.vue';
-import TreeView from './treeView/treeview'
+import TreeView from './treeView/treeview';
+import btiMap from './leaflet/bti';
 
 export default {
 	props:[
@@ -17,7 +21,8 @@ export default {
 	},
 	components:{
 		deviceComponent,
-		TreeView
+		TreeView,
+		btiMap,
 	},
 	mounted: function(){
 		const oid = this.objectid;

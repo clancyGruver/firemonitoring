@@ -17,26 +17,12 @@
     @endif
 
     <div class="row">
-        <form action="{{ route('devices.store') }}" method="POST" class="col-md-6 col-md-offset-3" enctype="multipart/form-data">
+        <form action="{{ route('antennas.store') }}" method="POST" class="col-md-6 col-md-offset-3" enctype="multipart/form-data">
             @csrf
             <div class="form-row">
                 <div class="form-group col">
                     <label for="name">Наименование</label>
                     <input id="name" name="name" type="text" class="form-control" placeholder="Наименование">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col">
-                    <label for="wires_count">Количество шлейфов</label>
-                    <input id="wires_count" name="wires_count" type="number" class="form-control" placeholder="0">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col">
-                    <label for="instruction">Инструкция</label>
-                    <input id="instruction" name="instruction" type="file" class="form-control-file" placeholder="Инструкция">
                 </div>
             </div>
 

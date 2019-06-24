@@ -9,6 +9,7 @@ use App\Raion;
 use App\DeviceClass;
 use App\Object_Device as OD;
 use App\ObjectMediafile as OMedia;
+use App\bti_files as BTI;
 
 class ObjectsController extends Controller
 {
@@ -58,8 +59,11 @@ class ObjectsController extends Controller
         ]);
         $obj = MO::find($id);
         $params = $request->all();
-        $params['project_isset'] = isset($params['project_isset']) ? 1 : 0;
         $param['created_user_id'] = Auth::user()->id;
+        if($params['bti_files']){
+            $this->save_bti_plans($params['bti_files'], $id, $param['created_user_id']);
+        }
+        $params['project_isset'] = isset($params['project_isset']) ? 1 : 0;
         $obj->update($params);
         return redirect('admin/objects');
     }
@@ -99,9 +103,20 @@ class ObjectsController extends Controller
         return response(403);
     }
 
-    public function fileDelete($id, Request $request){   
+    public function fileDelete($id, Request $request){
         $obj = OMedia::find($id);
         $obj->delete();
         return response()->json(200);
+    }
+
+    private function save_bti_plans($files, $obj_id, $user_id){
+        foreach ($files as $file) {
+            $params['name'] = $file->getClientOriginalName();
+            $params['object_id'] = $obj_id;
+            $params['created_user_id'] = $user_id;
+            $file->storeAs('bti/'.$obj_id, $params['name']);
+            $obj = new BTI($params);
+            $obj->save();
+        }
     }
 }

@@ -10,16 +10,17 @@
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
-            </ul>            
+            </ul>
         </div>
     </div>
 @endif
 </div>
 <div class="container-fluid mt-3">
 
-    <div class="row">    
+    <div class="row">
         <div id="mapid"></div>
     </div>
+    <h1>{{$item->name}}</h1>
     <ul class="nav nav-pills mt-3 mb-3" id="pills-tab" role="tablist">
         <li class="nav-item">
             <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Оснвные</a>
@@ -38,12 +39,12 @@
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
             <div id="app">
                 <devices :objectid="{{ $item->id }}"></devices>
-            </div>     
+            </div>
         </div>
         <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
     </div>
     <div class="row">
-        
+
     </div>
 </div>
 
@@ -53,7 +54,7 @@
 @push('css')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
 <style>
-    #mapid { 
+    #mapid {
         height: 400px;
         width: 100%;
     }
@@ -77,7 +78,7 @@
             popupAnchor: [1, -34],
             shadowSize: [41, 41]
         });
-        var marker = 
+        var marker =
             L.marker([{{ $item->lat }}, {{ $item->lng }}],{
                 icon:myIcon,
                 draggable:true,
@@ -99,7 +100,7 @@
             maxZoom: 18,
         }).addTo(mymap);
 
-        $('#raion_id').on('change',function(e){        
+        $('#raion_id').on('change',function(e){
             var option = $(this).find('option:selected');
             var data = option.data();
             marker.setLatLng(L.latLng(data.lat, data.lng));
@@ -129,7 +130,7 @@
                 delete added_devices[data['category_name']];
             draw_added_list();
         })
-        
+
         function draw_added_list(){
             const adf = $('#add_device_form');
             const hidden_inputs = $('.hidden-inputs')
@@ -150,7 +151,7 @@
                     let li = $('<li/>').appendTo(ul);
                     let span = $('<span/>',{class:'h2 font-weight-bold mb-0', text:added_devices[key][item].device_name}).appendTo(li);
                     let button = $('<button/>',{
-                        'data-object':added_devices[key][item].object_id, 
+                        'data-object':added_devices[key][item].object_id,
                         'data-category_name':key,
                         'data-device_name':added_devices[key][item].device_name,
                         'data-device':added_devices[key][item].device_id,
@@ -171,10 +172,10 @@
                     }).appendTo(hidden_inputs);
                     elements_count++;
                 }
-            }            
+            }
             adf.hasClass('invisible') ? $('#add_device_form').removeClass('invisible') : '';
         }
-    })    
+    })
 
 </script>
 @endpush
