@@ -18,12 +18,14 @@ class bti_files extends Model
         'created_user_id',
     ];
 
+    protected $appends = ['path'];
+
     public function object()
 	{
 		return $this->belongsTo('App\MonitoringObject');
 	}
 
-	public function path(){
+	public function getPathAttribute(){
 		return $this->url = Storage::url('bti/'.$this->object_id.'/'.$this->name);
 	}
 }

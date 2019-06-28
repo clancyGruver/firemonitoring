@@ -119,4 +119,9 @@ class ObjectsController extends Controller
             $obj->save();
         }
     }
+
+    public function btiFiles($id, Request $request){
+        $items = BTI::where('object_id',$id)->get();
+        return response()->json($items);
+    }
 }

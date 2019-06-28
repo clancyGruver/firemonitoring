@@ -2182,7 +2182,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['objectid'],
   data: function data() {
     return {
-      tree: []
+      tree: {}
     };
   },
   components: {
@@ -2194,13 +2194,14 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     var oid = this.objectid;
+    this.$store.commit('SET_OBJECT_ID', oid);
     axios.post("/api/objectdevice/get/".concat(oid)).then(function (response) {
       return _this.createTree(response.data);
     });
     axios.post("/api/devices/getbyclass").then(function (response) {
       return _this.$store.commit('SET_AVAILABLE_DEVICES', response.data);
     });
-    this.$store.commit('SET_OBJECT_ID', oid);
+    this.$store.commit('GET_BTIPLANS');
     this.$store.commit('FILL_SENSORS');
   },
   methods: {
@@ -2208,13 +2209,21 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       console.log(devices);
-      var tree = [];
+      var tree = {};
       devices.map(function (val) {
         var wireEl = [];
         val.wires.forEach(function (el) {
           el.isShow = false;
           wireEl.push(el);
         });
+
+        if (!(val.tbl_name in _this2.tree)) {
+          _this2.tree[val.tbl_name] = {
+            name: val.type,
+            items: []
+          };
+        }
+
         var treeEl = {
           name: val.devicable.name,
           tbl_name: val.tbl_name,
@@ -2223,10 +2232,11 @@ __webpack_require__.r(__webpack_exports__);
           wires: wireEl,
           wires_count: val.devicable.wires_count
         };
-        val.devicable;
 
-        _this2.tree.push(treeEl);
+        _this2.tree[val.tbl_name].items.push(treeEl); //this.tree.push(treeEl);
+
       });
+      console.log(this.tree);
       this.$store.commit('SET_DEVICES', this.tree);
     }
   }
@@ -2256,53 +2266,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       map: {},
-      imgs: ['http://localhost:5000/uploads/bti/6/plan-bti-3.jpg', 'http://localhost:5000/uploads/bti/6/plan-bti-2.jpg', 'http://localhost:5000/uploads/bti/6/plan-bti.jpg'],
       curImg: 0
     };
   },
   methods: {
     nextImg: function nextImg() {
-      console.log('nextImg');
-      if (this.curImg == this.imgs.length) this.curImg = 0;else ++this.curImg;
-      this.changeMapImg();
+      if (this.curImg == this.imgs.length - 1) this.curImg = 0;else ++this.curImg;
+      this.addImageToMap();
     },
     prevImg: function prevImg() {
-      console.log('prevImg');
       if (this.curImg == 0) this.curImg = this.imgs.length;else --this.curImg;
-      this.changeMapImg();
-    },
-    changeMapImg: function changeMapImg() {
-      var self = this;
       this.addImageToMap();
-      /*const img = new Image();
-      img.src = this.imgUrl;
-      img.onload = function() {
-      	const w = this.width,
-      		  h = this.height;
-      	self.addImageToMap(w,h);
-      }*/
     },
     addImageToMap: function addImageToMap(w, h) {
-      var
-      /*southWest = this.map.unproject([0, h], this.map.getMaxZoom()-1),
-      northEast = this.map.unproject([w, 0], this.map.getMaxZoom()-1),*/
-      //bounds = new L.LatLngBounds(southWest, northEast),
-      bounds = [[0, 0], [1000, 1000]];
-      this.map.fitBounds(bounds);
-      leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.imageOverlay(this.imgUrl, bounds).addTo(this.map); //console.log(southWest, northEast);
-      //this.map.setView([southWest.lat, northEast.lng], 1);
-
-      this.map.setView([500, 500], -1);
+      var img = new Image();
+      img.src = this.imgUrl;
+      var southWest = this.map.unproject([0, img.height], this.map.getMaxZoom() - 1),
+          northEast = this.map.unproject([img.width, 0], this.map.getMaxZoom() - 1),
+          bounds = new leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.LatLngBounds(southWest, northEast);
+      leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.imageOverlay(this.imgUrl, bounds).addTo(this.map);
+      this.map.setMaxBounds(bounds);
     }
   },
   computed: {
     imgUrl: function imgUrl() {
-      return this.imgs[this.curImg];
+      return this.imgs[this.curImg].path;
+    },
+    imgs: function imgs() {
+      return this.$store.getters.BTI_PLANS;
     }
   },
   mounted: function mounted() {
@@ -2310,9 +2317,9 @@ __webpack_require__.r(__webpack_exports__);
 
     this.map = leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.map('btiMap', {
       crs: leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.CRS.Simple,
-      minZoom: -5,
+      minZoom: 1,
       maxZoom: 4,
-      center: [500, 500],
+      center: [0, 0],
       zoom: 1
     });
     this.map.whenReady(function (e) {
@@ -2878,6 +2885,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2918,6 +2933,9 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    getSensorInfoData: function getSensorInfoData(id) {
+      this.sensorInfoData = this.$store.getters.SENSOR(id);
+    },
     addWire: function addWire(odid) {
       this.ObjectDeviceId = odid ? odid : null;
       this.addWireShow = !this.addWireShow;
@@ -2934,11 +2952,14 @@ __webpack_require__.r(__webpack_exports__);
         this.$store.commit('DELETE_WIRE', wire.id);
       }
     },
-    toggle: function toggle(idx) {
-      this.treeData[idx].isShow = !this.treeData[idx].isShow;
+    toggle: function toggle(typeIdx, idx) {
+      this.$store.commit('TOGGLE_DEVICE_SHOW', {
+        typeIdx: typeIdx,
+        idx: idx
+      }); //this.treeData[typeIdx].items[idx].isShow = !this.treeData[typeIdx].items[idx].isShow;
     },
-    toggleWire: function toggleWire(idx, wireIdx) {
-      this.treeData[idx].wires[wireIdx].isShow = !this.treeData[idx].wires[wireIdx].isShow;
+    toggleWire: function toggleWire(typeIdx, idx, wireIdx) {
+      this.treeData[typeIdx].items[idx].wires[wireIdx].isShow = !this.treeData[typeIdx].items[idx].wires[wireIdx].isShow;
     },
     addSensor: function addSensor(did, wid, sensorsCount) {
       if (this.sensorFormMethod == this.FormMethodAllowed[1]) this.sensorData = {
@@ -7541,7 +7562,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.pointer[data-v-62028b98]{\n\tcursor:pointer;\n}\n", ""]);
+exports.push([module.i, "\n.underline[data-v-62028b98]{\n\ttext-decoration: underline;\n}\n.pointer[data-v-62028b98]{\n\tcursor:pointer;\n}\n", ""]);
 
 // exports
 
@@ -54119,47 +54140,74 @@ var render = function() {
   return _c("div", { staticClass: "map-wrapper" }, [
     _c("div", { attrs: { id: "btiMap" } }),
     _vm._v(" "),
-    _c("ul", [
-      _c(
-        "li",
-        {
-          on: {
-            click: function($event) {
-              return _vm.nextImg()
+    _c("nav", { attrs: { "aria-label": "Page navigation example" } }, [
+      _c("ul", { staticClass: "pagination" }, [
+        _c(
+          "li",
+          {
+            staticClass: "page-item",
+            on: {
+              click: function($event) {
+                return _vm.prevImg()
+              }
             }
-          }
-        },
-        [_vm._m(0)]
-      ),
-      _vm._v(" "),
-      _c(
-        "li",
-        {
-          on: {
-            click: function($event) {
-              return _vm.prevImg()
+          },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "page-link",
+                attrs: { href: "#", "aria-label": "Назад" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                  }
+                }
+              },
+              [
+                _c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("«")]),
+                _vm._v(" "),
+                _c("span", { staticClass: "sr-only" }, [_vm._v("Назад")])
+              ]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "li",
+          {
+            staticClass: "page-item",
+            on: {
+              click: function($event) {
+                return _vm.nextImg()
+              }
             }
-          }
-        },
-        [_vm._m(1)]
-      )
+          },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "page-link",
+                attrs: { href: "#", "aria-label": "Вперед" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                  }
+                }
+              },
+              [
+                _c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("»")]),
+                _vm._v(" "),
+                _c("span", { staticClass: "sr-only" }, [_vm._v("Вперед")])
+              ]
+            )
+          ]
+        )
+      ])
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("span", [_c("i", { staticClass: "fas fa-arrow-left" })])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("span", [_c("i", { staticClass: "fas fa-arrow-right" })])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -55442,27 +55490,76 @@ var render = function() {
         }
       }),
       _vm._v(" "),
-      _c(
-        "ul",
-        { staticClass: "list-unstyled" },
-        [
-          _vm._l(_vm.treeData, function(device, index) {
-            return _c("li", { key: device.id }, [
-              _c(
-                "h4",
-                {
-                  staticClass: "pointer",
-                  on: {
-                    click: function($event) {
-                      return _vm.toggle(index)
+      _vm._l(_vm.treeData, function(type, typeIdx) {
+        return _c(
+          "div",
+          { key: typeIdx },
+          [
+            _c("h3", { staticClass: "underline" }, [_vm._v(_vm._s(type.name))]),
+            _vm._v(" "),
+            _vm._l(type.items, function(device, index) {
+              return _c("h4", { key: device.id }, [
+                _c(
+                  "span",
+                  {
+                    staticClass: "pointer",
+                    on: {
+                      click: function($event) {
+                        return _vm.toggle(typeIdx, index)
+                      }
                     }
-                  }
-                },
-                [
-                  device.isShow
-                    ? _c("span", [_vm._v("-")])
-                    : _c("span", [_vm._v("+")]),
-                  _vm._v("\n\t\t\t\t" + _vm._s(device.name) + "\n\t\t\t\t"),
+                  },
+                  [
+                    _vm._v(
+                      "\n\t\t\t\t" +
+                        _vm._s(device.name) +
+                        " " +
+                        _vm._s(device.isShow) +
+                        "\n\t\t\t"
+                    )
+                  ]
+                )
+              ])
+            })
+          ],
+          2
+        )
+      }),
+      _vm._v(" "),
+      _vm._l(_vm.treeData, function(type, typeIdx) {
+        return _c(
+          "ul",
+          { staticClass: "list-unstyled" },
+          [
+            _c("h3", { staticClass: "underline" }, [_vm._v(_vm._s(type.name))]),
+            _vm._v(" "),
+            _vm._l(type.items, function(device, index) {
+              return _c("li", { key: device.id }, [
+                _c("h4", [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "pointer",
+                      on: {
+                        click: function($event) {
+                          return _vm.toggle(typeIdx, index)
+                        }
+                      }
+                    },
+                    [
+                      device.isShow
+                        ? _c("span", [_vm._v("-")])
+                        : _c("span", [_vm._v("+")]),
+                      _vm._v(
+                        "\n\t\t\t\t\t" +
+                          _vm._s(device.name) +
+                          " " +
+                          _vm._s(device.isShow) +
+                          "\n\t\t\t\t"
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
                   _c("span", { staticClass: "badge badge-pill badge-info" }, [
                     _vm._v(
                       "\n\t\t\t\t\t" +
@@ -55490,44 +55587,50 @@ var render = function() {
                       }
                     }
                   })
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "ul",
-                {
-                  directives: [
-                    {
-                      name: "show",
-                      rawName: "v-show",
-                      value: device.isShow,
-                      expression: "device.isShow"
-                    }
-                  ],
-                  staticClass: "list-unstyled"
-                },
-                [
-                  _vm._l(device.wires, function(wire, wireIndex) {
-                    return _c("li", [
-                      _c(
-                        "h3",
-                        {
-                          staticClass: "pl-4 pointer",
-                          on: {
-                            click: function($event) {
-                              return _vm.toggleWire(index, wireIndex)
-                            }
-                          }
-                        },
-                        [
-                          wire.isShow
-                            ? _c("span", [_vm._v("-")])
-                            : _c("span", [_vm._v("+")]),
-                          _vm._v(
-                            "\n\t\t\t\t\t\t" +
-                              _vm._s(wire.description) +
-                              "\n\t\t\t\t\t\t"
+                ]),
+                _vm._v(" "),
+                _c(
+                  "ul",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: device.isShow,
+                        expression: "device.isShow"
+                      }
+                    ],
+                    staticClass: "list-unstyled"
+                  },
+                  [
+                    _vm._l(device.wires, function(wire, wireIndex) {
+                      return _c("li", [
+                        _c("h3", { staticClass: "pl-4 pointer" }, [
+                          _c(
+                            "span",
+                            {
+                              on: {
+                                click: function($event) {
+                                  return _vm.toggleWire(
+                                    typeIdx,
+                                    index,
+                                    wireIndex
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              wire.isShow
+                                ? _c("span", [_vm._v("-")])
+                                : _c("span", [_vm._v("+")]),
+                              _vm._v(
+                                "\n\t\t\t\t\t\t\t" +
+                                  _vm._s(wire.description) +
+                                  "\n\t\t\t\t\t\t"
+                              )
+                            ]
                           ),
+                          _vm._v(" "),
                           wire.type == "safe"
                             ? _c(
                                 "span",
@@ -55579,206 +55682,216 @@ var render = function() {
                               }
                             }
                           })
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "ul",
-                        {
-                          directives: [
-                            {
-                              name: "show",
-                              rawName: "v-show",
-                              value: wire.isShow,
-                              expression: "wire.isShow"
-                            }
-                          ],
-                          staticClass: "list-unstyled"
-                        },
-                        [
-                          _c("li", [
-                            _c("div", { staticClass: "table-responsive" }, [
-                              _c(
-                                "table",
-                                {
-                                  staticClass:
-                                    "table align-items-center table-dark"
-                                },
-                                [
-                                  _vm._m(0, true),
-                                  _vm._v(" "),
-                                  _c(
-                                    "tbody",
-                                    _vm._l(wire.sensors, function(
-                                      sensor,
-                                      sensorIdx
-                                    ) {
-                                      return _c("tr", { key: sensor.id }, [
-                                        _c("td", [
-                                          _vm._v(
-                                            "\n\t\t\t\t\t\t\t\t\t\t\t\t" +
-                                              _vm._s(
-                                                _vm.$store.getters.SENSOR(
-                                                  sensor.sensor_id
-                                                ).name
-                                              ) +
-                                              " \n\t\t\t\t\t\t\t\t\t\t\t\t"
-                                          ),
-                                          _c(
-                                            "span",
-                                            {
-                                              staticClass: "badge badge-info",
-                                              on: {
-                                                click: function($event) {
-                                                  _vm.sensorCardShow = !_vm.sensorCardShow
-                                                  _vm.sensorInfoData = _vm.$store.getters.SENSOR(
-                                                    sensor.sensor_id
-                                                  )
-                                                }
-                                              }
-                                            },
-                                            [
-                                              _c("i", {
-                                                staticClass: "fas fa-question"
-                                              })
-                                            ]
-                                          )
-                                        ]),
-                                        _vm._v(" "),
-                                        _c("td", [_vm._v(_vm._s(sensor.name))]),
-                                        _vm._v(" "),
-                                        _c("td", [
-                                          _vm._v(_vm._s(sensor.floor))
-                                        ]),
-                                        _vm._v(" "),
-                                        _c("td", [
-                                          _vm._v(_vm._s(sensor.cabinet_name))
-                                        ]),
-                                        _vm._v(" "),
-                                        _c("td", [
-                                          sensor.SP5_valid
-                                            ? _c("i", {
-                                                staticClass:
-                                                  "fas fa-check text-success"
-                                              })
-                                            : _c("i", {
-                                                staticClass:
-                                                  "fas fa-times text-danger"
-                                              })
-                                        ]),
-                                        _vm._v(" "),
-                                        _c("td", [
-                                          sensor.is_good
-                                            ? _c("i", {
-                                                staticClass:
-                                                  "fas fa-check text-success"
-                                              })
-                                            : _c("i", {
-                                                staticClass:
-                                                  "fas fa-times text-danger"
-                                              })
-                                        ]),
-                                        _vm._v(" "),
-                                        _c("td", [
-                                          _vm._v(
-                                            "\n\t\t\t\t\t\t\t\t\t\t\t\t" +
-                                              _vm._s(sensor.comment) +
-                                              "\n\t\t\t\t\t\t\t\t\t\t\t"
-                                          )
-                                        ]),
-                                        _vm._v(" "),
-                                        _c("td", [
-                                          _c("i", {
-                                            staticClass:
-                                              "fas fa-edit text-warning pointer",
-                                            on: {
-                                              click: function($event) {
-                                                return _vm.editSensor(
-                                                  device.id,
-                                                  sensor
-                                                )
-                                              }
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "ul",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: wire.isShow,
+                                expression: "wire.isShow"
+                              }
+                            ],
+                            staticClass: "list-unstyled"
+                          },
+                          [
+                            _c("li", [
+                              _c("div", { staticClass: "table-responsive" }, [
+                                _c(
+                                  "table",
+                                  {
+                                    staticClass:
+                                      "table align-items-center table-dark"
+                                  },
+                                  [
+                                    _vm._m(0, true),
+                                    _vm._v(" "),
+                                    _c(
+                                      "tbody",
+                                      _vm._l(wire.sensors, function(
+                                        sensor,
+                                        sensorIdx
+                                      ) {
+                                        return _c(
+                                          "tr",
+                                          {
+                                            key: sensor.id,
+                                            attrs: {
+                                              sensorInfoData: _vm.$store.getters.SENSOR(
+                                                sensor.sensor_id
+                                              )
                                             }
-                                          })
-                                        ])
-                                      ])
-                                    }),
-                                    0
-                                  )
-                                ]
+                                          },
+                                          [
+                                            _c("td", [
+                                              _vm._v(
+                                                "\n\t\t\t\t\t\t\t\t\t\t\t\t" +
+                                                  _vm._s(
+                                                    _vm.sensorInfoData.name
+                                                  ) +
+                                                  "\n\t\t\t\t\t\t\t\t\t\t\t\t"
+                                              ),
+                                              _c(
+                                                "span",
+                                                {
+                                                  staticClass:
+                                                    "badge badge-info",
+                                                  on: {
+                                                    click: function($event) {
+                                                      _vm.sensorCardShow = !_vm.sensorCardShow
+                                                    }
+                                                  }
+                                                },
+                                                [
+                                                  _c("i", {
+                                                    staticClass:
+                                                      "fas fa-question"
+                                                  })
+                                                ]
+                                              )
+                                            ]),
+                                            _vm._v(" "),
+                                            _c("td", [
+                                              _vm._v(_vm._s(sensor.name))
+                                            ]),
+                                            _vm._v(" "),
+                                            _c("td", [
+                                              _vm._v(_vm._s(sensor.floor))
+                                            ]),
+                                            _vm._v(" "),
+                                            _c("td", [
+                                              _vm._v(
+                                                _vm._s(sensor.cabinet_name)
+                                              )
+                                            ]),
+                                            _vm._v(" "),
+                                            _c("td", [
+                                              sensor.SP5_valid
+                                                ? _c("i", {
+                                                    staticClass:
+                                                      "fas fa-check text-success"
+                                                  })
+                                                : _c("i", {
+                                                    staticClass:
+                                                      "fas fa-times text-danger"
+                                                  })
+                                            ]),
+                                            _vm._v(" "),
+                                            _c("td", [
+                                              sensor.is_good
+                                                ? _c("i", {
+                                                    staticClass:
+                                                      "fas fa-check text-success"
+                                                  })
+                                                : _c("i", {
+                                                    staticClass:
+                                                      "fas fa-times text-danger"
+                                                  })
+                                            ]),
+                                            _vm._v(" "),
+                                            _c("td", [
+                                              _vm._v(
+                                                "\n\t\t\t\t\t\t\t\t\t\t\t\t" +
+                                                  _vm._s(sensor.comment) +
+                                                  "\n\t\t\t\t\t\t\t\t\t\t\t"
+                                              )
+                                            ]),
+                                            _vm._v(" "),
+                                            _c("td", [
+                                              _c("i", {
+                                                staticClass:
+                                                  "fas fa-edit text-warning pointer",
+                                                on: {
+                                                  click: function($event) {
+                                                    return _vm.editSensor(
+                                                      device.id,
+                                                      sensor
+                                                    )
+                                                  }
+                                                }
+                                              })
+                                            ])
+                                          ]
+                                        )
+                                      }),
+                                      0
+                                    )
+                                  ]
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("li", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "ml-4 btn btn-success",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.addSensor(
+                                        device.id,
+                                        wire.id,
+                                        wire.sensors.length
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("Добавить сенсор")]
                               )
                             ])
-                          ]),
-                          _vm._v(" "),
-                          _c("li", [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "ml-4 btn btn-success",
-                                attrs: { type: "button" },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.addSensor(
-                                      device.id,
-                                      wire.id,
-                                      wire.sensors.length
-                                    )
-                                  }
-                                }
-                              },
-                              [_vm._v("Добавить сенсор")]
-                            )
-                          ])
-                        ]
-                      )
-                    ])
-                  }),
-                  _vm._v(" "),
-                  device.wires.length < device.wires_count
-                    ? _c("li", { staticClass: "mt-2" }, [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-success",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function($event) {
-                                return _vm.addWire(device.id)
-                              }
-                            }
-                          },
-                          [_vm._v("Добавить шлейф")]
+                          ]
                         )
                       ])
-                    : _vm._e()
-                ],
-                2
-              )
-            ])
-          }),
-          _vm._v(" "),
-          _c("hr", { staticClass: "mt-2" }),
-          _vm._v(" "),
-          _c("li", [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-success mt-4",
-                attrs: { type: "button" },
-                on: {
-                  click: function($event) {
-                    _vm.addDeviceShow = true
-                  }
-                }
-              },
-              [_vm._v("Добавить оборудование")]
-            )
-          ])
-        ],
-        2
+                    }),
+                    _vm._v(" "),
+                    device.wires.length < device.wires_count
+                      ? _c("li", { staticClass: "mt-2" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-success",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.addWire(device.id)
+                                }
+                              }
+                            },
+                            [_vm._v("Добавить шлейф")]
+                          )
+                        ])
+                      : _vm._e()
+                  ],
+                  2
+                )
+              ])
+            })
+          ],
+          2
+        )
+      }),
+      _vm._v(" "),
+      _c("hr", { staticClass: "mt-2" }),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-success mt-4",
+          attrs: { type: "button" },
+          on: {
+            click: function($event) {
+              _vm.addDeviceShow = true
+            }
+          }
+        },
+        [_vm._v("Добавить оборудование")]
       )
     ],
-    1
+    2
   )
 }
 var staticRenderFns = [
@@ -69483,15 +69596,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!*************************************************!*\
   !*** ./resources/js/components/leaflet/bti.vue ***!
   \*************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bti_vue_vue_type_template_id_1a5a0bca_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./bti.vue?vue&type=template&id=1a5a0bca&scoped=true& */ "./resources/js/components/leaflet/bti.vue?vue&type=template&id=1a5a0bca&scoped=true&");
 /* harmony import */ var _bti_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bti.vue?vue&type=script&lang=js& */ "./resources/js/components/leaflet/bti.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _bti_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _bti_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _bti_vue_vue_type_style_index_0_id_1a5a0bca_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bti.vue?vue&type=style&index=0&id=1a5a0bca&scoped=true&lang=css& */ "./resources/js/components/leaflet/bti.vue?vue&type=style&index=0&id=1a5a0bca&scoped=true&lang=css&");
+/* empty/unused harmony star reexport *//* harmony import */ var _bti_vue_vue_type_style_index_0_id_1a5a0bca_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bti.vue?vue&type=style&index=0&id=1a5a0bca&scoped=true&lang=css& */ "./resources/js/components/leaflet/bti.vue?vue&type=style&index=0&id=1a5a0bca&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -69523,7 +69635,7 @@ component.options.__file = "resources/js/components/leaflet/bti.vue"
 /*!**************************************************************************!*\
   !*** ./resources/js/components/leaflet/bti.vue?vue&type=script&lang=js& ***!
   \**************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -69928,7 +70040,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     object_id: null,
     devices: [],
     availabledevices: [],
-    sensors: []
+    sensors: [],
+    bti_plans: []
   },
   mutations: {
     SET_OBJECT_ID: function SET_OBJECT_ID(state, payload) {
@@ -69967,6 +70080,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         });
         vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices, idx);
       });
+    },
+    TOGGLE_DEVICE_SHOW: function TOGGLE_DEVICE_SHOW(state, payload) {
+      state.devices[payload.typeIdx].items[payload.idx].isShow = !state.devices[payload.typeIdx].items[payload.idx].isShow;
     },
     ADD_WIRE: function ADD_WIRE(state, payload) {
       var idx = state.devices.findIndex(function (obj) {
@@ -70072,6 +70188,11 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         });
         vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.devices[device_idx].wires[wire_idx].sensors, sensor_idx, resonse.data);
       });
+    },
+    GET_BTIPLANS: function GET_BTIPLANS(state, payload) {
+      axios.post("/api/objects/btiFiles/".concat(state.object_id)).then(function (response) {
+        return state.bti_plans = response.data;
+      });
     }
   },
   getters: {
@@ -70090,6 +70211,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
           return el.id == id;
         });
       };
+    },
+    BTI_PLANS: function BTI_PLANS(state) {
+      return state.bti_plans;
     }
   }
 });

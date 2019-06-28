@@ -92,7 +92,7 @@
                         <label for="bti_files">Планы БТИ</label>
                         <ul>
                             @foreach($item->btifiles as $bti_file)
-                            <li><a href="{{$bti_file->path()}}" target="_blank">{{$bti_file->name}}</a></li>
+                            <li><a href="{{$bti_file->path}}" target="_blank">{{$bti_file->name}}</a></li>
                             @endforeach
                         </ul>
                         <input type="file" id="file" name="bti_files[]" class="form-control-file"  multiple>

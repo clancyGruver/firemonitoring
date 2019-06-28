@@ -11,6 +11,7 @@ export const store = new Vuex.Store({
     devices: [],
     availabledevices: [],
     sensors: [],
+    bti_plans: [],
   },
 
   mutations: {
@@ -52,6 +53,9 @@ export const store = new Vuex.Store({
           Vue.delete(state.devices,idx)
         }
       );
+    },
+    TOGGLE_DEVICE_SHOW: (state,payload) => {
+      state.devices[payload.typeIdx].items[payload.idx].isShow = !state.devices[payload.typeIdx].items[payload.idx].isShow;
     },
     ADD_WIRE: (state, payload) => {
       const idx = state.devices.findIndex(obj => obj.id == payload.odid );
@@ -162,6 +166,12 @@ export const store = new Vuex.Store({
           Vue.set(state.devices[device_idx].wires[wire_idx].sensors, sensor_idx, resonse.data);
         }
       )
+    },
+    GET_BTIPLANS: (state, payload) => {
+      axios.post(`/api/objects/btiFiles/${state.object_id}`)
+           .then(
+              response => state.bti_plans = response.data
+            )
     }
   },
 
@@ -170,5 +180,6 @@ export const store = new Vuex.Store({
     AVAILABLE_DEVICES: state => state.availabledevices,
     ALL_SENSORS: state => state.sensors,
     SENSOR: (state, getters) => (id) => state.sensors.find( el => el.id == id ),
+    BTI_PLANS: state => state.bti_plans,
 	}
-});   
+});

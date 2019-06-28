@@ -37,6 +37,7 @@ Route::post('/alert/delete/{id}', 'DeviceAlertController@delete')->name('alert.d
 Route::post('/objects/delete/{id}', 'ObjectsController@delete')->name('objects.delete');
 Route::post('/objects/fileUpload', 'ObjectsController@fileUpload')->name('objects.fileUpload');
 Route::post('/objects/fileDelete/{id}', 'ObjectsController@fileDelete')->name('objects.fileDelete');
+Route::post('/objects/btiFiles/{id}', 'ObjectsController@btiFiles')->name('objects.btiFiles');
 
 Route::post('/objectdevice/add', 'ObjectdevicesController@add')->name('od.add');
 Route::post('/objectdevice/get/{id}', 'ObjectdevicesController@getJson')->name('od.getJson');

@@ -1,9 +1,9 @@
 <template>
 	<div>
-		<add-wire 
-			:creating="addWireShow" 
-			v-on:end-adding="addWireShow = !addWireShow" 
-			:odid="ObjectDeviceId" 
+		<add-wire
+			:creating="addWireShow"
+			v-on:end-adding="addWireShow = !addWireShow"
+			:odid="ObjectDeviceId"
 			:newWire="wireData"
 			:mode="wireMode"
 		/>
@@ -19,13 +19,24 @@
 			v-on:end-adding="sensorCardShow = !sensorCardShow"
 			:sensorData="sensorInfoData"
 		/>
+		<div v-for="type, typeIdx in treeData" :key="typeIdx">
+			<h3 class="underline">{{type.name}}</h3>
+			<h4 v-for="(device, index) in type.items" :key="device.id">
+				<span @click="toggle(typeIdx, index)" class="pointer">
+					{{ device.name }} {{ device.isShow }}
+				</span>
+			</h4>
+		</div>
 
-		<ul class="list-unstyled">
-			<li v-for="(device, index) in treeData" :key="device.id">
-				<h4 @click="toggle(index)" class="pointer">
-					<span v-if="device.isShow">-</span>
-					<span v-else>+</span>
-					{{ device.name }}
+		<ul class="list-unstyled" v-for="type, typeIdx in treeData">
+			<h3 class="underline">{{type.name}}</h3>
+			<li v-for="(device, index) in type.items" :key="device.id">
+				<h4>
+					<span @click="toggle(typeIdx, index)" class="pointer">
+						<span v-if="device.isShow">-</span>
+						<span v-else>+</span>
+						{{ device.name }} {{ device.isShow }}
+					</span>
 					<span class="badge badge-pill badge-info">
 						{{ device.wires.length }} / {{ device.wires_count }}
 					</span>
@@ -34,10 +45,12 @@
 				</h4>
 				<ul v-show="device.isShow"  class="list-unstyled">
 					<li v-for="wire, wireIndex in device.wires">
-						<h3 class="pl-4 pointer" @click="toggleWire(index, wireIndex)">
-							<span v-if="wire.isShow">-</span>
-							<span v-else>+</span>
-							{{ wire.description }}
+						<h3 class="pl-4 pointer">
+							<span @click="toggleWire(typeIdx, index, wireIndex)">
+								<span v-if="wire.isShow">-</span>
+								<span v-else>+</span>
+								{{ wire.description }}
+							</span>
 							<span class="badge badge-pill badge-success" v-if="wire.type == 'safe'">ПБ</span>
 							<span class="badge badge-pill badge-danger" v-else-if="wire.type == 'unsafe'">ПО</span>
 							<span class="badge badge-pill badge-default" v-else-if="wire.type == 'radio'">Радио</span>
@@ -62,15 +75,12 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr v-for="(sensor, sensorIdx) in wire.sensors" :key="sensor.id">
+											<tr v-for="(sensor, sensorIdx) in wire.sensors" :key="sensor.id" :sensorInfoData="$store.getters.SENSOR(sensor.sensor_id)">
 												<td>
-													{{ $store.getters.SENSOR(sensor.sensor_id).name }} 
-													<span 
-														class="badge badge-info" 
-														@click="
-															sensorCardShow = !sensorCardShow; 
-															sensorInfoData = $store.getters.SENSOR(sensor.sensor_id)
-														"
+													{{ sensorInfoData.name }}
+													<span
+														class="badge badge-info"
+														@click="sensorCardShow = !sensorCardShow;"
 													>
 														<i class="fas fa-question"></i>
 													</span>
@@ -107,11 +117,9 @@
 					</li>
 				</ul>
 			</li>
-			<hr class="mt-2">
-			<li>
-				<button type="button" class="btn btn-success mt-4" @click="addDeviceShow = true">Добавить оборудование</button>
-			</li>
 		</ul>
+		<hr class="mt-2">
+		<button type="button" class="btn btn-success mt-4" @click="addDeviceShow = true">Добавить оборудование</button>
 	</div>
 </template>
 
@@ -164,6 +172,7 @@
 			}
 		},
 		methods: {
+			getSensorInfoData(id){this.sensorInfoData = this.$store.getters.SENSOR(id)},
 			addWire(odid){
 				this.ObjectDeviceId= odid ? odid : null;
 				this.addWireShow = !this.addWireShow;
@@ -180,11 +189,12 @@
 				  this.$store.commit('DELETE_WIRE', wire.id);
 				}
 			},
-			toggle(idx){
-				this.treeData[idx].isShow = !this.treeData[idx].isShow;
+			toggle(typeIdx, idx){
+				this.$store.commit('TOGGLE_DEVICE_SHOW', {typeIdx, idx});
+				//this.treeData[typeIdx].items[idx].isShow = !this.treeData[typeIdx].items[idx].isShow;
 			},
-			toggleWire(idx,wireIdx){
-				this.treeData[idx].wires[wireIdx].isShow = !this.treeData[idx].wires[wireIdx].isShow;
+			toggleWire(typeIdx, idx,wireIdx){
+				this.treeData[typeIdx].items[idx].wires[wireIdx].isShow = !this.treeData[typeIdx].items[idx].wires[wireIdx].isShow;
 			},
 			addSensor(did, wid, sensorsCount){
 				if(this.sensorFormMethod == this.FormMethodAllowed[1])
@@ -229,12 +239,15 @@
 			},
 		},
 		computed: {
-			treeData: function () {return this.$store.getters.DEVICES},
+			treeData() {return this.$store.getters.DEVICES},
 		}
 	}
 </script>
 
 <style scoped>
+	.underline{
+		text-decoration: underline;
+	}
 	.pointer{
 		cursor:pointer;
 	}

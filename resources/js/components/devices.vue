@@ -16,7 +16,7 @@ export default {
 	],
 	data() {
 		return {
-			tree: [],
+			tree: {},
 		}
 	},
 	components:{
@@ -26,6 +26,7 @@ export default {
 	},
 	mounted: function(){
 		const oid = this.objectid;
+		this.$store.commit('SET_OBJECT_ID', oid);
 
 		axios
 			.post(`/api/objectdevice/get/${oid}`)
@@ -34,7 +35,8 @@ export default {
 		axios
 			.post(`/api/devices/getbyclass`)
 			.then( response => this.$store.commit('SET_AVAILABLE_DEVICES', response.data) )
-			this.$store.commit('SET_OBJECT_ID', oid);
+
+		this.$store.commit('GET_BTIPLANS');
 
 		this.$store.commit('FILL_SENSORS');
 	},
@@ -42,10 +44,16 @@ export default {
 	methods:{
 		createTree: function (devices) {
 			console.log(devices)
-			const tree = [];
+			const tree = {};
 			devices.map(val => {
 				const wireEl = [];
 				val.wires.forEach( el => {el.isShow=false; wireEl.push(el)} );
+				if(!(val.tbl_name in this.tree)){
+					this.tree[val.tbl_name] = {
+						name: val.type,
+						items: [],
+					};
+				}
 				const treeEl = {
 					name: val.devicable.name,
 					tbl_name: val.tbl_name,
@@ -54,9 +62,10 @@ export default {
 		            wires: wireEl,
 		            wires_count: val.devicable.wires_count,
 				};
-				val.devicable
-				this.tree.push(treeEl);
+				this.tree[val.tbl_name].items.push(treeEl);
+				//this.tree.push(treeEl);
 			})
+				console.log(this.tree);
 			this.$store.commit('SET_DEVICES', this.tree);
 		}
 	}

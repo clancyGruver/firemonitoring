@@ -1,11 +1,22 @@
 <template>
 	<div class="map-wrapper">
-		<div id="btiMap">
-		</div>
-		<ul>
-			<li @click="nextImg()"><span><i class="fas fa-arrow-left"></i></span></li>
-			<li @click="prevImg()"><span><i class="fas fa-arrow-right"></i></span></li>
-		</ul>
+		<div id="btiMap"></div>
+		<nav aria-label="Page navigation example">
+			<ul class="pagination">
+				<li @click="prevImg()" class="page-item">
+					<a @click.prevent="" class="page-link" href="#" aria-label="Назад">
+						<span aria-hidden="true">&laquo;</span>
+        				<span class="sr-only">Назад</span>
+					</a>
+				</li>
+			    <li class="page-item" @click="nextImg()">
+			      <a class="page-link" @click.prevent="" href="#" aria-label="Вперед">
+			        <span aria-hidden="true">&raquo;</span>
+			        <span class="sr-only">Вперед</span>
+			      </a>
+			    </li>
+			</ul>
+		</nav>
 	</div>
 </template>
 
@@ -16,68 +27,47 @@
 	    data () {
 	      return {
 	      	map:{},
-	      	imgs:[
-	      		'http://localhost:5000/uploads/bti/6/plan-bti-3.jpg',
-	      		'http://localhost:5000/uploads/bti/6/plan-bti-2.jpg',
-	      		'http://localhost:5000/uploads/bti/6/plan-bti.jpg',
-	      	],
 	      	curImg: 0,
 	      }
 	    },
 
 	    methods: {
 	    	nextImg: function(){
-	    		console.log('nextImg');
-				if(this.curImg == this.imgs.length)
+				if(this.curImg == this.imgs.length-1)
 					this.curImg = 0;
 				else
 					++this.curImg;
-				this.changeMapImg();
+				this.addImageToMap();
 	    	},
 	    	prevImg: function(){
-	    		console.log('prevImg');
 				if(this.curImg == 0)
 					this.curImg = this.imgs.length;
 				else
 					--this.curImg;
-				this.changeMapImg();
-	    	},
-			changeMapImg: function () {
-				const self = this;
 				this.addImageToMap();
-				/*const img = new Image();
-				img.src = this.imgUrl;
-				img.onload = function() {
-					const w = this.width,
-						  h = this.height;
-					self.addImageToMap(w,h);
-				}*/
-			},
+	    	},
 			addImageToMap: function (w,h) {
-				const /*southWest = this.map.unproject([0, h], this.map.getMaxZoom()-1),
-					  northEast = this.map.unproject([w, 0], this.map.getMaxZoom()-1),*/
-					  //bounds = new L.LatLngBounds(southWest, northEast),
-					  bounds = [[0,0],[1000,1000]];
-				this.map.fitBounds(bounds);
+				const img = new Image();
+				img.src = this.imgUrl;
+				const southWest = this.map.unproject([0, img.height], this.map.getMaxZoom()-1),
+					  northEast = this.map.unproject([img.width, 0], this.map.getMaxZoom()-1),
+					  bounds = new L.LatLngBounds(southWest, northEast);
 			  	L.imageOverlay(this.imgUrl, bounds).addTo(this.map);
-				//console.log(southWest, northEast);
-				//this.map.setView([southWest.lat, northEast.lng], 1);
-				this.map.setView([500, 500], -1);
+				this.map.setMaxBounds(bounds);
 			}
 	    },
 
 	    computed: {
-			imgUrl: function() {
-				return this.imgs[this.curImg];
-			}
+			imgUrl: function() {return this.imgs[this.curImg].path;},
+			imgs: function() {return this.$store.getters.BTI_PLANS;},
 		},
 
 		mounted(){
 			this.map = L.map('btiMap', {
 				crs: L.CRS.Simple,
-				minZoom: -5,
+				minZoom: 1,
 				maxZoom: 4,
-				center: [500,500],
+				center: [0,0],
 				zoom: 1
 			})
 			this.map.whenReady((e)=>{

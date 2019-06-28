@@ -17,12 +17,25 @@ class Object_Device extends Model
         'device_id',
     ];
 
+    protected $appends = ['type'];
+
     public function devicable(){
         return $this->morphTo(
             null,
             'tbl_name',
             'device_id'
         );
+    }
+
+    public function getTypeAttribute(){
+        $types = [
+            'App\device_antenna'            => 'Антенна',
+            'App\device_rspi'               => 'Системы передачи извещений о пожаре',
+            'App\device_aps'                => 'Охранно-пожарная сигнализация',
+            'App\device_alert'              => 'Оповещатели',
+            'App\device_system_voice_alert' => 'Система речевого оповещения',
+        ];
+        return $types[$this->tbl_name];
     }
 
     public function devices(){
