@@ -47,8 +47,8 @@
 							<span class="badge badge-pill badge-danger" v-else-if="wire.type == 'unsafe'">ПО</span>
 							<span class="badge badge-pill badge-default" v-else-if="wire.type == 'radio'">Радио</span>
 							<span class="badge badge-pill badge-info">{{ wire.sensors.length }}</span>
-							<i class="ml-4 fas fa-edit text-warning pointer" @click="editWire(wire)"></i>
-							<i class="ml-2 fas fa-times text-danger pointer" @click="deleteWire(wire)"></i>
+							<i class="ml-4 fas fa-edit text-warning pointer" @click="editWire(typeIdx, wire)"></i>
+							<i class="ml-2 fas fa-times text-danger pointer" @click="deleteWire(typeIdx, wire)"></i>
 						</h3>
 						<ul v-show="wire.isShow"  class="list-unstyled">
 							<li>
@@ -174,14 +174,15 @@
 				this.typeIdx = typeIdx;
 				//this.wireData = wire;
 			},
-			editWire(wire){
+			editWire(typeIdx, wire){
 				this.addWireShow = true;
 				this.wireMode = 'edit';
 				this.wireData = wire;
+				this.typeIdx = typeIdx;
 			},
-			deleteWire(wire){
+			deleteWire(typeIdx, wire){
 				if(confirm(`Вы действительно хотите удалить ${wire.description}`)){
-				  this.$store.commit('DELETE_WIRE', wire.id);
+				  this.$store.commit('DELETE_WIRE', {typeIdx:typeIdx, is:wire.id});
 				}
 			},
 			toggle(typeIdx, idx){

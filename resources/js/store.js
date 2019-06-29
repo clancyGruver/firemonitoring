@@ -16,10 +16,10 @@ export const store = new Vuex.Store({
 
   mutations: {
     SET_OBJECT_ID: (state, payload) => {
-      state.object_id = payload;
+      state.object_id = {...payload};
     },
     SET_USER: (state, payload) => {
-      state.user = payload;
+      state.user = {...payload};
     },
     SET_DEVICES: (state, payload) => {
       state.devices = {...payload};
@@ -28,29 +28,31 @@ export const store = new Vuex.Store({
       state.availabledevices = payload;
     },
     ADD_DEVICE: (state, payload) => {
+      const p = {...payload}
       axios.post('/api/objectdevice/store',{
         user_id: state.user.id,
         object_id: state.object_id,
-        device_id: payload.id,
-        tbl_name: payload.tbl_name,
+        device_id: p.id,
+        tbl_name: p.tbl_name,
       })
       .then(
-        response => { console.log(response); state.devices[payload.tbl_name].items.push({
+        response => { console.log(response); state.devices[p.tbl_name].items.push({
           id: response.id,
-          name: payload.name,
+          name: p.name,
           isShow:true,
-          tbl_name: payload.tbl_name,
+          tbl_name: p.tbl_name,
           wires: [],
-          wires_count: payload.wires_count,
+          wires_count: p.wires_count,
         })}
       );
     },
     DELETE_DEVICE: (state, payload) => {
-      axios.post(`/api/objectdevice/delete/${payload.deviceId}`)
+      const p = {...payload}
+      axios.post(`/api/objectdevice/delete/${p.deviceId}`)
       .then(
         response => {
-          const idx = state.devices[payload.typeIdx].items.findIndex(obj => obj.id == payload.deviceId );
-          Vue.delete(state.devices[payload.typeIdx].items,idx);
+          const idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.deviceId );
+          Vue.delete(state.devices[p.typeIdx].items,idx);
         }
       );
     },
@@ -79,22 +81,24 @@ export const store = new Vuex.Store({
       );
     },
     EDIT_WIRE:(state, payload) => {
-      payload.user_id = state.user.id;
-      axios.post(`/api/wire/update/${payload.id}`,payload)
+      const p = {...payload};
+      p.wire.user_id = state.user.id;
+      axios.post(`/api/wire/update/${p.wire.id}`,p.wire)
       .then(
         response => {
-          const device_idx = state.devices.findIndex(obj => obj.id == payload.object_device_id );
-          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.id);
-          Vue.set(state.devices[device_idx].wires, wire_idx, payload);
+          const device_idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.wire.object_device_id );
+          const wire_idx  = state.devices[p.typeIdx].items[device_idx].wires.findIndex(el => el.id == p.wire.id);
+          Vue.set(state.devices[p.typeIdx].items[device_idx].wires, wire_idx, p.wire);
         }
       );
     },
     DELETE_WIRE: (state, payload) => {
-      axios.post(`/api/wire/delete/${payload}`)
+      const p = {...payload};
+      axios.post(`/api/wire/delete/${p.id}`)
       .then(
         response => {
-          const device_idx = state.devices.findIndex(obj => obj.id == payload.object_device_id );
-          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.id);
+          const device_idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.object_device_id );
+          const wire_idx  = state.devices[p.typeIdx].items[device_idx].wires.findIndex(el => el.id == p.id);
           Vue.delete(state.devices[idx].wires, wire_idx)
         }
       );

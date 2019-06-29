@@ -120,7 +120,7 @@
 					this.$store.commit('ADD_WIRE', {typeIdx:this.type, odid:this.odid, wire:this.newWire});	
 				}
 				else{
-					this.$store.commit('EDIT_WIRE', this.newWire);		
+					this.$store.commit('EDIT_WIRE', {typeIdx:this.type, wire:this.newWire});		
 				}
 				
 				this.cancel();

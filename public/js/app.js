@@ -2120,7 +2120,10 @@ __webpack_require__.r(__webpack_exports__);
           wire: this.newWire
         });
       } else {
-        this.$store.commit('EDIT_WIRE', this.newWire);
+        this.$store.commit('EDIT_WIRE', {
+          typeIdx: this.type,
+          wire: this.newWire
+        });
       }
 
       this.cancel();
@@ -2941,14 +2944,18 @@ __webpack_require__.r(__webpack_exports__);
       this.wireMode = 'new';
       this.typeIdx = typeIdx; //this.wireData = wire;
     },
-    editWire: function editWire(wire) {
+    editWire: function editWire(typeIdx, wire) {
       this.addWireShow = true;
       this.wireMode = 'edit';
       this.wireData = wire;
+      this.typeIdx = typeIdx;
     },
-    deleteWire: function deleteWire(wire) {
+    deleteWire: function deleteWire(typeIdx, wire) {
       if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(wire.description))) {
-        this.$store.commit('DELETE_WIRE', wire.id);
+        this.$store.commit('DELETE_WIRE', {
+          typeIdx: typeIdx,
+          is: wire.id
+        });
       }
     },
     toggle: function toggle(typeIdx, idx) {
@@ -55636,7 +55643,7 @@ var render = function() {
                               "ml-4 fas fa-edit text-warning pointer",
                             on: {
                               click: function($event) {
-                                return _vm.editWire(wire)
+                                return _vm.editWire(typeIdx, wire)
                               }
                             }
                           }),
@@ -55646,7 +55653,7 @@ var render = function() {
                               "ml-2 fas fa-times text-danger pointer",
                             on: {
                               click: function($event) {
-                                return _vm.deleteWire(wire)
+                                return _vm.deleteWire(typeIdx, wire)
                               }
                             }
                           })
@@ -70014,10 +70021,10 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   },
   mutations: {
     SET_OBJECT_ID: function SET_OBJECT_ID(state, payload) {
-      state.object_id = payload;
+      state.object_id = _objectSpread({}, payload);
     },
     SET_USER: function SET_USER(state, payload) {
-      state.user = payload;
+      state.user = _objectSpread({}, payload);
     },
     SET_DEVICES: function SET_DEVICES(state, payload) {
       state.devices = _objectSpread({}, payload);
@@ -70026,29 +70033,33 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       state.availabledevices = payload;
     },
     ADD_DEVICE: function ADD_DEVICE(state, payload) {
+      var p = _objectSpread({}, payload);
+
       axios.post('/api/objectdevice/store', {
         user_id: state.user.id,
         object_id: state.object_id,
-        device_id: payload.id,
-        tbl_name: payload.tbl_name
+        device_id: p.id,
+        tbl_name: p.tbl_name
       }).then(function (response) {
         console.log(response);
-        state.devices[payload.tbl_name].items.push({
+        state.devices[p.tbl_name].items.push({
           id: response.id,
-          name: payload.name,
+          name: p.name,
           isShow: true,
-          tbl_name: payload.tbl_name,
+          tbl_name: p.tbl_name,
           wires: [],
-          wires_count: payload.wires_count
+          wires_count: p.wires_count
         });
       });
     },
     DELETE_DEVICE: function DELETE_DEVICE(state, payload) {
-      axios.post("/api/objectdevice/delete/".concat(payload.deviceId)).then(function (response) {
-        var idx = state.devices[payload.typeIdx].items.findIndex(function (obj) {
-          return obj.id == payload.deviceId;
+      var p = _objectSpread({}, payload);
+
+      axios.post("/api/objectdevice/delete/".concat(p.deviceId)).then(function (response) {
+        var idx = state.devices[p.typeIdx].items.findIndex(function (obj) {
+          return obj.id == p.deviceId;
         });
-        vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices[payload.typeIdx].items, idx);
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices[p.typeIdx].items, idx);
       });
     },
     TOGGLE_DEVICE_SHOW: function TOGGLE_DEVICE_SHOW(state, payload) {
@@ -70073,24 +70084,28 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       });
     },
     EDIT_WIRE: function EDIT_WIRE(state, payload) {
-      payload.user_id = state.user.id;
-      axios.post("/api/wire/update/".concat(payload.id), payload).then(function (response) {
-        var device_idx = state.devices.findIndex(function (obj) {
-          return obj.id == payload.object_device_id;
+      var p = _objectSpread({}, payload);
+
+      p.wire.user_id = state.user.id;
+      axios.post("/api/wire/update/".concat(p.wire.id), p.wire).then(function (response) {
+        var device_idx = state.devices[p.typeIdx].items.findIndex(function (obj) {
+          return obj.id == p.wire.object_device_id;
         });
-        var wire_idx = state.devices[device_idx].wires.findIndex(function (el) {
-          return el.id == payload.id;
+        var wire_idx = state.devices[p.typeIdx].items[device_idx].wires.findIndex(function (el) {
+          return el.id == p.wire.id;
         });
-        vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.devices[device_idx].wires, wire_idx, payload);
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.devices[p.typeIdx].items[device_idx].wires, wire_idx, p.wire);
       });
     },
     DELETE_WIRE: function DELETE_WIRE(state, payload) {
-      axios.post("/api/wire/delete/".concat(payload)).then(function (response) {
-        var device_idx = state.devices.findIndex(function (obj) {
-          return obj.id == payload.object_device_id;
+      var p = _objectSpread({}, payload);
+
+      axios.post("/api/wire/delete/".concat(p.id)).then(function (response) {
+        var device_idx = state.devices[p.typeIdx].items.findIndex(function (obj) {
+          return obj.id == p.object_device_id;
         });
-        var wire_idx = state.devices[device_idx].wires.findIndex(function (el) {
-          return el.id == payload.id;
+        var wire_idx = state.devices[p.typeIdx].items[device_idx].wires.findIndex(function (el) {
+          return el.id == p.id;
         });
         vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices[idx].wires, wire_idx);
       });
