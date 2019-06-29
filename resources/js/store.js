@@ -8,7 +8,7 @@ export const store = new Vuex.Store({
   state: {
     user: null,
     object_id: null,
-    devices: [],
+    devices: {},
     availabledevices: [],
     sensors: [],
     bti_plans: [],
@@ -22,7 +22,7 @@ export const store = new Vuex.Store({
       state.user = payload;
     },
     SET_DEVICES: (state, payload) => {
-      state.devices = payload;
+      state.devices = {...payload};
     },
     SET_AVAILABLE_DEVICES: (state, payload) => {
       state.availabledevices = payload;
@@ -35,30 +35,33 @@ export const store = new Vuex.Store({
         tbl_name: payload.tbl_name,
       })
       .then(
-        response => state.devices.push({
+        response => { console.log(response); state.devices[payload.tbl_name].items.push({
           id: response.id,
           name: payload.name,
           isShow:true,
           tbl_name: payload.tbl_name,
           wires: [],
           wires_count: payload.wires_count,
-        })
+        })}
       );
     },
     DELETE_DEVICE: (state, payload) => {
-      axios.post(`/api/objectdevice/delete/${payload}`)
+      axios.post(`/api/objectdevice/delete/${payload.deviceId}`)
       .then(
         response => {
-          const idx = state.devices.findIndex(obj => obj.id == payload );
-          Vue.delete(state.devices,idx)
+          const idx = state.devices[payload.typeIdx].items.findIndex(obj => obj.id == payload.deviceId );
+          Vue.delete(state.devices[payload.typeIdx].items,idx);
         }
       );
     },
     TOGGLE_DEVICE_SHOW: (state,payload) => {
-      state.devices[payload.typeIdx].items[payload.idx].isShow = !state.devices[payload.typeIdx].items[payload.idx].isShow;
+      const p = {... payload };
+      const isShow = !state.devices[p.typeIdx].items[p.idx].isShow;
+      Vue.set(state.devices[p.typeIdx].items[p.idx], 'isShow', isShow);
+      //state.devices[payload.typeIdx].items[payload.idx].isShow = !state.devices[payload.typeIdx].items[payload.idx].isShow;
     },
     ADD_WIRE: (state, payload) => {
-      const idx = state.devices.findIndex(obj => obj.id == payload.odid );
+      const idx = state.devices[payload.typeIdx].items.findIndex(obj => obj.id == payload.odid );
       axios.post('/api/wire/store',{
         user_id: state.user.id,
         object_device_id: payload.odid,
@@ -68,8 +71,8 @@ export const store = new Vuex.Store({
         response => {
           payload.wire.id = response.data.id;
           payload.wire.sensors = [];
-          isShow:true,
-          state.devices[idx].wires.push(
+          payload.wire.isShow = true;
+          state.devices[payload.typeIdx].items[idx].wires.push(
             payload.wire
           );
         }
@@ -95,6 +98,9 @@ export const store = new Vuex.Store({
           Vue.delete(state.devices[idx].wires, wire_idx)
         }
       );
+    },
+    TOGGLE_WIRE_SHOW:(state,payload) => {
+      state.devices[payload.typeIdx].items[payload.idx].wires[payload.wireIdx].isShow = !state.devices[payload.typeIdx].items[payload.idx].wires[payload.wireIdx].isShow;
     },
     FILL_SENSORS: (state) => {
       axios.post('/api/sensors/getall',{})

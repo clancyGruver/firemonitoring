@@ -9,15 +9,15 @@ use App\Wire;
 class WiresController extends Controller
 {
     public function storeJson(Request $request){
-        $data = $request->all();
+        $data = $request;
         $params = [];
 
         $params['created_user_id'] = $data['user_id'];
         $params['object_device_id'] = $data['object_device_id'];
         foreach ($data['wire_data'] as $key => $value) {
+            if($key == 'type') continue;
             $params[$key] = $value;
-        }        
-
+        }
         $obj = new Wire($params);
         $obj->save();
 

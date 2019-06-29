@@ -8,7 +8,7 @@
 					  <p>
 					    <b>Пожалуйста исправьте указанные ошибки:</b>
 					    <ul>
-					    	<li class="alert alert-danger" role="alert" v-for="error in errors">{{ error }}</li>
+					    	<li class="alert alert-danger" role="alert" v-for="(error,idx) in errors" :key="idx">{{ error }}</li>
 					    </ul>
 					  </p>
 				  </div>
@@ -23,7 +23,7 @@
 			                </div>
 			                <div class="">
 			                    <div class="form-group col custom-control custom-checkbox">
-			                        <input class="custom-control-input" id="is_good" name="is_good" type="checkbox"v-model="newWire.is_good">
+			                        <input class="custom-control-input" id="is_good" name="is_good" type="checkbox" v-model="newWire.is_good">
 			                        <label class="custom-control-label" for="is_good">Исправен</label>
 			                    </div>
 			                </div>
@@ -70,6 +70,10 @@
 		          return ['new','edit'].indexOf(value) > -1
 		        },
 			},
+			type:{
+				type: String,
+				default: null
+			},
 			odid:{
 				type: Number,
 				default: null
@@ -112,7 +116,8 @@
 				}				
 				console.log(this.newWire);
 				if(this.mode == 'new'){
-					this.$store.commit('ADD_WIRE', {odid:this.odid, wire:this.newWire});	
+					console.log(this.typeIdx);
+					this.$store.commit('ADD_WIRE', {typeIdx:this.type, odid:this.odid, wire:this.newWire});	
 				}
 				else{
 					this.$store.commit('EDIT_WIRE', this.newWire);		

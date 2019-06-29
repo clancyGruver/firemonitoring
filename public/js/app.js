@@ -2065,6 +2065,10 @@ __webpack_require__.r(__webpack_exports__);
         return ['new', 'edit'].indexOf(value) > -1;
       }
     },
+    type: {
+      type: String,
+      "default": null
+    },
     odid: {
       type: Number,
       "default": null
@@ -2109,7 +2113,9 @@ __webpack_require__.r(__webpack_exports__);
       console.log(this.newWire);
 
       if (this.mode == 'new') {
+        console.log(this.typeIdx);
         this.$store.commit('ADD_WIRE', {
+          typeIdx: this.type,
           odid: this.odid,
           wire: this.newWire
         });
@@ -2323,8 +2329,6 @@ __webpack_require__.r(__webpack_exports__);
       zoom: 1
     });
     this.map.whenReady(function (e) {
-      _this.addImageToMap();
-
       _this.map.on('click', function (e) {
         console.log(e.latlng);
         var marker = leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.marker(e.latlng);
@@ -2344,6 +2348,7 @@ __webpack_require__.r(__webpack_exports__);
     this.map.on('moveend', function (e) {
       console.log('moveEnded: ', _this.map.getCenter(), _this.map.getZoom());
     });
+    if (this.imgs.length > 0) this.addImageToMap();
   }
 });
 
@@ -2885,14 +2890,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -2907,6 +2904,7 @@ __webpack_require__.r(__webpack_exports__);
   props: {},
   data: function data() {
     return {
+      tData: {},
       isShow: true,
       addDeviceShow: false,
       addWireShow: false,
@@ -2919,6 +2917,7 @@ __webpack_require__.r(__webpack_exports__);
       sensorFormMethod: 'new',
       FormMethodAllowed: ['new', 'edit'],
       ObjectDeviceId: null,
+      typeIdx: null,
       sensorCardShow: false,
       sensorData: {
         name: null,
@@ -2936,11 +2935,11 @@ __webpack_require__.r(__webpack_exports__);
     getSensorInfoData: function getSensorInfoData(id) {
       this.sensorInfoData = this.$store.getters.SENSOR(id);
     },
-    addWire: function addWire(odid) {
+    addWire: function addWire(typeIdx, odid) {
       this.ObjectDeviceId = odid ? odid : null;
       this.addWireShow = !this.addWireShow;
       this.wireMode = 'new';
-      this.wireData = wire;
+      this.typeIdx = typeIdx; //this.wireData = wire;
     },
     editWire: function editWire(wire) {
       this.addWireShow = true;
@@ -2959,7 +2958,11 @@ __webpack_require__.r(__webpack_exports__);
       }); //this.treeData[typeIdx].items[idx].isShow = !this.treeData[typeIdx].items[idx].isShow;
     },
     toggleWire: function toggleWire(typeIdx, idx, wireIdx) {
-      this.treeData[typeIdx].items[idx].wires[wireIdx].isShow = !this.treeData[typeIdx].items[idx].wires[wireIdx].isShow;
+      this.$store.commit('TOGGLE_WIRE_SHOW', {
+        typeIdx: typeIdx,
+        idx: idx,
+        wireIdx: wireIdx
+      }); //this.treeData[typeIdx].items[idx].wires[wireIdx].isShow = !this.treeData[typeIdx].items[idx].wires[wireIdx].isShow;
     },
     addSensor: function addSensor(did, wid, sensorsCount) {
       if (this.sensorFormMethod == this.FormMethodAllowed[1]) this.sensorData = {
@@ -2983,14 +2986,17 @@ __webpack_require__.r(__webpack_exports__);
       this.sensorData = sensor;
       Vue.set(this.sensorData, 'deviceId', did);
     },
-    editDevice: function editDevice(device) {
+    editDevice: function editDevice(typeIdx, device) {
       this.deviceFormShow = true;
       this.deviceFormMethod = this.deviceFormMethodAllowed[1];
       this.deviceData = device;
     },
-    deleteDevice: function deleteDevice(device) {
+    deleteDevice: function deleteDevice(typeIdx, device) {
       if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(device.name))) {
-        this.$store.commit('DELETE_DEVICE', device.id);
+        this.$store.commit('DELETE_DEVICE', {
+          typeIdx: typeIdx,
+          deviceId: device.id
+        });
       }
     },
     sensorEndAdding: function sensorEndAdding(params) {
@@ -7505,7 +7511,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
 
 // exports
 
@@ -7543,7 +7549,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n\t\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-30364831] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\r\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n\t\r\n", ""]);
 
 // exports
 
@@ -53790,10 +53796,11 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "ul",
-                      _vm._l(_vm.errors, function(error) {
+                      _vm._l(_vm.errors, function(error, idx) {
                         return _c(
                           "li",
                           {
+                            key: idx,
                             staticClass: "alert alert-danger",
                             attrs: { role: "alert" }
                           },
@@ -55453,6 +55460,7 @@ var render = function() {
         attrs: {
           creating: _vm.addWireShow,
           odid: _vm.ObjectDeviceId,
+          type: _vm.typeIdx,
           newWire: _vm.wireData,
           mode: _vm.wireMode
         },
@@ -55492,44 +55500,8 @@ var render = function() {
       _vm._v(" "),
       _vm._l(_vm.treeData, function(type, typeIdx) {
         return _c(
-          "div",
-          { key: typeIdx },
-          [
-            _c("h3", { staticClass: "underline" }, [_vm._v(_vm._s(type.name))]),
-            _vm._v(" "),
-            _vm._l(type.items, function(device, index) {
-              return _c("h4", { key: device.id }, [
-                _c(
-                  "span",
-                  {
-                    staticClass: "pointer",
-                    on: {
-                      click: function($event) {
-                        return _vm.toggle(typeIdx, index)
-                      }
-                    }
-                  },
-                  [
-                    _vm._v(
-                      "\n\t\t\t\t" +
-                        _vm._s(device.name) +
-                        " " +
-                        _vm._s(device.isShow) +
-                        "\n\t\t\t"
-                    )
-                  ]
-                )
-              ])
-            })
-          ],
-          2
-        )
-      }),
-      _vm._v(" "),
-      _vm._l(_vm.treeData, function(type, typeIdx) {
-        return _c(
           "ul",
-          { staticClass: "list-unstyled" },
+          { key: typeIdx, staticClass: "list-unstyled" },
           [
             _c("h3", { staticClass: "underline" }, [_vm._v(_vm._s(type.name))]),
             _vm._v(" "),
@@ -55551,11 +55523,7 @@ var render = function() {
                         ? _c("span", [_vm._v("-")])
                         : _c("span", [_vm._v("+")]),
                       _vm._v(
-                        "\n\t\t\t\t\t" +
-                          _vm._s(device.name) +
-                          " " +
-                          _vm._s(device.isShow) +
-                          "\n\t\t\t\t"
+                        "\n\t\t\t\t\t" + _vm._s(device.name) + "\n\t\t\t\t"
                       )
                     ]
                   ),
@@ -55574,7 +55542,7 @@ var render = function() {
                     staticClass: "ml-4 fas fa-edit text-warning pointer",
                     on: {
                       click: function($event) {
-                        return _vm.editDevice(device)
+                        return _vm.editDevice(typeIdx, device)
                       }
                     }
                   }),
@@ -55583,7 +55551,7 @@ var render = function() {
                     staticClass: "ml-2 fas fa-times text-danger pointer",
                     on: {
                       click: function($event) {
-                        return _vm.deleteDevice(device)
+                        return _vm.deleteDevice(typeIdx, device)
                       }
                     }
                   })
@@ -55604,7 +55572,7 @@ var render = function() {
                   },
                   [
                     _vm._l(device.wires, function(wire, wireIndex) {
-                      return _c("li", [
+                      return _c("li", { key: wireIndex }, [
                         _c("h3", { staticClass: "pl-4 pointer" }, [
                           _c(
                             "span",
@@ -55711,10 +55679,7 @@ var render = function() {
                                     _vm._v(" "),
                                     _c(
                                       "tbody",
-                                      _vm._l(wire.sensors, function(
-                                        sensor,
-                                        sensorIdx
-                                      ) {
+                                      _vm._l(wire.sensors, function(sensor) {
                                         return _c(
                                           "tr",
                                           {
@@ -55857,7 +55822,7 @@ var render = function() {
                               attrs: { type: "button" },
                               on: {
                                 click: function($event) {
-                                  return _vm.addWire(device.id)
+                                  return _vm.addWire(typeIdx, device.id)
                                 }
                               }
                             },
@@ -70031,6 +69996,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
@@ -70038,7 +70007,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   state: {
     user: null,
     object_id: null,
-    devices: [],
+    devices: {},
     availabledevices: [],
     sensors: [],
     bti_plans: []
@@ -70051,7 +70020,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       state.user = payload;
     },
     SET_DEVICES: function SET_DEVICES(state, payload) {
-      state.devices = payload;
+      state.devices = _objectSpread({}, payload);
     },
     SET_AVAILABLE_DEVICES: function SET_AVAILABLE_DEVICES(state, payload) {
       state.availabledevices = payload;
@@ -70063,7 +70032,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         device_id: payload.id,
         tbl_name: payload.tbl_name
       }).then(function (response) {
-        return state.devices.push({
+        console.log(response);
+        state.devices[payload.tbl_name].items.push({
           id: response.id,
           name: payload.name,
           isShow: true,
@@ -70074,18 +70044,21 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       });
     },
     DELETE_DEVICE: function DELETE_DEVICE(state, payload) {
-      axios.post("/api/objectdevice/delete/".concat(payload)).then(function (response) {
-        var idx = state.devices.findIndex(function (obj) {
-          return obj.id == payload;
+      axios.post("/api/objectdevice/delete/".concat(payload.deviceId)).then(function (response) {
+        var idx = state.devices[payload.typeIdx].items.findIndex(function (obj) {
+          return obj.id == payload.deviceId;
         });
-        vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices, idx);
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices[payload.typeIdx].items, idx);
       });
     },
     TOGGLE_DEVICE_SHOW: function TOGGLE_DEVICE_SHOW(state, payload) {
-      state.devices[payload.typeIdx].items[payload.idx].isShow = !state.devices[payload.typeIdx].items[payload.idx].isShow;
+      var p = _objectSpread({}, payload);
+
+      var isShow = !state.devices[p.typeIdx].items[p.idx].isShow;
+      vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.devices[p.typeIdx].items[p.idx], 'isShow', isShow); //state.devices[payload.typeIdx].items[payload.idx].isShow = !state.devices[payload.typeIdx].items[payload.idx].isShow;
     },
     ADD_WIRE: function ADD_WIRE(state, payload) {
-      var idx = state.devices.findIndex(function (obj) {
+      var idx = state.devices[payload.typeIdx].items.findIndex(function (obj) {
         return obj.id == payload.odid;
       });
       axios.post('/api/wire/store', {
@@ -70095,8 +70068,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       }).then(function (response) {
         payload.wire.id = response.data.id;
         payload.wire.sensors = [];
-
-        isShow: true, state.devices[idx].wires.push(payload.wire);
+        payload.wire.isShow = true;
+        state.devices[payload.typeIdx].items[idx].wires.push(payload.wire);
       });
     },
     EDIT_WIRE: function EDIT_WIRE(state, payload) {
@@ -70121,6 +70094,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         });
         vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices[idx].wires, wire_idx);
       });
+    },
+    TOGGLE_WIRE_SHOW: function TOGGLE_WIRE_SHOW(state, payload) {
+      state.devices[payload.typeIdx].items[payload.idx].wires[payload.wireIdx].isShow = !state.devices[payload.typeIdx].items[payload.idx].wires[payload.wireIdx].isShow;
     },
     FILL_SENSORS: function FILL_SENSORS(state) {
       axios.post('/api/sensors/getall', {}).then(function (response) {
@@ -70238,8 +70214,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! e:\XAMPP\htdocs\firemonitoring\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! e:\XAMPP\htdocs\firemonitoring\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

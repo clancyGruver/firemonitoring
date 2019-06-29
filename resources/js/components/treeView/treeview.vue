@@ -4,6 +4,7 @@
 			:creating="addWireShow"
 			v-on:end-adding="addWireShow = !addWireShow"
 			:odid="ObjectDeviceId"
+			:type="typeIdx"
 			:newWire="wireData"
 			:mode="wireMode"
 		/>
@@ -19,32 +20,23 @@
 			v-on:end-adding="sensorCardShow = !sensorCardShow"
 			:sensorData="sensorInfoData"
 		/>
-		<div v-for="type, typeIdx in treeData" :key="typeIdx">
-			<h3 class="underline">{{type.name}}</h3>
-			<h4 v-for="(device, index) in type.items" :key="device.id">
-				<span @click="toggle(typeIdx, index)" class="pointer">
-					{{ device.name }} {{ device.isShow }}
-				</span>
-			</h4>
-		</div>
-
-		<ul class="list-unstyled" v-for="type, typeIdx in treeData">
+		<ul class="list-unstyled" v-for="(type, typeIdx) in treeData" :key="typeIdx">
 			<h3 class="underline">{{type.name}}</h3>
 			<li v-for="(device, index) in type.items" :key="device.id">
 				<h4>
 					<span @click="toggle(typeIdx, index)" class="pointer">
 						<span v-if="device.isShow">-</span>
 						<span v-else>+</span>
-						{{ device.name }} {{ device.isShow }}
+						{{ device.name }}
 					</span>
 					<span class="badge badge-pill badge-info">
 						{{ device.wires.length }} / {{ device.wires_count }}
 					</span>
-					<i class="ml-4 fas fa-edit text-warning pointer" @click="editDevice(device)"></i>
-					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteDevice(device)"></i>
+					<i class="ml-4 fas fa-edit text-warning pointer" @click="editDevice(typeIdx, device)"></i>
+					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteDevice(typeIdx, device)"></i>
 				</h4>
 				<ul v-show="device.isShow"  class="list-unstyled">
-					<li v-for="wire, wireIndex in device.wires">
+					<li v-for="(wire, wireIndex) in device.wires" :key="wireIndex">
 						<h3 class="pl-4 pointer">
 							<span @click="toggleWire(typeIdx, index, wireIndex)">
 								<span v-if="wire.isShow">-</span>
@@ -75,7 +67,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr v-for="(sensor, sensorIdx) in wire.sensors" :key="sensor.id" :sensorInfoData="$store.getters.SENSOR(sensor.sensor_id)">
+											<tr v-for="sensor in wire.sensors" :key="sensor.id" :sensorInfoData="$store.getters.SENSOR(sensor.sensor_id)">
 												<td>
 													{{ sensorInfoData.name }}
 													<span
@@ -113,7 +105,7 @@
 						</ul>
 					</li>
 					<li v-if="device.wires.length < device.wires_count" class="mt-2">
-						<button type="button" class="btn btn-success" @click="addWire(device.id)">Добавить шлейф</button>
+						<button type="button" class="btn btn-success" @click="addWire(typeIdx, device.id)">Добавить шлейф</button>
 					</li>
 				</ul>
 			</li>
@@ -141,6 +133,7 @@
 		},
 		data: function () {
 			return {
+				tData: {},
 				isShow: true,
 				addDeviceShow: false,
 				addWireShow: false,
@@ -154,6 +147,7 @@
 				sensorFormMethod: 'new',
 				FormMethodAllowed: ['new','edit'],
 				ObjectDeviceId: null,
+				typeIdx: null,
 				sensorCardShow: false,
 				sensorData:{
 					name: null,
@@ -173,11 +167,12 @@
 		},
 		methods: {
 			getSensorInfoData(id){this.sensorInfoData = this.$store.getters.SENSOR(id)},
-			addWire(odid){
+			addWire(typeIdx, odid){
 				this.ObjectDeviceId= odid ? odid : null;
 				this.addWireShow = !this.addWireShow;
 				this.wireMode = 'new';
-				this.wireData = wire;
+				this.typeIdx = typeIdx;
+				//this.wireData = wire;
 			},
 			editWire(wire){
 				this.addWireShow = true;
@@ -194,7 +189,8 @@
 				//this.treeData[typeIdx].items[idx].isShow = !this.treeData[typeIdx].items[idx].isShow;
 			},
 			toggleWire(typeIdx, idx,wireIdx){
-				this.treeData[typeIdx].items[idx].wires[wireIdx].isShow = !this.treeData[typeIdx].items[idx].wires[wireIdx].isShow;
+				this.$store.commit('TOGGLE_WIRE_SHOW', {typeIdx, idx, wireIdx});
+				//this.treeData[typeIdx].items[idx].wires[wireIdx].isShow = !this.treeData[typeIdx].items[idx].wires[wireIdx].isShow;
 			},
 			addSensor(did, wid, sensorsCount){
 				if(this.sensorFormMethod == this.FormMethodAllowed[1])
@@ -220,14 +216,14 @@
 				this.sensorData = sensor;
 				Vue.set(this.sensorData, 'deviceId', did);
 			},
-			editDevice(device){
+			editDevice(typeIdx, device){
 				this.deviceFormShow = true;
 				this.deviceFormMethod = this.deviceFormMethodAllowed[1];
 				this.deviceData = device;
 			},
-			deleteDevice(device){
+			deleteDevice(typeIdx, device){
 				if(confirm(`Вы действительно хотите удалить ${device.name}`)){
-				  this.$store.commit('DELETE_DEVICE', device.id);
+				  this.$store.commit('DELETE_DEVICE', {typeIdx:typeIdx, deviceId:device.id});
 				}
 			},
 			sensorEndAdding: function (params) {
@@ -239,7 +235,7 @@
 			},
 		},
 		computed: {
-			treeData() {return this.$store.getters.DEVICES},
+			treeData:function() {return this.$store.getters.DEVICES},
 		}
 	}
 </script>

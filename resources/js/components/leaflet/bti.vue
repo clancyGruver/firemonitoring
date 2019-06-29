@@ -71,7 +71,6 @@
 				zoom: 1
 			})
 			this.map.whenReady((e)=>{
-				this.addImageToMap();
 				this.map.on('click', (e)=>{
 					console.log(e.latlng);
 					const marker = L.marker(e.latlng);
@@ -85,6 +84,8 @@
 				markers.forEach((el) => el.addTo(this.map));
 			});
 			this.map.on('moveend',(e)=>{console.log('moveEnded: ',this.map.getCenter(), this.map.getZoom())});
+			if(this.imgs.length > 0)
+				this.addImageToMap();
 		}
 	}
 </script>
