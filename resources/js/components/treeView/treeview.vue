@@ -24,16 +24,20 @@
 			<h3 class="underline">{{type.name}}</h3>
 			<li v-for="(device, index) in type.items" :key="device.id">
 				<h4>
-					<span @click="toggle(typeIdx, index)" class="pointer">
+					<span @click="toggle(typeIdx, index)" class="pointer" v-if="['App\\device_aps','App\\device_system_voice_alert'].indexOf(typeIdx) >-1 ">
 						<span v-if="device.isShow">-</span>
 						<span v-else>+</span>
 						{{ device.name }}
 					</span>
-					<span class="badge badge-pill badge-info">
+					<span v-else>
+						{{ device.name }}
+					</span>
+					<span class="badge badge-pill badge-info" v-if="typeIdx == 'App\\device_aps'">
 						{{ device.wires.length }} / {{ device.wires_count }}
 					</span>
 					<i class="ml-4 fas fa-edit text-warning pointer" @click="editDevice(typeIdx, device)"></i>
 					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteDevice(typeIdx, device)"></i>
+					<i class="ml-2 fas fa-map-marker text-danger pointer" @click="setMarker(typeIdx, device)"></i>
 				</h4>
 				<ul v-show="device.isShow"  class="list-unstyled">
 					<li v-for="(wire, wireIndex) in device.wires" :key="wireIndex">
@@ -234,9 +238,13 @@
 				Vue.set(this.sensorData, 'SP5_valid', params.SP5_valid);
 				this.sensorFormShow = !this.sensorFormShow;
 			},
+			setMarker(typeIdx, device){
+				this.$store.commit('TOGGLE_MAP');
+				this.$store.commit('SET_MAP_ACTIVE_DEVICE',{typeIdx:typeIdx, deviceId:device.id});
+			},
 		},
 		computed: {
-			treeData:function() {return this.$store.getters.DEVICES},
+			treeData() {return this.$store.getters.DEVICES},
 		}
 	}
 </script>

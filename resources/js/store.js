@@ -11,12 +11,17 @@ export const store = new Vuex.Store({
     devices: {},
     availabledevices: [],
     sensors: [],
-    bti_plans: [],
+    setMarker: false,
+    markerObj: {},
+    bti_plans: {
+                status: false,
+                items: []
+              },
   },
 
   mutations: {
     SET_OBJECT_ID: (state, payload) => {
-      state.object_id = {...payload};
+      state.object_id = payload;
     },
     SET_USER: (state, payload) => {
       state.user = {...payload};
@@ -177,12 +182,40 @@ export const store = new Vuex.Store({
         }
       )
     },
-    GET_BTIPLANS: (state, payload) => {
+    SET_BTIPLANS: (state, payload) => {
       axios.post(`/api/objects/btiFiles/${state.object_id}`)
            .then(
-              response => state.bti_plans = response.data
+              response => state.bti_plans = {
+                status: true,
+                items: response.data
+              }
             )
-    }
+    },
+    TOGGLE_MAP: state => {
+      state.setMarker = !state.setMarker;
+    },
+    SET_MAP_ACTIVE_DEVICE: (state, payload) => {
+      const p = {...payload};
+      const idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.deviceId );
+      state.markerObj = state.devices[p.typeIdx].items[idx];
+    },
+    SET_DEVICE_COORDS:(state, payload) => {
+      const p = {...payload};
+      state.markerObj.lng = p.coords.lng;
+      state.markerObj.lat = p.coords.lat;
+      state.markerObj.bti_files_id = p.bti_plan_id;
+      axios.post(`/api/objectdevice/storeCoords/${state.markerObj.id}`,state.markerObj)
+       .then(
+          response => {
+            const rd = response.data;
+            const idx = state.devices[rd.tbl_name].items.findIndex(obj => obj.id == rd.id );
+            const obj = state.devices[rd.tbl_name].items[idx];
+            obj.lat = rd.lat;
+            obj.lng = rd.lng;
+            obj.lng = rd.bti_files_id;
+          }
+        )
+    },
   },
 
   getters: {
@@ -191,5 +224,25 @@ export const store = new Vuex.Store({
     ALL_SENSORS: state => state.sensors,
     SENSOR: (state, getters) => (id) => state.sensors.find( el => el.id == id ),
     BTI_PLANS: state => state.bti_plans,
+    MARKER_SETTABLE: state => state.setMarker,
+    DEVICE_MARKERS: state => {
+      const markers = [];
+      for(let deviceType in state.devices){
+        state.devices[deviceType].items.map(
+          item => {
+            if(!markers[item.bti_files_id])
+              markers[item.bti_files_id] = [];
+            markers[item.bti_files_id].push({
+              lng: item.lng,
+              lat: item.lat,
+              icon: item.icon,
+              deviceId: item.id,
+              deviceType: deviceType
+            })
+          }
+        )
+      }
+      return markers;
+    },
 	}
 });

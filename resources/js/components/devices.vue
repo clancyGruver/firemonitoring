@@ -36,7 +36,7 @@ export default {
 			.post(`/api/devices/getbyclass`)
 			.then( response => this.$store.commit('SET_AVAILABLE_DEVICES', response.data) )
 
-		this.$store.commit('GET_BTIPLANS');
+		this.$store.commit('SET_BTIPLANS');
 
 		this.$store.commit('FILL_SENSORS');
 	},
@@ -61,6 +61,10 @@ export default {
 					id: val.id,
 		            wires: wireEl,
 		            wires_count: val.devicable.wires_count,
+		            lng: val.lng,
+		            lat: val.lat,
+		            icon: val.devicable.icon || 'default',
+		            bti_files_id: val.bti_files_id,
 				};
 				this.tree[val.tbl_name].items.push(treeEl);
 				//this.tree.push(treeEl);

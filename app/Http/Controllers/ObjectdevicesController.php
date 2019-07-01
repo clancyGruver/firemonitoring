@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ObjectdevicesController extends Controller
 {
+    public function storeCoordsJson($id, Request $request){
+        $obj = OD::find($id);
+        $data = $request->only(['lat', 'lng', 'bti_files_id']);
+        $data['created_user_id'] = $request->header('x-user');
+        $obj->update($data);
+        return response()->json($obj);
+    }
     public function store(Request $request){
         $data = $request->all();
         $params = [];

@@ -2210,7 +2210,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.post("/api/devices/getbyclass").then(function (response) {
       return _this.$store.commit('SET_AVAILABLE_DEVICES', response.data);
     });
-    this.$store.commit('GET_BTIPLANS');
+    this.$store.commit('SET_BTIPLANS');
     this.$store.commit('FILL_SENSORS');
   },
   methods: {
@@ -2239,7 +2239,11 @@ __webpack_require__.r(__webpack_exports__);
           isShow: false,
           id: val.id,
           wires: wireEl,
-          wires_count: val.devicable.wires_count
+          wires_count: val.devicable.wires_count,
+          lng: val.lng,
+          lat: val.lat,
+          icon: val.devicable.icon || 'default',
+          bti_files_id: val.bti_files_id
         };
 
         _this2.tree[val.tbl_name].items.push(treeEl); //this.tree.push(treeEl);
@@ -2291,16 +2295,22 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       map: {},
-      curImg: 0
+      curImg: 0,
+      mapMarkers: []
     };
   },
   methods: {
+    checkPlans: function checkPlans() {
+      var status = this.$store.getters.BTI_PLANS.status;
+      if (status) this.addImageToMap();
+      return status;
+    },
     nextImg: function nextImg() {
-      if (this.curImg == this.imgs.length - 1) this.curImg = 0;else ++this.curImg;
+      if (this.curImg >= this.imgs.length - 1) this.curImg = 0;else ++this.curImg;
       this.addImageToMap();
     },
     prevImg: function prevImg() {
-      if (this.curImg == 0) this.curImg = this.imgs.length;else --this.curImg;
+      if (this.curImg <= 0) this.curImg = this.imgs.length;else --this.curImg;
       this.addImageToMap();
     },
     addImageToMap: function addImageToMap(w, h) {
@@ -2311,6 +2321,33 @@ __webpack_require__.r(__webpack_exports__);
           bounds = new leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.LatLngBounds(southWest, northEast);
       leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.imageOverlay(this.imgUrl, bounds).addTo(this.map);
       this.map.setMaxBounds(bounds);
+      this.setMarkers();
+    },
+    setMarkers: function setMarkers() {
+      var self = this;
+      var markers = this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];
+
+      if (this.mapMarkers.length > 0) {
+        this.mapMarkers.map(function (marker) {
+          return marker.remove();
+        });
+        this.mapMarkers = [];
+      }
+
+      if (typeof markers == "undefined" || markers.length < 1) return false;
+      markers.map(function (marker) {
+        var markerParams = {};
+        if (marker.icon != 'default') markerParams.icon = leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.icon({
+          iconUrl: marker.icon,
+          iconSize: [38, 38]
+        });
+        var theMarker = leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.marker({
+          lat: marker.lat,
+          lng: marker.lng
+        }, markerParams);
+        self.mapMarkers.push(theMarker);
+        theMarker.addTo(self.map);
+      });
     }
   },
   computed: {
@@ -2318,7 +2355,13 @@ __webpack_require__.r(__webpack_exports__);
       return this.imgs[this.curImg].path;
     },
     imgs: function imgs() {
-      return this.$store.getters.BTI_PLANS;
+      return this.$store.getters.BTI_PLANS.items;
+    },
+    markerSetable: function markerSetable() {
+      return this.$store.getters.MARKER_SETTABLE;
+    },
+    markers: function markers() {
+      return this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];
     }
   },
   mounted: function mounted() {
@@ -2331,27 +2374,25 @@ __webpack_require__.r(__webpack_exports__);
       center: [0, 0],
       zoom: 1
     });
+    var self = this;
     this.map.whenReady(function (e) {
       _this.map.on('click', function (e) {
-        console.log(e.latlng);
-        var marker = leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.marker(e.latlng);
-        markers.push(marker);
-        marker.addTo(_this.map);
-      });
+        if (self.markerSetable) {
+          _this.$store.commit('TOGGLE_MAP');
 
-      var markers = [leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.marker(leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.latLng(-131, 75)).on('click', function () {
-        return alert('Object 1');
-      }), leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.marker(leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.latLng(-81, 77)).on('click', function () {
-        return alert('Object 2');
-      })];
-      markers.forEach(function (el) {
-        return el.addTo(_this.map);
+          _this.$store.commit('SET_DEVICE_COORDS', {
+            coords: e.latlng,
+            bti_plan_id: self.imgs[_this.curImg].id
+          });
+
+          self.setMarkers();
+        }
       });
     });
-    this.map.on('moveend', function (e) {
-      console.log('moveEnded: ', _this.map.getCenter(), _this.map.getZoom());
-    });
-    if (this.imgs.length > 0) this.addImageToMap();
+    var timerId = setTimeout(function tick() {
+      var flag = self.checkPlans();
+      if (!flag) timerId = setTimeout(tick, 100);
+    }, 100);
   }
 });
 
@@ -2893,6 +2934,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -3012,6 +3057,13 @@ __webpack_require__.r(__webpack_exports__);
       Vue.set(this.sensorData, 'is_good', params.is_good);
       Vue.set(this.sensorData, 'SP5_valid', params.SP5_valid);
       this.sensorFormShow = !this.sensorFormShow;
+    },
+    setMarker: function setMarker(typeIdx, device) {
+      this.$store.commit('TOGGLE_MAP');
+      this.$store.commit('SET_MAP_ACTIVE_DEVICE', {
+        typeIdx: typeIdx,
+        deviceId: device.id
+      });
     }
   },
   computed: {
@@ -7518,7 +7570,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -7556,7 +7608,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-30364831] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\r\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n\t\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n\t\n", ""]);
 
 // exports
 
@@ -55515,35 +55567,49 @@ var render = function() {
             _vm._l(type.items, function(device, index) {
               return _c("li", { key: device.id }, [
                 _c("h4", [
-                  _c(
-                    "span",
-                    {
-                      staticClass: "pointer",
-                      on: {
-                        click: function($event) {
-                          return _vm.toggle(typeIdx, index)
-                        }
-                      }
-                    },
-                    [
-                      device.isShow
-                        ? _c("span", [_vm._v("-")])
-                        : _c("span", [_vm._v("+")]),
-                      _vm._v(
-                        "\n\t\t\t\t\t" + _vm._s(device.name) + "\n\t\t\t\t"
+                  ["App\\device_aps", "App\\device_system_voice_alert"].indexOf(
+                    typeIdx
+                  ) > -1
+                    ? _c(
+                        "span",
+                        {
+                          staticClass: "pointer",
+                          on: {
+                            click: function($event) {
+                              return _vm.toggle(typeIdx, index)
+                            }
+                          }
+                        },
+                        [
+                          device.isShow
+                            ? _c("span", [_vm._v("-")])
+                            : _c("span", [_vm._v("+")]),
+                          _vm._v(
+                            "\n\t\t\t\t\t" + _vm._s(device.name) + "\n\t\t\t\t"
+                          )
+                        ]
                       )
-                    ]
-                  ),
+                    : _c("span", [
+                        _vm._v(
+                          "\n\t\t\t\t\t" + _vm._s(device.name) + "\n\t\t\t\t"
+                        )
+                      ]),
                   _vm._v(" "),
-                  _c("span", { staticClass: "badge badge-pill badge-info" }, [
-                    _vm._v(
-                      "\n\t\t\t\t\t" +
-                        _vm._s(device.wires.length) +
-                        " / " +
-                        _vm._s(device.wires_count) +
-                        "\n\t\t\t\t"
-                    )
-                  ]),
+                  typeIdx == "App\\device_aps"
+                    ? _c(
+                        "span",
+                        { staticClass: "badge badge-pill badge-info" },
+                        [
+                          _vm._v(
+                            "\n\t\t\t\t\t" +
+                              _vm._s(device.wires.length) +
+                              " / " +
+                              _vm._s(device.wires_count) +
+                              "\n\t\t\t\t"
+                          )
+                        ]
+                      )
+                    : _vm._e(),
                   _vm._v(" "),
                   _c("i", {
                     staticClass: "ml-4 fas fa-edit text-warning pointer",
@@ -55559,6 +55625,15 @@ var render = function() {
                     on: {
                       click: function($event) {
                         return _vm.deleteDevice(typeIdx, device)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("i", {
+                    staticClass: "ml-2 fas fa-map-marker text-danger pointer",
+                    on: {
+                      click: function($event) {
+                        return _vm.setMarker(typeIdx, device)
                       }
                     }
                   })
@@ -70017,11 +70092,16 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     devices: {},
     availabledevices: [],
     sensors: [],
-    bti_plans: []
+    setMarker: false,
+    markerObj: {},
+    bti_plans: {
+      status: false,
+      items: []
+    }
   },
   mutations: {
     SET_OBJECT_ID: function SET_OBJECT_ID(state, payload) {
-      state.object_id = _objectSpread({}, payload);
+      state.object_id = payload;
     },
     SET_USER: function SET_USER(state, payload) {
       state.user = _objectSpread({}, payload);
@@ -70180,9 +70260,40 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.devices[device_idx].wires[wire_idx].sensors, sensor_idx, resonse.data);
       });
     },
-    GET_BTIPLANS: function GET_BTIPLANS(state, payload) {
+    SET_BTIPLANS: function SET_BTIPLANS(state, payload) {
       axios.post("/api/objects/btiFiles/".concat(state.object_id)).then(function (response) {
-        return state.bti_plans = response.data;
+        return state.bti_plans = {
+          status: true,
+          items: response.data
+        };
+      });
+    },
+    TOGGLE_MAP: function TOGGLE_MAP(state) {
+      state.setMarker = !state.setMarker;
+    },
+    SET_MAP_ACTIVE_DEVICE: function SET_MAP_ACTIVE_DEVICE(state, payload) {
+      var p = _objectSpread({}, payload);
+
+      var idx = state.devices[p.typeIdx].items.findIndex(function (obj) {
+        return obj.id == p.deviceId;
+      });
+      state.markerObj = state.devices[p.typeIdx].items[idx];
+    },
+    SET_DEVICE_COORDS: function SET_DEVICE_COORDS(state, payload) {
+      var p = _objectSpread({}, payload);
+
+      state.markerObj.lng = p.coords.lng;
+      state.markerObj.lat = p.coords.lat;
+      state.markerObj.bti_files_id = p.bti_plan_id;
+      axios.post("/api/objectdevice/storeCoords/".concat(state.markerObj.id), state.markerObj).then(function (response) {
+        var rd = response.data;
+        var idx = state.devices[rd.tbl_name].items.findIndex(function (obj) {
+          return obj.id == rd.id;
+        });
+        var obj = state.devices[rd.tbl_name].items[idx];
+        obj.lat = rd.lat;
+        obj.lng = rd.lng;
+        obj.lng = rd.bti_files_id;
       });
     }
   },
@@ -70205,6 +70316,31 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     BTI_PLANS: function BTI_PLANS(state) {
       return state.bti_plans;
+    },
+    MARKER_SETTABLE: function MARKER_SETTABLE(state) {
+      return state.setMarker;
+    },
+    DEVICE_MARKERS: function DEVICE_MARKERS(state) {
+      var markers = [];
+
+      var _loop = function _loop(deviceType) {
+        state.devices[deviceType].items.map(function (item) {
+          if (!markers[item.bti_files_id]) markers[item.bti_files_id] = [];
+          markers[item.bti_files_id].push({
+            lng: item.lng,
+            lat: item.lat,
+            icon: item.icon,
+            deviceId: item.id,
+            deviceType: deviceType
+          });
+        });
+      };
+
+      for (var deviceType in state.devices) {
+        _loop(deviceType);
+      }
+
+      return markers;
     }
   }
 });
@@ -70229,8 +70365,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! e:\XAMPP\htdocs\firemonitoring\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! e:\XAMPP\htdocs\firemonitoring\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

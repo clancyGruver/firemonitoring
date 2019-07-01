@@ -28,19 +28,26 @@
 	      return {
 	      	map:{},
 	      	curImg: 0,
+	      	mapMarkers: [],
 	      }
 	    },
 
 	    methods: {
+	    	checkPlans: function() {
+	    		const status = this.$store.getters.BTI_PLANS.status;
+				if(status)
+					this.addImageToMap();
+				return status;
+	    	},
 	    	nextImg: function(){
-				if(this.curImg == this.imgs.length-1)
+				if(this.curImg >= this.imgs.length-1)
 					this.curImg = 0;
 				else
 					++this.curImg;
 				this.addImageToMap();
 	    	},
 	    	prevImg: function(){
-				if(this.curImg == 0)
+				if(this.curImg <= 0)
 					this.curImg = this.imgs.length;
 				else
 					--this.curImg;
@@ -54,12 +61,36 @@
 					  bounds = new L.LatLngBounds(southWest, northEast);
 			  	L.imageOverlay(this.imgUrl, bounds).addTo(this.map);
 				this.map.setMaxBounds(bounds);
-			}
+				this.setMarkers();
+			},
+	    	setMarkers(){
+	    		const self = this;
+	    		const markers = this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id]
+	    		if(this.mapMarkers.length > 0){
+		    		this.mapMarkers.map(marker => marker.remove())
+		    		this.mapMarkers = [];
+	    		}
+	    		if(typeof(markers) == "undefined" || markers.length < 1)
+	    			return false;
+	    		markers.map(marker => {
+	    			const markerParams = {};
+	    			if(marker.icon != 'default')
+	    				markerParams.icon = L.icon({
+	    					iconUrl: marker.icon,
+	    					iconSize: [38, 38],
+	    				});
+	    			const theMarker = L.marker({lat: marker.lat, lng: marker.lng}, markerParams);
+	    			self.mapMarkers.push(theMarker);
+	    			theMarker.addTo(self.map);
+	    		});
+	    	},
 	    },
 
 	    computed: {
-			imgUrl: function() {return this.imgs[this.curImg].path;},
-			imgs: function() {return this.$store.getters.BTI_PLANS;},
+			imgUrl() {return this.imgs[this.curImg].path;},
+			imgs() {return this.$store.getters.BTI_PLANS.items;},
+			markerSetable() {return this.$store.getters.MARKER_SETTABLE;},
+			markers() {return this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];},
 		},
 
 		mounted(){
@@ -70,22 +101,21 @@
 				center: [0,0],
 				zoom: 1
 			})
+			const self = this;
 			this.map.whenReady((e)=>{
 				this.map.on('click', (e)=>{
-					console.log(e.latlng);
-					const marker = L.marker(e.latlng);
-					markers.push(marker);
-					marker.addTo(this.map);
+					if(self.markerSetable){
+						this.$store.commit('TOGGLE_MAP');
+						this.$store.commit('SET_DEVICE_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id});
+						self.setMarkers();
+					}
 				});
-				const markers = [
-					L.marker(L.latLng(-131,75)).on('click', () => alert('Object 1')),
-					L.marker(L.latLng(-81,77)).on('click', () => alert('Object 2')),
-				];
-				markers.forEach((el) => el.addTo(this.map));
 			});
-			this.map.on('moveend',(e)=>{console.log('moveEnded: ',this.map.getCenter(), this.map.getZoom())});
-			if(this.imgs.length > 0)
-				this.addImageToMap();
+			let timerId = setTimeout(function tick() {
+			  const flag = self.checkPlans();
+			  if(!flag)
+			  	timerId = setTimeout(tick, 100);
+			}, 100);
 		}
 	}
 </script>

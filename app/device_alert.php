@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+use Illuminate\Support\Facades\Storage;
 
 class device_alert extends Device
 {
@@ -13,6 +14,8 @@ class device_alert extends Device
         'created_user_id',
     ];
 
+    protected $appends = ['icon'];
+
     public function type_name(){
     	$arr = [
     		'sound'=>'Звуковой',
@@ -24,5 +27,9 @@ class device_alert extends Device
 
     public function get_instruction_path(){
     	return $this->url = Storage::url('instructions/alert/'.$this->id.'/'.$this->instruction);
+    }
+
+    public function getIconAttribute(){
+        return Storage::url('icons/alerts/'.$this->type.'.png');
     }
 }

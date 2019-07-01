@@ -15,6 +15,9 @@ class Object_Device extends Model
         'tbl_name',
         'object_id',
         'device_id',
+        'bti_files_id',
+        'lng',
+        'lat',
     ];
 
     protected $appends = ['type'];
