@@ -1,7 +1,9 @@
 <?php
 
 namespace App;
+
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class device_system_voice_alert extends Device
 {

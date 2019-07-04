@@ -1,9 +1,9 @@
-<template>	
+<template>
 	<transition name="modal">
 		<div class="modal-mask mb-4 " v-show="creating" @click.self="cancel">
 			<div class="modal-container card card-stats">
 				<div class="modal-content card-body">
-					<h5 class="card-title">Добавить сенсор</h5> 
+					<h5 class="card-title">Добавить сенсор</h5>
 
           <div class="alert alert-danger" v-show="errors.length > 0">
               <ul>
@@ -12,8 +12,8 @@
           </div>
 
           <div class="row">
-            <div class="col">        
-              <div class="form-group">                  
+            <div class="col">
+              <div class="form-group">
                 <div class="input-group mb-4">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -21,16 +21,19 @@
                   <input class="form-control" placeholder="Поиск" type="text" v-model="searchString">
                 </div>
               </div>
+              <div v-if="sensorData.sensor_id">
+                <strong>{{getSensorById(sensorData.sensor_id).name}}</strong>
+                <hr>
+              </div>
               <ul class="list-unstyled">
                 <li v-for="sensor in availSensors">
                   <span class="mb-0" @click="addSensor(sensor)">
-                    <strong v-if="sensor.id == sensorData.sensor_id">{{sensor.name}}</strong>
-                    <span v-else>{{sensor.name}}</span>                    
+                    <span>{{sensor.name}}</span>
                   </span>
                 </li>
-              </ul>  
+              </ul>
             </div>
-            <div class="col">  
+            <div class="col">
               <form>
                 <div class="form-group col">
                   <label for="name">Наименование</label>
@@ -57,6 +60,10 @@
               </form>
             </div>
           </div>
+          <div class="card-footer bg-transparent border-success">
+            <button type="button" class="btn btn-success mt-4" @click="handleCommit">Сохранить</button>
+            <button type="button" class="btn btn-warning mt-4" @click="cancel">Отмена</button>
+          </div>
 				</div>
 			</div>
 		</div>
@@ -66,6 +73,18 @@
 <script>
 	export default{
 		props: {
+      typeIdx:{
+        type: String,
+        default: '',
+      },
+      ObjectDeviceId:{
+        type: Number,
+        default: -1,
+      },
+      wireId:{
+        type: Number,
+        default: -1,
+      },
       sensorData:{
         type: Object,
         default: function() { return {
@@ -77,6 +96,8 @@
             cabinet_name: '',
             SP5_valid: '',
             is_good: '',
+            comment: '',
+            sensor_id: -1,
           }
         }
       },
@@ -91,30 +112,42 @@
           return ['new','edit'].indexOf(value) > -1
         },
       }
-		},		
+		},
 		data: function () {
 			return {
         searchString: '',
         errors: [],
+        sensor: {},
 			}
 		},
-		methods: {		
+		methods: {
       cancel () {
         this.$emit('end-adding',this.sensorData)
       },
-			addSensor(sensor){
+      handleCommit(){
         if(!this.validate()) return false;
         const data = {
-          sensor:   sensor, 
-          sensorData: this.sensorData
+          sensor: this.getSensorById(this.sensorData.sensor_id),
+          typeIdx: this.typeIdx,
+          ObjectDeviceId: this.ObjectDeviceId,
+          wireId: this.wireId,
+          sensorData: this.sensorData,
         };
         if(this.method == 'new')
-				  this.$store.commit('ADD_SENSOR_TO_WIRE', data);
+          this.$store.commit('ADD_SENSOR_TO_WIRE', data);
         else
           this.$store.commit('UPDATE_SENSOR_TO_WIRE', data);
-				this.cancel();
+        this.cancel();
+      },
+      getSensorById(id){
+        const filtered = this.$store.getters.ALL_SENSORS;
+        const sid = this.sensorData.sensor_id;
+        const currentSensorIdx = filtered.findIndex(s => s.id == sid )
+        return filtered[currentSensorIdx];
+      },
+			addSensor(sensor){
+        this.sensorData.sensor_id = sensor.id;
 			},
-
       validate(){
         this.errors = [];
         let checked = true;
@@ -122,7 +155,7 @@
         if(!Number.isInteger(this.sensorData.floor)){
           this.errors.push('Этаж должен быть числом');
           checked = false;
-        } 
+        }
         else if(this.sensorData.floor === ''){
           this.errors.push('Этаж не заплнен');
           checked = false;
@@ -159,12 +192,18 @@
           filtered = this.$store.getters.ALL_SENSORS.filter(s => s.name.includes(SS) )
         return filtered;
       },
+      currentSensor(){
+        const filtered = this.$store.getters.ALL_SENSORS;
+        const sid = this.sensorData.sensor_id;
+        const currentSensorIdx = filtered.findIndex(s => s.id == sid )
+        return filtered[currentSensorIdx];
+      }
 		},
 	}
 </script>
 
 <style scoped>
-	span{		
+	span{
 		cursor: pointer;
 	}
 .modal-mask {

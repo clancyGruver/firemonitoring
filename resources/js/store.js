@@ -104,12 +104,14 @@ export const store = new Vuex.Store({
         response => {
           const device_idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.object_device_id );
           const wire_idx  = state.devices[p.typeIdx].items[device_idx].wires.findIndex(el => el.id == p.id);
-          Vue.delete(state.devices[idx].wires, wire_idx)
+          Vue.delete(state.devices[p.typeIdx].items[device_idx].wires, wire_idx)
         }
       );
     },
     TOGGLE_WIRE_SHOW:(state,payload) => {
-      state.devices[payload.typeIdx].items[payload.idx].wires[payload.wireIdx].isShow = !state.devices[payload.typeIdx].items[payload.idx].wires[payload.wireIdx].isShow;
+      const p = {...payload}
+      const device_idx = state.devices[p.tid].items.findIndex(obj => obj.id == p.odid );
+      state.devices[p.tid].items[device_idx].wires[p.wireIdx].isShow = !state.devices[p.tid].items[device_idx].wires[p.wireIdx].isShow;
     },
     FILL_SENSORS: (state) => {
       axios.post('/api/sensors/getall',{})
@@ -162,9 +164,10 @@ export const store = new Vuex.Store({
       })
       .then(
         resonse => {
-          const device_idx = state.devices.findIndex(el => el.id == payload.sensorData.deviceId);
-          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.sensorData.wire_id);
-          state.devices[device_idx].wires[wire_idx].sensors.push(resonse.data);
+          const p = {...payload};
+          const device_idx = state.devices[p.typeIdx].items.findIndex(el => el.id == p.ObjectDeviceId);
+          const wire_idx  = state.devices[p.typeIdx].items[device_idx].wires.findIndex(el => el.id == p.wireId);
+          state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors.push(resonse.data);
         }
       )
     },
@@ -175,12 +178,25 @@ export const store = new Vuex.Store({
       })
       .then(
         resonse => {
-          const device_idx = state.devices.findIndex(el => el.id == payload.sensorData.deviceId);
-          const wire_idx  = state.devices[device_idx].wires.findIndex(el => el.id == payload.sensorData.wire_id);
-          const sensor_idx = state.devices[device_idx].wires[wire_idx].sensors.findIndex(el => el.id == payload.sensorData.id);
-          Vue.set(state.devices[device_idx].wires[wire_idx].sensors, sensor_idx, resonse.data);
+          const p = {...payload};
+          const device_idx = state.devices[p.typeIdx].items.findIndex(el => el.id == p.ObjectDeviceId);
+          const wire_idx  = state.devices[p.typeIdx].items[device_idx].wires.findIndex(el => el.id == p.wireId);
+          const sensor_idx = state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors.findIndex(el => el.id == payload.sensorData.id);
+          Vue.set(state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors, sensor_idx, resonse.data);
         }
       )
+    },
+    DELETE_SENSOR_ON_WIRE: (state, payload) => {
+      axios.post(`/api/sensorwire/delete/${payload.sensorId}`)
+            .then(
+              response => {
+                const p = {...payload};
+                const device_idx = state.devices[p.typeIdx].items.findIndex(el => el.id == p.ObjectDeviceId);
+                const wire_idx  = state.devices[p.typeIdx].items[device_idx].wires.findIndex(el => el.id == p.wireId);
+                const sensor_idx = state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors.findIndex(el => el.id == p.sensorId);
+                Vue.delete(state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors, sensor_idx);
+              }
+            );
     },
     SET_BTIPLANS: (state, payload) => {
       axios.post(`/api/objects/btiFiles/${state.object_id}`)
@@ -198,6 +214,15 @@ export const store = new Vuex.Store({
       const p = {...payload};
       const idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.deviceId );
       state.markerObj = state.devices[p.typeIdx].items[idx];
+      state.markerObj.type = 'device';
+    },
+    SET_MAP_ACTIVE_SENSOR: (state, payload) => {
+      const p = {...payload};
+      const idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.deviceId );
+      const wire_idx = state.devices[p.typeIdx].items[idx].wires.findIndex(obj => obj.id == p.wid );
+      const sensor_id = state.devices[p.typeIdx].items[idx].wires[wire_idx].sensors.findIndex(obj => obj.id == p.sensor.id );
+      state.markerObj = state.devices[p.typeIdx].items[idx].wires[wire_idx].sensors[sensor_id];
+      state.markerObj.type = 'sensor';
     },
     SET_DEVICE_COORDS:(state, payload) => {
       const p = {...payload};
@@ -216,6 +241,25 @@ export const store = new Vuex.Store({
           }
         )
     },
+    SET_SENSOR_COORDS:(state, payload) => {
+      const p = {...payload};
+      return;
+      state.markerObj.lng = p.coords.lng;
+      state.markerObj.lat = p.coords.lat;
+      state.markerObj.bti_files_id = p.bti_plan_id;
+      axios.post(`/api/sensorwire/storeCoords/${state.markerObj.id}`,state.markerObj)
+       .then(
+          response => {
+            const rd = response.data;
+            console.log(rd);
+            const idx = state.devices[rd.tbl_name].items.findIndex(obj => obj.id == rd.id );
+            const obj = state.devices[rd.tbl_name].items[idx];
+            obj.lat = rd.lat;
+            obj.lng = rd.lng;
+            obj.lng = rd.bti_files_id;
+          }
+        )
+    },
   },
 
   getters: {
@@ -225,6 +269,7 @@ export const store = new Vuex.Store({
     SENSOR: (state, getters) => (id) => state.sensors.find( el => el.id == id ),
     BTI_PLANS: state => state.bti_plans,
     MARKER_SETTABLE: state => state.setMarker,
+    MARKER_OBJECT: state => state.markerObj,
     DEVICE_MARKERS: state => {
       const markers = [];
       for(let deviceType in state.devices){

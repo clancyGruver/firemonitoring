@@ -52,6 +52,8 @@ Route::post('/sensors/delete', 'SensorController@deleteJson')->name('sensors.del
 
 Route::post('/sensorwire/add', 'SensorWireController@addJson')->name('sensorwire.addJson');
 Route::post('/sensorwire/update', 'SensorWireController@updateJson')->name('sensorwire.updateJson');
+Route::post('/sensorwire/delete/{id}', 'SensorWireController@deleteJson')->name('sensorwire.deleteJson');
+Route::post('/sensorwire/storeCoords/{id}', 'SensorWireController@storeCoordsJson')->name('sensorwire.storeCoords');
 
 Route::post('/wire/store', 'WiresController@storeJson')->name('wires.storeJson');
 Route::post('/wire/update/{id}', 'WiresController@updateJson')->name('wires.updateJson');

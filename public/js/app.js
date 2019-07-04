@@ -1888,8 +1888,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
+    typeIdx: {
+      type: String,
+      "default": ''
+    },
+    ObjectDeviceId: {
+      type: Number,
+      "default": -1
+    },
+    wireId: {
+      type: Number,
+      "default": -1
+    },
     sensorData: {
       type: Object,
       "default": function _default() {
@@ -1901,7 +1920,9 @@ __webpack_require__.r(__webpack_exports__);
           floor: '',
           cabinet_name: '',
           SP5_valid: '',
-          is_good: ''
+          is_good: '',
+          comment: '',
+          sensor_id: -1
         };
       }
     },
@@ -1920,21 +1941,36 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       searchString: '',
-      errors: []
+      errors: [],
+      sensor: {}
     };
   },
   methods: {
     cancel: function cancel() {
       this.$emit('end-adding', this.sensorData);
     },
-    addSensor: function addSensor(sensor) {
+    handleCommit: function handleCommit() {
       if (!this.validate()) return false;
       var data = {
-        sensor: sensor,
+        sensor: this.getSensorById(this.sensorData.sensor_id),
+        typeIdx: this.typeIdx,
+        ObjectDeviceId: this.ObjectDeviceId,
+        wireId: this.wireId,
         sensorData: this.sensorData
       };
       if (this.method == 'new') this.$store.commit('ADD_SENSOR_TO_WIRE', data);else this.$store.commit('UPDATE_SENSOR_TO_WIRE', data);
       this.cancel();
+    },
+    getSensorById: function getSensorById(id) {
+      var filtered = this.$store.getters.ALL_SENSORS;
+      var sid = this.sensorData.sensor_id;
+      var currentSensorIdx = filtered.findIndex(function (s) {
+        return s.id == sid;
+      });
+      return filtered[currentSensorIdx];
+    },
+    addSensor: function addSensor(sensor) {
+      this.sensorData.sensor_id = sensor.id;
     },
     validate: function validate() {
       this.errors = [];
@@ -1979,6 +2015,14 @@ __webpack_require__.r(__webpack_exports__);
         return s.name.includes(SS);
       });
       return filtered;
+    },
+    currentSensor: function currentSensor() {
+      var filtered = this.$store.getters.ALL_SENSORS;
+      var sid = this.sensorData.sensor_id;
+      var currentSensorIdx = filtered.findIndex(function (s) {
+        return s.id == sid;
+      });
+      return filtered[currentSensorIdx];
     }
   }
 });
@@ -2380,11 +2424,14 @@ __webpack_require__.r(__webpack_exports__);
         if (self.markerSetable) {
           _this.$store.commit('TOGGLE_MAP');
 
-          _this.$store.commit('SET_DEVICE_COORDS', {
+          var markerType = _this.$store.getters.MARKER_OBJECT.type;
+          if (markerType == 'device') _this.$store.commit('SET_DEVICE_COORDS', {
+            coords: e.latlng,
+            bti_plan_id: self.imgs[_this.curImg].id
+          });else if (markerType == 'sensor') _this.$store.commit('SET_SENSOR_COORDS', {
             coords: e.latlng,
             bti_plan_id: self.imgs[_this.curImg].id
           });
-
           self.setMarkers();
         }
       });
@@ -2814,9 +2861,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _add_device__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../add-device */ "./resources/js/components/add-device.vue");
-/* harmony import */ var _add_wire__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../add-wire */ "./resources/js/components/add-wire.vue");
-/* harmony import */ var _add_sensor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../add-sensor */ "./resources/js/components/add-sensor.vue");
-/* harmony import */ var _sensors_card__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../sensors/card */ "./resources/js/components/sensors/card.vue");
+/* harmony import */ var _wireTree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wireTree */ "./resources/js/components/treeView/wireTree.vue");
 //
 //
 //
@@ -2847,196 +2892,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     addDevice: _add_device__WEBPACK_IMPORTED_MODULE_0__["default"],
-    addWire: _add_wire__WEBPACK_IMPORTED_MODULE_1__["default"],
-    addSensor: _add_sensor__WEBPACK_IMPORTED_MODULE_2__["default"],
-    sensorCard: _sensors_card__WEBPACK_IMPORTED_MODULE_3__["default"]
+    wireTree: _wireTree__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   props: {},
   data: function data() {
     return {
       tData: {},
-      isShow: true,
       addDeviceShow: false,
-      addWireShow: false,
-      wireMode: 'new',
-      wireData: {
-        is_good: true,
-        type: 'unsafe'
-      },
-      sensorFormShow: false,
-      sensorFormMethod: 'new',
       FormMethodAllowed: ['new', 'edit'],
       ObjectDeviceId: null,
       typeIdx: null,
-      sensorCardShow: false,
-      sensorData: {
-        name: null,
-        deviceId: null,
-        wire_id: null,
-        sensor_id: null
-      },
-      sensorInfoData: {},
       deviceFormShow: false,
       deviceFormMethod: 'edit',
       deviceData: {}
     };
   },
   methods: {
-    getSensorInfoData: function getSensorInfoData(id) {
-      this.sensorInfoData = this.$store.getters.SENSOR(id);
-    },
-    addWire: function addWire(typeIdx, odid) {
-      this.ObjectDeviceId = odid ? odid : null;
-      this.addWireShow = !this.addWireShow;
-      this.wireMode = 'new';
-      this.typeIdx = typeIdx; //this.wireData = wire;
-    },
-    editWire: function editWire(typeIdx, wire) {
-      this.addWireShow = true;
-      this.wireMode = 'edit';
-      this.wireData = wire;
-      this.typeIdx = typeIdx;
-    },
-    deleteWire: function deleteWire(typeIdx, wire) {
-      if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(wire.description))) {
-        this.$store.commit('DELETE_WIRE', {
-          typeIdx: typeIdx,
-          is: wire.id
-        });
-      }
-    },
     toggle: function toggle(typeIdx, idx) {
       this.$store.commit('TOGGLE_DEVICE_SHOW', {
         typeIdx: typeIdx,
         idx: idx
       }); //this.treeData[typeIdx].items[idx].isShow = !this.treeData[typeIdx].items[idx].isShow;
-    },
-    toggleWire: function toggleWire(typeIdx, idx, wireIdx) {
-      this.$store.commit('TOGGLE_WIRE_SHOW', {
-        typeIdx: typeIdx,
-        idx: idx,
-        wireIdx: wireIdx
-      }); //this.treeData[typeIdx].items[idx].wires[wireIdx].isShow = !this.treeData[typeIdx].items[idx].wires[wireIdx].isShow;
-    },
-    addSensor: function addSensor(did, wid, sensorsCount) {
-      if (this.sensorFormMethod == this.FormMethodAllowed[1]) this.sensorData = {
-        deviceId: did,
-        wire_id: wid,
-        name: ++sensorsCount
-      };else {
-        Vue.set(this.sensorData, 'deviceId', did);
-        Vue.set(this.sensorData, 'wire_id', wid);
-        Vue.set(this.sensorData, 'name', ++sensorsCount);
-      }
-      this.sensorFormShow = true;
-      this.sensorFormMethod = this.FormMethodAllowed[0];
-    },
-    showSensorInfo: function showSensorInfo(sensor) {
-      console.log('showSensorInfo', sensor);
-    },
-    editSensor: function editSensor(did, sensor) {
-      this.sensorFormShow = true;
-      this.sensorFormMethod = this.FormMethodAllowed[1];
-      this.sensorData = sensor;
-      Vue.set(this.sensorData, 'deviceId', did);
     },
     editDevice: function editDevice(typeIdx, device) {
       this.deviceFormShow = true;
@@ -3051,13 +2932,6 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
     },
-    sensorEndAdding: function sensorEndAdding(params) {
-      Vue.set(this.sensorData, 'cabinet_name', params.cabinet_name);
-      Vue.set(this.sensorData, 'floor', params.floor);
-      Vue.set(this.sensorData, 'is_good', params.is_good);
-      Vue.set(this.sensorData, 'SP5_valid', params.SP5_valid);
-      this.sensorFormShow = !this.sensorFormShow;
-    },
     setMarker: function setMarker(typeIdx, device) {
       this.$store.commit('TOGGLE_MAP');
       this.$store.commit('SET_MAP_ACTIVE_DEVICE', {
@@ -3071,6 +2945,275 @@ __webpack_require__.r(__webpack_exports__);
       return this.$store.getters.DEVICES;
     }
   }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireSensor.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/wireSensor.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _add_sensor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../add-sensor */ "./resources/js/components/add-sensor.vue");
+/* harmony import */ var _sensors_card__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../sensors/card */ "./resources/js/components/sensors/card.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    addSensor: _add_sensor__WEBPACK_IMPORTED_MODULE_0__["default"],
+    sensorCard: _sensors_card__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  props: ['typeIdx', 'ObjectDeviceId', 'wireId', 'sensors'],
+  data: function data() {
+    return {
+      sensorFormShow: false,
+      sensorFormMethod: 'new',
+      FormMethodAllowed: ['new', 'edit'],
+      sensorCardShow: false,
+      sensorData: {
+        name: null,
+        deviceId: null,
+        wire_id: null,
+        sensor_id: null,
+        comment: null
+      },
+      sensorInfoData: {}
+    };
+  },
+  methods: {
+    getSensorInfoData: function getSensorInfoData(id) {
+      this.sensorInfoData = this.$store.getters.SENSOR(id);
+    },
+    addSensor: function addSensor(wid, sensorsCount) {
+      if (this.sensorFormMethod == this.FormMethodAllowed[1]) this.sensorData = {
+        deviceId: this.ObjectDeviceId,
+        wire_id: wid,
+        name: ++sensorsCount,
+        cabinet_name: '',
+        comment: ''
+      };else {
+        Vue.set(this.sensorData, 'deviceId', this.ObjectDeviceId);
+        Vue.set(this.sensorData, 'wire_id', wid);
+        Vue.set(this.sensorData, 'name', ++sensorsCount);
+        Vue.set(this.sensorData, 'cabinet_name', '');
+        Vue.set(this.sensorData, 'comment', '');
+      }
+      this.sensorFormShow = true;
+      this.sensorFormMethod = this.FormMethodAllowed[0];
+    },
+    showSensorInfo: function showSensorInfo(sensor) {
+      console.log('showSensorInfo', sensor);
+    },
+    editSensor: function editSensor(sensor) {
+      this.sensorFormShow = true;
+      this.sensorFormMethod = this.FormMethodAllowed[1];
+      this.sensorData = sensor;
+      Vue.set(this.sensorData, 'deviceId', this.ObjectDeviceId);
+    },
+    sensorEndAdding: function sensorEndAdding(params) {
+      Vue.set(this.sensorData, 'cabinet_name', params.cabinet_name);
+      Vue.set(this.sensorData, 'floor', params.floor);
+      Vue.set(this.sensorData, 'is_good', params.is_good);
+      Vue.set(this.sensorData, 'SP5_valid', params.SP5_valid);
+      Vue.set(this.sensorData, 'sensor_id', params.sensor_id);
+      this.sensorFormShow = !this.sensorFormShow;
+    },
+    setMarker: function setMarker(sensor) {
+      var typeIdx = this.typeIdx,
+          deviceId = this.ObjectDeviceId,
+          wid = this.wireId;
+      this.$store.commit('TOGGLE_MAP');
+      this.$store.commit('SET_MAP_ACTIVE_SENSOR', {
+        typeIdx: typeIdx,
+        deviceId: deviceId,
+        wid: wid,
+        sensor: sensor
+      });
+    },
+    deleteSensor: function deleteSensor(sensor) {
+      if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(sensor.name))) {
+        this.$store.commit('DELETE_SENSOR_ON_WIRE', {
+          typeIdx: this.typeIdx,
+          wireId: this.wireId,
+          ObjectDeviceId: this.ObjectDeviceId,
+          sensorId: sensor.id
+        });
+      }
+    }
+  },
+  computed: {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireTree.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/wireTree.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _add_wire__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../add-wire */ "./resources/js/components/add-wire.vue");
+/* harmony import */ var _wireSensor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wireSensor */ "./resources/js/components/treeView/wireSensor.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    addWire: _add_wire__WEBPACK_IMPORTED_MODULE_0__["default"],
+    wireSensor: _wireSensor__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  props: ['wires', 'wires_count', 'typeIdx', 'ObjectDeviceId'],
+  data: function data() {
+    return {
+      addWireShow: false,
+      FormMethodAllowed: ['new', 'edit'],
+      wireData: {
+        is_good: true,
+        type: 'unsafe'
+      },
+      wireMode: 'new'
+    };
+  },
+  methods: {
+    addWire: function addWire() {
+      this.addWireShow = !this.addWireShow;
+      this.wireMode = 'new'; //this.wireData = wire;
+    },
+    editWire: function editWire(wire) {
+      this.addWireShow = true;
+      this.wireMode = 'edit';
+      this.wireData = wire;
+    },
+    deleteWire: function deleteWire(wire) {
+      if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(wire.description))) {
+        this.$store.commit('DELETE_WIRE', {
+          typeIdx: this.typeIdx,
+          object_device_id: this.ObjectDeviceId,
+          id: wire.id
+        });
+      }
+    },
+    toggleWire: function toggleWire(wireIdx) {
+      var tid = this.typeIdx,
+          odid = this.ObjectDeviceId;
+      this.$store.commit('TOGGLE_WIRE_SHOW', {
+        tid: tid,
+        odid: odid,
+        wireIdx: wireIdx
+      });
+    }
+  },
+  computed: {}
 });
 
 /***/ }),
@@ -7551,7 +7694,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\nspan[data-v-1b2ebbf1]{\t\t\n\t\tcursor: pointer;\n}\n.modal-mask[data-v-1b2ebbf1] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-1b2ebbf1] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-1b2ebbf1] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-1b2ebbf1], .modal-leave-active[data-v-1b2ebbf1] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-1b2ebbf1], .modal-leave-active .modal-container[data-v-1b2ebbf1] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
+exports.push([module.i, "\nspan[data-v-1b2ebbf1]{\n\t\tcursor: pointer;\n}\n.modal-mask[data-v-1b2ebbf1] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-1b2ebbf1] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-1b2ebbf1] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-1b2ebbf1], .modal-leave-active[data-v-1b2ebbf1] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-1b2ebbf1], .modal-leave-active .modal-container[data-v-1b2ebbf1] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -7628,6 +7771,44 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 // module
 exports.push([module.i, "\n.underline[data-v-62028b98]{\n\ttext-decoration: underline;\n}\n.pointer[data-v-62028b98]{\n\tcursor:pointer;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css&":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css& ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.underline[data-v-3c04a350]{\n\ttext-decoration: underline;\n}\n.pointer[data-v-3c04a350]{\n\tcursor:pointer;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.underline[data-v-20f698b4]{\n\ttext-decoration: underline;\n}\n.pointer[data-v-20f698b4]{\n\tcursor:pointer;\n}\n", ""]);
 
 // exports
 
@@ -52685,6 +52866,66 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css&":
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css& ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css&":
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css& ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/lib/addStyles.js":
 /*!****************************************************!*\
   !*** ./node_modules/style-loader/lib/addStyles.js ***!
@@ -53466,6 +53707,20 @@ var render = function() {
                   ])
                 ]),
                 _vm._v(" "),
+                _vm.sensorData.sensor_id
+                  ? _c("div", [
+                      _c("strong", [
+                        _vm._v(
+                          _vm._s(
+                            _vm.getSensorById(_vm.sensorData.sensor_id).name
+                          )
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("hr")
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
                 _c(
                   "ul",
                   { staticClass: "list-unstyled" },
@@ -53481,11 +53736,7 @@ var render = function() {
                             }
                           }
                         },
-                        [
-                          sensor.id == _vm.sensorData.sensor_id
-                            ? _c("strong", [_vm._v(_vm._s(sensor.name))])
-                            : _c("span", [_vm._v(_vm._s(sensor.name))])
-                        ]
+                        [_c("span", [_vm._v(_vm._s(sensor.name))])]
                       )
                     ])
                   }),
@@ -53792,7 +54043,33 @@ var render = function() {
                   })
                 ])
               ])
-            ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "card-footer bg-transparent border-success" },
+              [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success mt-4",
+                    attrs: { type: "button" },
+                    on: { click: _vm.handleCommit }
+                  },
+                  [_vm._v("Сохранить")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-warning mt-4",
+                    attrs: { type: "button" },
+                    on: { click: _vm.cancel }
+                  },
+                  [_vm._v("Отмена")]
+                )
+              ]
+            )
           ])
         ])
       ]
@@ -55515,44 +55792,11 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("add-wire", {
-        attrs: {
-          creating: _vm.addWireShow,
-          odid: _vm.ObjectDeviceId,
-          type: _vm.typeIdx,
-          newWire: _vm.wireData,
-          mode: _vm.wireMode
-        },
-        on: {
-          "end-adding": function($event) {
-            _vm.addWireShow = !_vm.addWireShow
-          }
-        }
-      }),
-      _vm._v(" "),
       _c("add-device", {
         attrs: { creating: _vm.addDeviceShow },
         on: {
           "end-adding": function($event) {
             _vm.addDeviceShow = !_vm.addDeviceShow
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("addSensor", {
-        attrs: {
-          creating: _vm.sensorFormShow,
-          method: _vm.sensorFormMethod,
-          sensorData: _vm.sensorData
-        },
-        on: { "end-adding": _vm.sensorEndAdding }
-      }),
-      _vm._v(" "),
-      _c("sensorCard", {
-        attrs: { edit: _vm.sensorCardShow, sensorData: _vm.sensorInfoData },
-        on: {
-          "end-adding": function($event) {
-            _vm.sensorCardShow = !_vm.sensorCardShow
           }
         }
       }),
@@ -55565,83 +55809,87 @@ var render = function() {
             _c("h3", { staticClass: "underline" }, [_vm._v(_vm._s(type.name))]),
             _vm._v(" "),
             _vm._l(type.items, function(device, index) {
-              return _c("li", { key: device.id }, [
-                _c("h4", [
-                  ["App\\device_aps", "App\\device_system_voice_alert"].indexOf(
-                    typeIdx
-                  ) > -1
-                    ? _c(
-                        "span",
-                        {
-                          staticClass: "pointer",
-                          on: {
-                            click: function($event) {
-                              return _vm.toggle(typeIdx, index)
+              return _c(
+                "li",
+                { key: device.id },
+                [
+                  _c("h4", [
+                    [
+                      "App\\device_aps",
+                      "App\\device_system_voice_alert"
+                    ].indexOf(typeIdx) > -1
+                      ? _c(
+                          "span",
+                          {
+                            staticClass: "pointer",
+                            on: {
+                              click: function($event) {
+                                return _vm.toggle(typeIdx, index)
+                              }
                             }
-                          }
-                        },
-                        [
-                          device.isShow
-                            ? _c("span", [_vm._v("-")])
-                            : _c("span", [_vm._v("+")]),
+                          },
+                          [
+                            device.isShow
+                              ? _c("span", [_vm._v("-")])
+                              : _c("span", [_vm._v("+")]),
+                            _vm._v(
+                              "\n\t\t\t\t\t" +
+                                _vm._s(device.name) +
+                                "\n\t\t\t\t"
+                            )
+                          ]
+                        )
+                      : _c("span", [
                           _vm._v(
                             "\n\t\t\t\t\t" + _vm._s(device.name) + "\n\t\t\t\t"
                           )
-                        ]
-                      )
-                    : _c("span", [
-                        _vm._v(
-                          "\n\t\t\t\t\t" + _vm._s(device.name) + "\n\t\t\t\t"
+                        ]),
+                    _vm._v(" "),
+                    typeIdx == "App\\device_aps"
+                      ? _c(
+                          "span",
+                          { staticClass: "badge badge-pill badge-info" },
+                          [
+                            _vm._v(
+                              "\n\t\t\t\t\t" +
+                                _vm._s(device.wires.length) +
+                                " / " +
+                                _vm._s(device.wires_count) +
+                                "\n\t\t\t\t"
+                            )
+                          ]
                         )
-                      ]),
-                  _vm._v(" "),
-                  typeIdx == "App\\device_aps"
-                    ? _c(
-                        "span",
-                        { staticClass: "badge badge-pill badge-info" },
-                        [
-                          _vm._v(
-                            "\n\t\t\t\t\t" +
-                              _vm._s(device.wires.length) +
-                              " / " +
-                              _vm._s(device.wires_count) +
-                              "\n\t\t\t\t"
-                          )
-                        ]
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _c("i", {
-                    staticClass: "ml-4 fas fa-edit text-warning pointer",
-                    on: {
-                      click: function($event) {
-                        return _vm.editDevice(typeIdx, device)
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("i", {
+                      staticClass: "ml-4 fas fa-edit text-warning pointer",
+                      on: {
+                        click: function($event) {
+                          return _vm.editDevice(typeIdx, device)
+                        }
                       }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("i", {
-                    staticClass: "ml-2 fas fa-times text-danger pointer",
-                    on: {
-                      click: function($event) {
-                        return _vm.deleteDevice(typeIdx, device)
+                    }),
+                    _vm._v(" "),
+                    _c("i", {
+                      staticClass: "ml-2 fas fa-times text-danger pointer",
+                      on: {
+                        click: function($event) {
+                          return _vm.deleteDevice(typeIdx, device)
+                        }
                       }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("i", {
-                    staticClass: "ml-2 fas fa-map-marker text-danger pointer",
-                    on: {
-                      click: function($event) {
-                        return _vm.setMarker(typeIdx, device)
+                    }),
+                    _vm._v(" "),
+                    _c("i", {
+                      staticClass: "ml-2 fas fa-map-marker text-danger pointer",
+                      on: {
+                        click: function($event) {
+                          return _vm.setMarker(typeIdx, device)
+                        }
                       }
-                    }
-                  })
-                ]),
-                _vm._v(" "),
-                _c(
-                  "ul",
-                  {
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("wire-tree", {
                     directives: [
                       {
                         name: "show",
@@ -55650,272 +55898,16 @@ var render = function() {
                         expression: "device.isShow"
                       }
                     ],
-                    staticClass: "list-unstyled"
-                  },
-                  [
-                    _vm._l(device.wires, function(wire, wireIndex) {
-                      return _c("li", { key: wireIndex }, [
-                        _c("h3", { staticClass: "pl-4 pointer" }, [
-                          _c(
-                            "span",
-                            {
-                              on: {
-                                click: function($event) {
-                                  return _vm.toggleWire(
-                                    typeIdx,
-                                    index,
-                                    wireIndex
-                                  )
-                                }
-                              }
-                            },
-                            [
-                              wire.isShow
-                                ? _c("span", [_vm._v("-")])
-                                : _c("span", [_vm._v("+")]),
-                              _vm._v(
-                                "\n\t\t\t\t\t\t\t" +
-                                  _vm._s(wire.description) +
-                                  "\n\t\t\t\t\t\t"
-                              )
-                            ]
-                          ),
-                          _vm._v(" "),
-                          wire.type == "safe"
-                            ? _c(
-                                "span",
-                                {
-                                  staticClass: "badge badge-pill badge-success"
-                                },
-                                [_vm._v("ПБ")]
-                              )
-                            : wire.type == "unsafe"
-                            ? _c(
-                                "span",
-                                {
-                                  staticClass: "badge badge-pill badge-danger"
-                                },
-                                [_vm._v("ПО")]
-                              )
-                            : wire.type == "radio"
-                            ? _c(
-                                "span",
-                                {
-                                  staticClass: "badge badge-pill badge-default"
-                                },
-                                [_vm._v("Радио")]
-                              )
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _c(
-                            "span",
-                            { staticClass: "badge badge-pill badge-info" },
-                            [_vm._v(_vm._s(wire.sensors.length))]
-                          ),
-                          _vm._v(" "),
-                          _c("i", {
-                            staticClass:
-                              "ml-4 fas fa-edit text-warning pointer",
-                            on: {
-                              click: function($event) {
-                                return _vm.editWire(typeIdx, wire)
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("i", {
-                            staticClass:
-                              "ml-2 fas fa-times text-danger pointer",
-                            on: {
-                              click: function($event) {
-                                return _vm.deleteWire(typeIdx, wire)
-                              }
-                            }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "ul",
-                          {
-                            directives: [
-                              {
-                                name: "show",
-                                rawName: "v-show",
-                                value: wire.isShow,
-                                expression: "wire.isShow"
-                              }
-                            ],
-                            staticClass: "list-unstyled"
-                          },
-                          [
-                            _c("li", [
-                              _c("div", { staticClass: "table-responsive" }, [
-                                _c(
-                                  "table",
-                                  {
-                                    staticClass:
-                                      "table align-items-center table-dark"
-                                  },
-                                  [
-                                    _vm._m(0, true),
-                                    _vm._v(" "),
-                                    _c(
-                                      "tbody",
-                                      _vm._l(wire.sensors, function(sensor) {
-                                        return _c(
-                                          "tr",
-                                          {
-                                            key: sensor.id,
-                                            attrs: {
-                                              sensorInfoData: _vm.$store.getters.SENSOR(
-                                                sensor.sensor_id
-                                              )
-                                            }
-                                          },
-                                          [
-                                            _c("td", [
-                                              _vm._v(
-                                                "\n\t\t\t\t\t\t\t\t\t\t\t\t" +
-                                                  _vm._s(
-                                                    _vm.sensorInfoData.name
-                                                  ) +
-                                                  "\n\t\t\t\t\t\t\t\t\t\t\t\t"
-                                              ),
-                                              _c(
-                                                "span",
-                                                {
-                                                  staticClass:
-                                                    "badge badge-info",
-                                                  on: {
-                                                    click: function($event) {
-                                                      _vm.sensorCardShow = !_vm.sensorCardShow
-                                                    }
-                                                  }
-                                                },
-                                                [
-                                                  _c("i", {
-                                                    staticClass:
-                                                      "fas fa-question"
-                                                  })
-                                                ]
-                                              )
-                                            ]),
-                                            _vm._v(" "),
-                                            _c("td", [
-                                              _vm._v(_vm._s(sensor.name))
-                                            ]),
-                                            _vm._v(" "),
-                                            _c("td", [
-                                              _vm._v(_vm._s(sensor.floor))
-                                            ]),
-                                            _vm._v(" "),
-                                            _c("td", [
-                                              _vm._v(
-                                                _vm._s(sensor.cabinet_name)
-                                              )
-                                            ]),
-                                            _vm._v(" "),
-                                            _c("td", [
-                                              sensor.SP5_valid
-                                                ? _c("i", {
-                                                    staticClass:
-                                                      "fas fa-check text-success"
-                                                  })
-                                                : _c("i", {
-                                                    staticClass:
-                                                      "fas fa-times text-danger"
-                                                  })
-                                            ]),
-                                            _vm._v(" "),
-                                            _c("td", [
-                                              sensor.is_good
-                                                ? _c("i", {
-                                                    staticClass:
-                                                      "fas fa-check text-success"
-                                                  })
-                                                : _c("i", {
-                                                    staticClass:
-                                                      "fas fa-times text-danger"
-                                                  })
-                                            ]),
-                                            _vm._v(" "),
-                                            _c("td", [
-                                              _vm._v(
-                                                "\n\t\t\t\t\t\t\t\t\t\t\t\t" +
-                                                  _vm._s(sensor.comment) +
-                                                  "\n\t\t\t\t\t\t\t\t\t\t\t"
-                                              )
-                                            ]),
-                                            _vm._v(" "),
-                                            _c("td", [
-                                              _c("i", {
-                                                staticClass:
-                                                  "fas fa-edit text-warning pointer",
-                                                on: {
-                                                  click: function($event) {
-                                                    return _vm.editSensor(
-                                                      device.id,
-                                                      sensor
-                                                    )
-                                                  }
-                                                }
-                                              })
-                                            ])
-                                          ]
-                                        )
-                                      }),
-                                      0
-                                    )
-                                  ]
-                                )
-                              ])
-                            ]),
-                            _vm._v(" "),
-                            _c("li", [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "ml-4 btn btn-success",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.addSensor(
-                                        device.id,
-                                        wire.id,
-                                        wire.sensors.length
-                                      )
-                                    }
-                                  }
-                                },
-                                [_vm._v("Добавить сенсор")]
-                              )
-                            ])
-                          ]
-                        )
-                      ])
-                    }),
-                    _vm._v(" "),
-                    device.wires.length < device.wires_count
-                      ? _c("li", { staticClass: "mt-2" }, [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-success",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.addWire(typeIdx, device.id)
-                                }
-                              }
-                            },
-                            [_vm._v("Добавить шлейф")]
-                          )
-                        ])
-                      : _vm._e()
-                  ],
-                  2
-                )
-              ])
+                    attrs: {
+                      wires: device.wires,
+                      wires_count: device.wires_count,
+                      typeIdx: typeIdx,
+                      ObjectDeviceId: device.id
+                    }
+                  })
+                ],
+                1
+              )
             })
           ],
           2
@@ -55939,6 +55931,175 @@ var render = function() {
       )
     ],
     2
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireSensor.vue?vue&type=template&id=3c04a350&scoped=true&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/wireSensor.vue?vue&type=template&id=3c04a350&scoped=true& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "ul",
+    { staticClass: "list-unstyled" },
+    [
+      _c("addSensor", {
+        attrs: {
+          creating: _vm.sensorFormShow,
+          method: _vm.sensorFormMethod,
+          sensorData: _vm.sensorData,
+          typeIdx: _vm.typeIdx,
+          ObjectDeviceId: _vm.ObjectDeviceId,
+          wireId: _vm.wireId
+        },
+        on: { "end-adding": _vm.sensorEndAdding }
+      }),
+      _vm._v(" "),
+      _c("sensorCard", {
+        attrs: { edit: _vm.sensorCardShow, sensorData: _vm.sensorInfoData },
+        on: {
+          "end-adding": function($event) {
+            _vm.sensorCardShow = !_vm.sensorCardShow
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("li", [
+        _c("div", { staticClass: "table-responsive" }, [
+          _c("table", { staticClass: "table align-items-center table-dark" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c(
+              "tbody",
+              _vm._l(_vm.sensors, function(sensor) {
+                return _c(
+                  "tr",
+                  {
+                    key: sensor.id,
+                    attrs: {
+                      sensorInfoData: _vm.$store.getters.SENSOR(
+                        sensor.sensor_id
+                      )
+                    }
+                  },
+                  [
+                    _c("td", [
+                      _vm._v(
+                        "\n\t\t\t\t\t\t\t" +
+                          _vm._s(_vm.sensorInfoData.name) +
+                          "\n\t\t\t\t\t\t\t"
+                      ),
+                      _c(
+                        "span",
+                        {
+                          staticClass: "badge badge-info",
+                          on: {
+                            click: function($event) {
+                              _vm.sensorCardShow = !_vm.sensorCardShow
+                            }
+                          }
+                        },
+                        [_c("i", { staticClass: "fas fa-question" })]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(sensor.name))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(sensor.floor))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(sensor.cabinet_name))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      sensor.SP5_valid
+                        ? _c("i", { staticClass: "fas fa-check text-success" })
+                        : _c("i", { staticClass: "fas fa-times text-danger" })
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      sensor.is_good
+                        ? _c("i", { staticClass: "fas fa-check text-success" })
+                        : _c("i", { staticClass: "fas fa-times text-danger" })
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        "\n\t\t\t\t\t\t\t" +
+                          _vm._s(sensor.comment) +
+                          "\n\t\t\t\t\t\t"
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c("i", {
+                        staticClass: "fas fa-edit text-warning pointer",
+                        on: {
+                          click: function($event) {
+                            return _vm.editSensor(sensor)
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("i", {
+                        staticClass: "ml-2 fas fa-times text-danger pointer",
+                        on: {
+                          click: function($event) {
+                            return _vm.deleteSensor(sensor)
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("i", {
+                        staticClass:
+                          "ml-2 fas fa-map-marker text-danger pointer",
+                        on: {
+                          click: function($event) {
+                            return _vm.setMarker(sensor)
+                          }
+                        }
+                      })
+                    ])
+                  ]
+                )
+              }),
+              0
+            )
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("li", [
+        _c(
+          "button",
+          {
+            staticClass: "ml-4 btn btn-success",
+            attrs: { type: "button" },
+            on: {
+              click: function($event) {
+                return _vm.addSensor(_vm.wireId, _vm.sensors.length)
+              }
+            }
+          },
+          [_vm._v("Добавить извещатель")]
+        )
+      ])
+    ],
+    1
   )
 }
 var staticRenderFns = [
@@ -55967,6 +56128,153 @@ var staticRenderFns = [
     ])
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireTree.vue?vue&type=template&id=20f698b4&scoped=true&":
+/*!********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/wireTree.vue?vue&type=template&id=20f698b4&scoped=true& ***!
+  \********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "ul",
+    { staticClass: "list-unstyled" },
+    [
+      _c("add-wire", {
+        attrs: {
+          creating: _vm.addWireShow,
+          odid: _vm.ObjectDeviceId,
+          type: _vm.typeIdx,
+          newWire: _vm.wireData,
+          mode: _vm.wireMode
+        },
+        on: {
+          "end-adding": function($event) {
+            _vm.addWireShow = !_vm.addWireShow
+          }
+        }
+      }),
+      _vm._v(" "),
+      _vm._l(_vm.wires, function(wire, wireIndex) {
+        return _c(
+          "li",
+          { key: wireIndex },
+          [
+            _c("h3", { staticClass: "pl-4 pointer" }, [
+              _c(
+                "span",
+                {
+                  on: {
+                    click: function($event) {
+                      return _vm.toggleWire(wireIndex)
+                    }
+                  }
+                },
+                [
+                  wire.isShow
+                    ? _c("span", [_vm._v("-")])
+                    : _c("span", [_vm._v("+")]),
+                  _vm._v("\n\t\t\t\t" + _vm._s(wire.description) + "\n\t\t\t")
+                ]
+              ),
+              _vm._v(" "),
+              wire.type == "safe"
+                ? _c(
+                    "span",
+                    { staticClass: "badge badge-pill badge-success" },
+                    [_vm._v("ПБ")]
+                  )
+                : wire.type == "unsafe"
+                ? _c("span", { staticClass: "badge badge-pill badge-danger" }, [
+                    _vm._v("ПО")
+                  ])
+                : wire.type == "radio"
+                ? _c(
+                    "span",
+                    { staticClass: "badge badge-pill badge-default" },
+                    [_vm._v("Радио")]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _c("span", { staticClass: "badge badge-pill badge-info" }, [
+                _vm._v(_vm._s(wire.sensors.length))
+              ]),
+              _vm._v(" "),
+              _c("i", {
+                staticClass: "ml-4 fas fa-edit text-warning pointer",
+                on: {
+                  click: function($event) {
+                    return _vm.editWire(wire)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c("i", {
+                staticClass: "ml-2 fas fa-times text-danger pointer",
+                on: {
+                  click: function($event) {
+                    return _vm.deleteWire(wire)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("wire-sensor", {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: wire.isShow,
+                  expression: "wire.isShow"
+                }
+              ],
+              attrs: {
+                typeIdx: _vm.typeIdx,
+                ObjectDeviceId: _vm.ObjectDeviceId,
+                wireId: wire.id,
+                sensors: wire.sensors
+              }
+            })
+          ],
+          1
+        )
+      }),
+      _vm._v(" "),
+      _vm.wires.length < _vm.wires_count
+        ? _c("li", { staticClass: "mt-2 mb-2" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-success",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    return _vm.addWire()
+                  }
+                }
+              },
+              [_vm._v("Добавить шлейф")]
+            )
+          ])
+        : _vm._e()
+    ],
+    2
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -70038,6 +70346,180 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/treeView/wireSensor.vue":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/treeView/wireSensor.vue ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _wireSensor_vue_vue_type_template_id_3c04a350_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./wireSensor.vue?vue&type=template&id=3c04a350&scoped=true& */ "./resources/js/components/treeView/wireSensor.vue?vue&type=template&id=3c04a350&scoped=true&");
+/* harmony import */ var _wireSensor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wireSensor.vue?vue&type=script&lang=js& */ "./resources/js/components/treeView/wireSensor.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _wireSensor_vue_vue_type_style_index_0_id_3c04a350_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css& */ "./resources/js/components/treeView/wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _wireSensor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _wireSensor_vue_vue_type_template_id_3c04a350_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _wireSensor_vue_vue_type_template_id_3c04a350_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "3c04a350",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/treeView/wireSensor.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/wireSensor.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/treeView/wireSensor.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./wireSensor.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireSensor.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css&":
+/*!******************************************************************************************************************!*\
+  !*** ./resources/js/components/treeView/wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css& ***!
+  \******************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_style_index_0_id_3c04a350_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireSensor.vue?vue&type=style&index=0&id=3c04a350&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_style_index_0_id_3c04a350_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_style_index_0_id_3c04a350_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_style_index_0_id_3c04a350_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_style_index_0_id_3c04a350_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_style_index_0_id_3c04a350_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/wireSensor.vue?vue&type=template&id=3c04a350&scoped=true&":
+/*!****************************************************************************************************!*\
+  !*** ./resources/js/components/treeView/wireSensor.vue?vue&type=template&id=3c04a350&scoped=true& ***!
+  \****************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_template_id_3c04a350_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./wireSensor.vue?vue&type=template&id=3c04a350&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireSensor.vue?vue&type=template&id=3c04a350&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_template_id_3c04a350_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_wireSensor_vue_vue_type_template_id_3c04a350_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/wireTree.vue":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/treeView/wireTree.vue ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _wireTree_vue_vue_type_template_id_20f698b4_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./wireTree.vue?vue&type=template&id=20f698b4&scoped=true& */ "./resources/js/components/treeView/wireTree.vue?vue&type=template&id=20f698b4&scoped=true&");
+/* harmony import */ var _wireTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wireTree.vue?vue&type=script&lang=js& */ "./resources/js/components/treeView/wireTree.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _wireTree_vue_vue_type_style_index_0_id_20f698b4_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css& */ "./resources/js/components/treeView/wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _wireTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _wireTree_vue_vue_type_template_id_20f698b4_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _wireTree_vue_vue_type_template_id_20f698b4_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "20f698b4",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/treeView/wireTree.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/wireTree.vue?vue&type=script&lang=js&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/treeView/wireTree.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./wireTree.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireTree.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css&":
+/*!****************************************************************************************************************!*\
+  !*** ./resources/js/components/treeView/wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css& ***!
+  \****************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_style_index_0_id_20f698b4_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireTree.vue?vue&type=style&index=0&id=20f698b4&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_style_index_0_id_20f698b4_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_style_index_0_id_20f698b4_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_style_index_0_id_20f698b4_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_style_index_0_id_20f698b4_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_style_index_0_id_20f698b4_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/wireTree.vue?vue&type=template&id=20f698b4&scoped=true&":
+/*!**************************************************************************************************!*\
+  !*** ./resources/js/components/treeView/wireTree.vue?vue&type=template&id=20f698b4&scoped=true& ***!
+  \**************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_template_id_20f698b4_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./wireTree.vue?vue&type=template&id=20f698b4&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/wireTree.vue?vue&type=template&id=20f698b4&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_template_id_20f698b4_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_wireTree_vue_vue_type_template_id_20f698b4_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/mixins/auth.js":
 /*!*************************************!*\
   !*** ./resources/js/mixins/auth.js ***!
@@ -70187,11 +70669,16 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         var wire_idx = state.devices[p.typeIdx].items[device_idx].wires.findIndex(function (el) {
           return el.id == p.id;
         });
-        vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices[idx].wires, wire_idx);
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices[p.typeIdx].items[device_idx].wires, wire_idx);
       });
     },
     TOGGLE_WIRE_SHOW: function TOGGLE_WIRE_SHOW(state, payload) {
-      state.devices[payload.typeIdx].items[payload.idx].wires[payload.wireIdx].isShow = !state.devices[payload.typeIdx].items[payload.idx].wires[payload.wireIdx].isShow;
+      var p = _objectSpread({}, payload);
+
+      var device_idx = state.devices[p.tid].items.findIndex(function (obj) {
+        return obj.id == p.odid;
+      });
+      state.devices[p.tid].items[device_idx].wires[p.wireIdx].isShow = !state.devices[p.tid].items[device_idx].wires[p.wireIdx].isShow;
     },
     FILL_SENSORS: function FILL_SENSORS(state) {
       axios.post('/api/sensors/getall', {}).then(function (response) {
@@ -70234,13 +70721,15 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         payload: payload,
         user_id: state.user.id
       }).then(function (resonse) {
-        var device_idx = state.devices.findIndex(function (el) {
-          return el.id == payload.sensorData.deviceId;
+        var p = _objectSpread({}, payload);
+
+        var device_idx = state.devices[p.typeIdx].items.findIndex(function (el) {
+          return el.id == p.ObjectDeviceId;
         });
-        var wire_idx = state.devices[device_idx].wires.findIndex(function (el) {
-          return el.id == payload.sensorData.wire_id;
+        var wire_idx = state.devices[p.typeIdx].items[device_idx].wires.findIndex(function (el) {
+          return el.id == p.wireId;
         });
-        state.devices[device_idx].wires[wire_idx].sensors.push(resonse.data);
+        state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors.push(resonse.data);
       });
     },
     UPDATE_SENSOR_TO_WIRE: function UPDATE_SENSOR_TO_WIRE(state, payload) {
@@ -70248,16 +70737,34 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         payload: payload,
         user_id: state.user.id
       }).then(function (resonse) {
-        var device_idx = state.devices.findIndex(function (el) {
-          return el.id == payload.sensorData.deviceId;
+        var p = _objectSpread({}, payload);
+
+        var device_idx = state.devices[p.typeIdx].items.findIndex(function (el) {
+          return el.id == p.ObjectDeviceId;
         });
-        var wire_idx = state.devices[device_idx].wires.findIndex(function (el) {
-          return el.id == payload.sensorData.wire_id;
+        var wire_idx = state.devices[p.typeIdx].items[device_idx].wires.findIndex(function (el) {
+          return el.id == p.wireId;
         });
-        var sensor_idx = state.devices[device_idx].wires[wire_idx].sensors.findIndex(function (el) {
+        var sensor_idx = state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors.findIndex(function (el) {
           return el.id == payload.sensorData.id;
         });
-        vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.devices[device_idx].wires[wire_idx].sensors, sensor_idx, resonse.data);
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors, sensor_idx, resonse.data);
+      });
+    },
+    DELETE_SENSOR_ON_WIRE: function DELETE_SENSOR_ON_WIRE(state, payload) {
+      axios.post("/api/sensorwire/delete/".concat(payload.sensorId)).then(function (response) {
+        var p = _objectSpread({}, payload);
+
+        var device_idx = state.devices[p.typeIdx].items.findIndex(function (el) {
+          return el.id == p.ObjectDeviceId;
+        });
+        var wire_idx = state.devices[p.typeIdx].items[device_idx].wires.findIndex(function (el) {
+          return el.id == p.wireId;
+        });
+        var sensor_idx = state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors.findIndex(function (el) {
+          return el.id == p.sensorId;
+        });
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a["delete"](state.devices[p.typeIdx].items[device_idx].wires[wire_idx].sensors, sensor_idx);
       });
     },
     SET_BTIPLANS: function SET_BTIPLANS(state, payload) {
@@ -70278,6 +70785,22 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         return obj.id == p.deviceId;
       });
       state.markerObj = state.devices[p.typeIdx].items[idx];
+      state.markerObj.type = 'device';
+    },
+    SET_MAP_ACTIVE_SENSOR: function SET_MAP_ACTIVE_SENSOR(state, payload) {
+      var p = _objectSpread({}, payload);
+
+      var idx = state.devices[p.typeIdx].items.findIndex(function (obj) {
+        return obj.id == p.deviceId;
+      });
+      var wire_idx = state.devices[p.typeIdx].items[idx].wires.findIndex(function (obj) {
+        return obj.id == p.wid;
+      });
+      var sensor_id = state.devices[p.typeIdx].items[idx].wires[wire_idx].sensors.findIndex(function (obj) {
+        return obj.id == p.sensor.id;
+      });
+      state.markerObj = state.devices[p.typeIdx].items[idx].wires[wire_idx].sensors[sensor_id];
+      state.markerObj.type = 'sensor';
     },
     SET_DEVICE_COORDS: function SET_DEVICE_COORDS(state, payload) {
       var p = _objectSpread({}, payload);
@@ -70287,6 +70810,25 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       state.markerObj.bti_files_id = p.bti_plan_id;
       axios.post("/api/objectdevice/storeCoords/".concat(state.markerObj.id), state.markerObj).then(function (response) {
         var rd = response.data;
+        var idx = state.devices[rd.tbl_name].items.findIndex(function (obj) {
+          return obj.id == rd.id;
+        });
+        var obj = state.devices[rd.tbl_name].items[idx];
+        obj.lat = rd.lat;
+        obj.lng = rd.lng;
+        obj.lng = rd.bti_files_id;
+      });
+    },
+    SET_SENSOR_COORDS: function SET_SENSOR_COORDS(state, payload) {
+      var p = _objectSpread({}, payload);
+
+      return;
+      state.markerObj.lng = p.coords.lng;
+      state.markerObj.lat = p.coords.lat;
+      state.markerObj.bti_files_id = p.bti_plan_id;
+      axios.post("/api/sensorwire/storeCoords/".concat(state.markerObj.id), state.markerObj).then(function (response) {
+        var rd = response.data;
+        console.log(rd);
         var idx = state.devices[rd.tbl_name].items.findIndex(function (obj) {
           return obj.id == rd.id;
         });
@@ -70319,6 +70861,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     MARKER_SETTABLE: function MARKER_SETTABLE(state) {
       return state.setMarker;
+    },
+    MARKER_OBJECT: function MARKER_OBJECT(state) {
+      return state.markerObj;
     },
     DEVICE_MARKERS: function DEVICE_MARKERS(state) {
       var markers = [];

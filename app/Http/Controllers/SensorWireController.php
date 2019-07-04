@@ -11,10 +11,10 @@ class SensorWireController extends Controller
     public function addJson(Request $request){
         $data = $request->all();
         $params = [];
-        if(isset($data['payload']['sensorData']['SP5_valid']))       
+        if(isset($data['payload']['sensorData']['SP5_valid']))
         	$SP5 = $data['payload']['sensorData']['SP5_valid'];
        	else $SP5 = false;
-        if(isset($data['payload']['sensorData']['is_good']))       
+        if(isset($data['payload']['sensorData']['is_good']))
         	$is_good = $data['payload']['sensorData']['is_good'];
        	else $is_good = false;
         $params['wire_id'] = $data['payload']['sensorData']['wire_id'];
@@ -33,13 +33,31 @@ class SensorWireController extends Controller
         return response()->json($obj);
     }
 
+    public function deleteJson($id, Request $request){
+        $obj = WireSensor::find($id);
+        $prev_state = new WireSensorPrevState($obj->toArray());
+        $prev_state->wire_sensor_id = $obj->id;
+        unset($prev_state->id);
+        $prev_state->save();
+
+        $obj->delete();
+    }
+
+    public function storeCoordsJson($id, Request $request){
+        $obj = WireSensor::find($id);
+        $data = $request->only(['lat', 'lng', 'bti_files_id']);
+        $data['created_user_id'] = $request->header('x-user');
+        $obj->update($data);
+        return response()->json($obj);
+    }
+
     public function updateJson(Request $request){
         $data = $request->all();
         $params = [];
-        if(isset($data['payload']['sensorData']['SP5_valid']))       
+        if(isset($data['payload']['sensorData']['SP5_valid']))
         	$SP5 = $data['payload']['sensorData']['SP5_valid'];
        	else $SP5 = false;
-        if(isset($data['payload']['sensorData']['is_good']))       
+        if(isset($data['payload']['sensorData']['is_good']))
         	$is_good = $data['payload']['sensorData']['is_good'];
        	else $is_good = false;
         $params['wire_id'] = $data['payload']['sensorData']['wire_id'];

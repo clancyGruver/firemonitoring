@@ -1,7 +1,9 @@
 <?php
 
 namespace App;
+
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class device_alert extends Device
 {

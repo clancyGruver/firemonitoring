@@ -3,14 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WireSensor extends Model
 {
+    use SoftDeletes;
 	protected $table = 'wire_sensor';
     protected $primaryKey = 'id';
-    protected $attributes = [
-        'is_active' => true,
-    ];
     protected $fillable = [
 		'wire_id',
 		'sensor_id',
@@ -20,7 +19,9 @@ class WireSensor extends Model
 		'cabinet_name',
 		'SP5_valid',
 		'is_good',
-		'is_active',
 		'comment',
+        'bti_files_id',
+        'lng',
+        'lat',
 	];
 }
