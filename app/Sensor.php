@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sensor extends Model
 {
@@ -23,4 +25,17 @@ class Sensor extends Model
         'automate_reaction',
         'created_user_id',
     ];
+
+    protected $appends = ['icon'];
+
+    public function getIconAttribute(){
+        $url = 'icons/sensors/';
+        if(!$this->is_automate)
+            return Storage::url($url . 'manual.png');
+        else{
+            $url .= 'auto_';
+            return Storage::url( url . $this->automate_attribute . '.png');
+        }
+    }
+
 }
