@@ -70800,6 +70800,10 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         return obj.id == p.sensor.id;
       });
       state.markerObj = state.devices[p.typeIdx].items[idx].wires[wire_idx].sensors[sensor_id];
+      state.markerObj.typeIdx = p.typeIdx;
+      state.markerObj.itemsIdx = idx;
+      state.markerObj.wireIdx = wire_idx;
+      state.markerObj.sensorIdx = sensor_id;
       state.markerObj.type = 'sensor';
     },
     SET_DEVICE_COORDS: function SET_DEVICE_COORDS(state, payload) {
@@ -70816,26 +70820,22 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         var obj = state.devices[rd.tbl_name].items[idx];
         obj.lat = rd.lat;
         obj.lng = rd.lng;
-        obj.lng = rd.bti_files_id;
+        obj.bti_files_id = rd.bti_files_id;
       });
     },
     SET_SENSOR_COORDS: function SET_SENSOR_COORDS(state, payload) {
       var p = _objectSpread({}, payload);
 
-      return;
       state.markerObj.lng = p.coords.lng;
       state.markerObj.lat = p.coords.lat;
       state.markerObj.bti_files_id = p.bti_plan_id;
       axios.post("/api/sensorwire/storeCoords/".concat(state.markerObj.id), state.markerObj).then(function (response) {
         var rd = response.data;
-        console.log(rd);
-        var idx = state.devices[rd.tbl_name].items.findIndex(function (obj) {
-          return obj.id == rd.id;
-        });
-        var obj = state.devices[rd.tbl_name].items[idx];
+        var mo = state.markerObj;
+        var obj = state.devices[mo.typeIdx].items[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx];
         obj.lat = rd.lat;
         obj.lng = rd.lng;
-        obj.lng = rd.bti_files_id;
+        obj.bti_files_id = rd.bti_files_id;
       });
     }
   },
@@ -70869,14 +70869,26 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       var markers = [];
 
       var _loop = function _loop(deviceType) {
-        state.devices[deviceType].items.map(function (item) {
-          if (!markers[item.bti_files_id]) markers[item.bti_files_id] = [];
-          markers[item.bti_files_id].push({
-            lng: item.lng,
-            lat: item.lat,
-            icon: item.icon,
-            deviceId: item.id,
+        state.devices[deviceType].items.map(function (device) {
+          if (!markers[device.bti_files_id]) markers[device.bti_files_id] = [];
+          markers[device.bti_files_id].push({
+            lng: device.lng,
+            lat: device.lat,
+            icon: device.icon,
+            deviceId: device.id,
             deviceType: deviceType
+          });
+          if (device.markers && device.markers.length > 0) item.map(function (wire) {
+            if (wire.sensors > 0) wire.sensors.map(function (sensor) {
+              if (!markers[sensor.bti_files_id]) markers[sensor.bti_files_id] = [];
+              markers[sensor.bti_files_id].push({
+                lng: sensor.lng,
+                lat: sensor.lat,
+                icon: sensor.icon,
+                sensorId: sensor.id,
+                deviceType: 'sensor'
+              });
+            });
           });
         });
       };

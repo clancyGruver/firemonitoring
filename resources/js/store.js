@@ -222,6 +222,10 @@ export const store = new Vuex.Store({
       const wire_idx = state.devices[p.typeIdx].items[idx].wires.findIndex(obj => obj.id == p.wid );
       const sensor_id = state.devices[p.typeIdx].items[idx].wires[wire_idx].sensors.findIndex(obj => obj.id == p.sensor.id );
       state.markerObj = state.devices[p.typeIdx].items[idx].wires[wire_idx].sensors[sensor_id];
+      state.markerObj.typeIdx = p.typeIdx;
+      state.markerObj.itemsIdx = idx;
+      state.markerObj.wireIdx = wire_idx;
+      state.markerObj.sensorIdx = sensor_id;
       state.markerObj.type = 'sensor';
     },
     SET_DEVICE_COORDS:(state, payload) => {
@@ -237,13 +241,12 @@ export const store = new Vuex.Store({
             const obj = state.devices[rd.tbl_name].items[idx];
             obj.lat = rd.lat;
             obj.lng = rd.lng;
-            obj.lng = rd.bti_files_id;
+            obj.bti_files_id = rd.bti_files_id;
           }
         )
     },
     SET_SENSOR_COORDS:(state, payload) => {
       const p = {...payload};
-      return;
       state.markerObj.lng = p.coords.lng;
       state.markerObj.lat = p.coords.lat;
       state.markerObj.bti_files_id = p.bti_plan_id;
@@ -251,12 +254,11 @@ export const store = new Vuex.Store({
        .then(
           response => {
             const rd = response.data;
-            console.log(rd);
-            const idx = state.devices[rd.tbl_name].items.findIndex(obj => obj.id == rd.id );
-            const obj = state.devices[rd.tbl_name].items[idx];
+            const mo = state.markerObj;
+            const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx]
             obj.lat = rd.lat;
             obj.lng = rd.lng;
-            obj.lng = rd.bti_files_id;
+            obj.bti_files_id = rd.bti_files_id;
           }
         )
     },
@@ -274,16 +276,35 @@ export const store = new Vuex.Store({
       const markers = [];
       for(let deviceType in state.devices){
         state.devices[deviceType].items.map(
-          item => {
-            if(!markers[item.bti_files_id])
-              markers[item.bti_files_id] = [];
-            markers[item.bti_files_id].push({
-              lng: item.lng,
-              lat: item.lat,
-              icon: item.icon,
-              deviceId: item.id,
+          device => {
+            if(!markers[device.bti_files_id])
+              markers[device.bti_files_id] = [];
+            markers[device.bti_files_id].push({
+              lng: device.lng,
+              lat: device.lat,
+              icon: device.icon,
+              deviceId: device.id,
               deviceType: deviceType
             })
+            if( device.markers && device.markers.length > 0 )
+              item.map(
+                wire => {
+                  if( wire.sensors > 0 )
+                    wire.sensors.map(
+                      sensor => {
+                        if(!markers[sensor.bti_files_id])
+                          markers[sensor.bti_files_id] = [];
+                        markers[sensor.bti_files_id].push({
+                          lng: sensor.lng,
+                          lat: sensor.lat,
+                          icon: sensor.icon,
+                          sensorId: sensor.id,
+                          deviceType: 'sensor'
+                        })
+                      }
+                    )
+                }
+              )
           }
         )
       }
