@@ -286,10 +286,10 @@ export const store = new Vuex.Store({
               deviceId: device.id,
               deviceType: deviceType
             })
-            if( device.markers && device.markers.length > 0 )
-              item.map(
+            if( device.wires && device.wires.length > 0 )
+              device.wires.map(
                 wire => {
-                  if( wire.sensors > 0 )
+                  if( wire.sensors.length > 0 ){
                     wire.sensors.map(
                       sensor => {
                         if(!markers[sensor.bti_files_id])
@@ -303,6 +303,7 @@ export const store = new Vuex.Store({
                         })
                       }
                     )
+                  }
                 }
               )
           }

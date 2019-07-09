@@ -2290,13 +2290,144 @@ __webpack_require__.r(__webpack_exports__);
           bti_files_id: val.bti_files_id
         };
 
-        _this2.tree[val.tbl_name].items.push(treeEl); //this.tree.push(treeEl);
-
+        _this2.tree[val.tbl_name].items.push(treeEl);
       });
       console.log(this.tree);
       this.$store.commit('SET_DEVICES', this.tree);
     }
   }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/antenna.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/editForms/antenna.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    deviceData: {
+      type: Object,
+      "default": function _default() {}
+    }
+  },
+  data: function data() {
+    return {
+      errors: []
+    };
+  },
+  methods: {
+    save: function save() {
+      if (!this.check()) return false;
+      console.log(this.deviceData);
+      this.$store.commit('UPDATE_ANTENNA', this.sensorData);
+      this.$emit('end-adding');
+    },
+    cancel: function cancel() {
+      this.$emit('end-adding');
+    },
+    check: function check() {
+      var res = true;
+      this.errors = [];
+
+      if (!this.antennaData.setup_place) {
+        this.errors.push('Требуется указать место установки.');
+        res = false;
+      }
+
+      if (!this.antennaData.mast_isset) {
+        this.errors.push('Требуется указать наличие мачты.');
+        res = false;
+      }
+
+      return res;
+    }
+  },
+  computed: {}
 });
 
 /***/ }),
@@ -2405,7 +2536,9 @@ __webpack_require__.r(__webpack_exports__);
       return this.$store.getters.MARKER_SETTABLE;
     },
     markers: function markers() {
-      return this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];
+      var markers = this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];
+      console.log(markers);
+      return markers;
     }
   },
   mounted: function mounted() {
@@ -2748,11 +2881,7 @@ __webpack_require__.r(__webpack_exports__);
       return res;
     }
   },
-  computed: {
-    availDevs: function availDevs() {
-      return this.$store.getters.AVAILABLE_DEVICES;
-    }
-  }
+  computed: {}
 });
 
 /***/ }),
@@ -2862,6 +2991,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _add_device__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../add-device */ "./resources/js/components/add-device.vue");
 /* harmony import */ var _wireTree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wireTree */ "./resources/js/components/treeView/wireTree.vue");
+/* harmony import */ var _editForms_antenna__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../editForms/antenna */ "./resources/js/components/editForms/antenna.vue");
 //
 //
 //
@@ -2892,18 +3022,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+
+ //import alarmDevices from './alarmDevices';
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     addDevice: _add_device__WEBPACK_IMPORTED_MODULE_0__["default"],
-    wireTree: _wireTree__WEBPACK_IMPORTED_MODULE_1__["default"]
+    wireTree: _wireTree__WEBPACK_IMPORTED_MODULE_1__["default"],
+    antennaDevice: _editForms_antenna__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   props: {},
   data: function data() {
     return {
       tData: {},
       addDeviceShow: false,
+      atennaEdit: false,
       FormMethodAllowed: ['new', 'edit'],
       ObjectDeviceId: null,
       typeIdx: null,
@@ -2921,8 +3056,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     editDevice: function editDevice(typeIdx, device) {
       this.deviceFormShow = true;
-      this.deviceFormMethod = this.deviceFormMethodAllowed[1];
+      this.deviceFormMethod = 'edit';
       this.deviceData = device;
+      console.log(typeIdx);
+      if (typeIdx == 'App\\device_antenna') this.atennaEdit = true;
     },
     deleteDevice: function deleteDevice(typeIdx, device) {
       if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(device.name))) {
@@ -7713,7 +7850,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
 
 // exports
 
@@ -7751,7 +7888,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n\t\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-30364831] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\r\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n\t\r\n", ""]);
 
 // exports
 
@@ -53666,7 +53803,7 @@ var render = function() {
                 _c(
                   "ul",
                   _vm._l(_vm.errors, function(error, index) {
-                    return _c("li", [_vm._v(_vm._s(error))])
+                    return _c("li", { key: index }, [_vm._v(_vm._s(error))])
                   }),
                   0
                 )
@@ -53725,7 +53862,7 @@ var render = function() {
                   "ul",
                   { staticClass: "list-unstyled" },
                   _vm._l(_vm.availSensors, function(sensor) {
-                    return _c("li", [
+                    return _c("li", { key: sensor.id }, [
                       _c(
                         "span",
                         {
@@ -54465,6 +54602,360 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/antenna.vue?vue&type=template&id=0a9e7104&scoped=true&":
+/*!********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/editForms/antenna.vue?vue&type=template&id=0a9e7104&scoped=true& ***!
+  \********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("transition", { attrs: { name: "modal" } }, [
+    _c(
+      "div",
+      {
+        staticClass:
+          "modal-dialog modal- modal-dialog-centered modal-xl modal-mask",
+        attrs: { role: "document" },
+        on: {
+          click: function($event) {
+            if ($event.target !== $event.currentTarget) {
+              return null
+            }
+            return _vm.cancel($event)
+          }
+        }
+      },
+      [
+        _c("div", { staticClass: "modal-content card-body modal-wrapper" }, [
+          _c("div", { staticClass: "modal-body p-0 modal-container" }, [
+            _c("div", { staticClass: "card bg-secondary shadow border-0" }, [
+              _c(
+                "div",
+                { staticClass: "card-header bg-transparent pb-5 modal-header" },
+                [
+                  _c(
+                    "div",
+                    { staticClass: "text-muted text-center mt-2 mb-3" },
+                    [_c("small", [_vm._v("Свойства антенны")])]
+                  ),
+                  _vm._v(" "),
+                  _vm.errors.length
+                    ? _c(
+                        "div",
+                        { staticClass: "text-muted text-center mt-2 mb-3" },
+                        [
+                          _c("p", [
+                            _c("b", [
+                              _vm._v("Пожалуйста исправьте указанные ошибки:")
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "ul",
+                              _vm._l(_vm.errors, function(error, index) {
+                                return _c(
+                                  "li",
+                                  {
+                                    key: index,
+                                    staticClass: "alert alert-danger",
+                                    attrs: { role: "alert" }
+                                  },
+                                  [_vm._v(_vm._s(error))]
+                                )
+                              }),
+                              0
+                            )
+                          ])
+                        ]
+                      )
+                    : _vm._e()
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "card-body px-lg-5 py-lg-5 modal-body" },
+                [
+                  _c(
+                    "form",
+                    {
+                      on: {
+                        keyup: function($event) {
+                          if (
+                            !$event.type.indexOf("key") &&
+                            _vm._k(
+                              $event.keyCode,
+                              "enter",
+                              13,
+                              $event.key,
+                              "Enter"
+                            )
+                          ) {
+                            return null
+                          }
+                          return _vm.save($event)
+                        }
+                      }
+                    },
+                    [
+                      _c("div", { staticClass: "form-group col" }, [
+                        _c("label", { attrs: { for: "setup_place" } }, [
+                          _vm._v("Место установки")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.deviceData.name,
+                              expression: "deviceData.name"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            id: "setup_place",
+                            name: "setup_place",
+                            type: "text",
+                            placeholder: "Место установки"
+                          },
+                          domProps: { value: _vm.deviceData.name },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.deviceData,
+                                "name",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "form-group col custom-control" },
+                        [
+                          _c("label", { attrs: { for: "mast_isset" } }, [
+                            _vm._v("Имеется мачта")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.deviceData.mast_isset,
+                                  expression: "deviceData.mast_isset"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { id: "mast_isset", name: "mast_isset" },
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.deviceData,
+                                    "mast_isset",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _c(
+                                "option",
+                                { attrs: { disabled: "", value: "" } },
+                                [_vm._v("Выберите один из вариантов")]
+                              ),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "true" } }, [
+                                _vm._v("Есть")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "false" } }, [
+                                _vm._v("Нет")
+                              ])
+                            ]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.deviceData.mast_isset == "true",
+                              expression: "deviceData.mast_isset == 'true'"
+                            }
+                          ]
+                        },
+                        [
+                          _c("div", { staticClass: "form-group col" }, [
+                            _c("label", { attrs: { for: "mast_height" } }, [
+                              _vm._v("Высота мачты")
+                            ]),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.deviceData.mast_height,
+                                  expression: "deviceData.mast_height"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                id: "mast_height",
+                                name: "mast_height",
+                                type: "number"
+                              },
+                              domProps: { value: _vm.deviceData.mast_height },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.deviceData,
+                                    "mast_height",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "form-group col custom-control" },
+                        [
+                          _c("label", { attrs: { for: "cable_type" } }, [
+                            _vm._v("Тип кабеля")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.deviceData.cable_type,
+                                  expression: "deviceData.cable_type"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { id: "cable_type", name: "cable_type" },
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.deviceData,
+                                    "cable_type",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _c(
+                                "option",
+                                { attrs: { disabled: "", value: "" } },
+                                [_vm._v("Выберите один из вариантов")]
+                              ),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "true" } }, [
+                                _vm._v("RK 50")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "false" } }, [
+                                _vm._v("RG 213")
+                              ])
+                            ]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("div", {}, [
+                        _c("div", { staticClass: "form-group col btn-group" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "cancel",
+                              attrs: { type: "button" },
+                              on: { click: _vm.cancel }
+                            },
+                            [_vm._v("Отмена")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "save",
+                              attrs: { type: "button" },
+                              on: { click: _vm.save }
+                            },
+                            [_vm._v("Сохранить")]
+                          )
+                        ])
+                      ])
+                    ]
+                  )
+                ]
+              )
+            ])
+          ])
+        ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/leaflet/bti.vue?vue&type=template&id=1a5a0bca&scoped=true&":
 /*!**************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/leaflet/bti.vue?vue&type=template&id=1a5a0bca&scoped=true& ***!
@@ -54900,10 +55391,11 @@ var render = function() {
                             _vm._v(" "),
                             _c(
                               "ul",
-                              _vm._l(_vm.errors, function(error) {
+                              _vm._l(_vm.errors, function(error, index) {
                                 return _c(
                                   "li",
                                   {
+                                    key: index,
                                     staticClass: "alert alert-danger",
                                     attrs: { role: "alert" }
                                   },
@@ -55792,6 +56284,18 @@ var render = function() {
   return _c(
     "div",
     [
+      _c("antenna-device", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.atennaEdit,
+            expression: "atennaEdit"
+          }
+        ],
+        attrs: { device: _vm.deviceData }
+      }),
+      _vm._v(" "),
       _c("add-device", {
         attrs: { creating: _vm.addDeviceShow },
         on: {
@@ -69947,6 +70451,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/editForms/antenna.vue":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/editForms/antenna.vue ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _antenna_vue_vue_type_template_id_0a9e7104_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./antenna.vue?vue&type=template&id=0a9e7104&scoped=true& */ "./resources/js/components/editForms/antenna.vue?vue&type=template&id=0a9e7104&scoped=true&");
+/* harmony import */ var _antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antenna.vue?vue&type=script&lang=js& */ "./resources/js/components/editForms/antenna.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _antenna_vue_vue_type_template_id_0a9e7104_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _antenna_vue_vue_type_template_id_0a9e7104_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "0a9e7104",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/editForms/antenna.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/editForms/antenna.vue?vue&type=script&lang=js&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/editForms/antenna.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./antenna.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/antenna.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/editForms/antenna.vue?vue&type=template&id=0a9e7104&scoped=true&":
+/*!**************************************************************************************************!*\
+  !*** ./resources/js/components/editForms/antenna.vue?vue&type=template&id=0a9e7104&scoped=true& ***!
+  \**************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_template_id_0a9e7104_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./antenna.vue?vue&type=template&id=0a9e7104&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/antenna.vue?vue&type=template&id=0a9e7104&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_template_id_0a9e7104_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_template_id_0a9e7104_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/leaflet/bti.vue":
 /*!*************************************************!*\
   !*** ./resources/js/components/leaflet/bti.vue ***!
@@ -70878,17 +71451,19 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
             deviceId: device.id,
             deviceType: deviceType
           });
-          if (device.markers && device.markers.length > 0) item.map(function (wire) {
-            if (wire.sensors > 0) wire.sensors.map(function (sensor) {
-              if (!markers[sensor.bti_files_id]) markers[sensor.bti_files_id] = [];
-              markers[sensor.bti_files_id].push({
-                lng: sensor.lng,
-                lat: sensor.lat,
-                icon: sensor.icon,
-                sensorId: sensor.id,
-                deviceType: 'sensor'
+          if (device.wires && device.wires.length > 0) device.wires.map(function (wire) {
+            if (wire.sensors.length > 0) {
+              wire.sensors.map(function (sensor) {
+                if (!markers[sensor.bti_files_id]) markers[sensor.bti_files_id] = [];
+                markers[sensor.bti_files_id].push({
+                  lng: sensor.lng,
+                  lat: sensor.lat,
+                  icon: sensor.icon,
+                  sensorId: sensor.id,
+                  deviceType: 'sensor'
+                });
               });
-            });
+            }
           });
         });
       };
@@ -70922,8 +71497,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! e:\XAMPP\htdocs\firemonitoring\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! e:\XAMPP\htdocs\firemonitoring\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

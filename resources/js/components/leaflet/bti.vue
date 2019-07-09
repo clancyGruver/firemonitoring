@@ -90,7 +90,11 @@
 			imgUrl() {return this.imgs[this.curImg].path;},
 			imgs() {return this.$store.getters.BTI_PLANS.items;},
 			markerSetable() {return this.$store.getters.MARKER_SETTABLE;},
-			markers() {return this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];},
+			markers() {
+				const markers = this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];
+				console.log(markers);
+				return markers;
+			},
 		},
 
 		mounted(){

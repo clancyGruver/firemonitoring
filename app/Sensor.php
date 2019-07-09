@@ -29,6 +29,7 @@ class Sensor extends Model
     protected $appends = ['icon'];
 
     public function getIconAttribute(){
+        return Storage::url(  'icons/sensors/auto_fire.png' );
         $url = 'icons/sensors/';
         if(!$this->is_automate)
             return Storage::url($url . 'manual.png');

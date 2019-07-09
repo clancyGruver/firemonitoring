@@ -67,7 +67,6 @@ export default {
 		            bti_files_id: val.bti_files_id,
 				};
 				this.tree[val.tbl_name].items.push(treeEl);
-				//this.tree.push(treeEl);
 			})
 				console.log(this.tree);
 			this.$store.commit('SET_DEVICES', this.tree);

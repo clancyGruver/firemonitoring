@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<antenna-device v-show="atennaEdit" :device="deviceData" />
 		<add-device :creating="addDeviceShow" v-on:end-adding="addDeviceShow = !addDeviceShow" />
 		<ul class="list-unstyled" v-for="(type, typeIdx) in treeData" :key="typeIdx">
 			<h3 class="underline">{{type.name}}</h3>
@@ -31,12 +32,15 @@
 <script>
 	import addDevice from '../add-device';
 	import wireTree from './wireTree';
+	//import alarmDevices from './alarmDevices';
+	import antennaDevice from '../editForms/antenna';
 
 	export default
 	{
 		components: {
 			addDevice,
 			wireTree,
+			antennaDevice,
 		},
 		props: {
 		},
@@ -44,6 +48,7 @@
 			return {
 				tData: {},
 				addDeviceShow: false,
+				atennaEdit: false,
 
 				FormMethodAllowed: ['new','edit'],
 				ObjectDeviceId: null,
@@ -61,8 +66,11 @@
 			},
 			editDevice(typeIdx, device){
 				this.deviceFormShow = true;
-				this.deviceFormMethod = this.deviceFormMethodAllowed[1];
+				this.deviceFormMethod = 'edit';
 				this.deviceData = device;
+				console.log(typeIdx);
+				if(typeIdx == 'App\\device_antenna')
+					this.atennaEdit = true;
 			},
 			deleteDevice(typeIdx, device){
 				if(confirm(`Вы действительно хотите удалить ${device.name}`)){

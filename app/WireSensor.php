@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Sensor;
 
 class WireSensor extends Model
 {
@@ -24,4 +25,10 @@ class WireSensor extends Model
         'lng',
         'lat',
 	];
+
+    protected $appends = ['icon'];
+
+	public function getIconAttribute(){
+		return Sensor::find($this->sensor_id)->icon;
+	}
 }

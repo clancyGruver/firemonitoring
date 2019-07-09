@@ -7,7 +7,7 @@
 
           <div class="alert alert-danger" v-show="errors.length > 0">
               <ul>
-                  <li v-for="(error, index) in errors ">{{ error }}</li>
+                  <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
               </ul>
           </div>
 
@@ -26,7 +26,7 @@
                 <hr>
               </div>
               <ul class="list-unstyled">
-                <li v-for="sensor in availSensors">
+                <li v-for="sensor in availSensors" :key="sensor.id">
                   <span class="mb-0" @click="addSensor(sensor)">
                     <span>{{sensor.name}}</span>
                   </span>
@@ -48,12 +48,12 @@
                   <input id="cabinet_name" name="cabinet_name" type="text" class="form-control" placeholder="Наименование помещения" v-model.trim="sensorData.cabinet_name">
                 </div>
                 <div class="form-group col custom-control custom-checkbox">
-                  <input class="custom-control-input" id="SP5_valid" name="SP5_valid" type="checkbox"v-model="sensorData.SP5_valid">
+                  <input class="custom-control-input" id="SP5_valid" name="SP5_valid" type="checkbox" v-model="sensorData.SP5_valid">
                   <label class="custom-control-label" for="SP5_valid">Соостетсвует СП5</label>
                   <a href="/uploads/documents/sp5.pdf" target="_blank" class="badge badge-info">СП5</a>
                 </div>
                 <div class="form-group col custom-control custom-checkbox">
-                  <input class="custom-control-input" id="isGood" name="isGood" type="checkbox"v-model="sensorData.is_good">
+                  <input class="custom-control-input" id="isGood" name="isGood" type="checkbox" v-model="sensorData.is_good">
                   <label class="custom-control-label" for="isGood">В рабочем состоянии</label>
                 </div>
                 <textarea class="form-control" id="comment" rows="3" name="comment" placeholder="Комментарий" v-model="sensorData.comment"></textarea>

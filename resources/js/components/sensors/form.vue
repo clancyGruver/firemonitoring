@@ -13,7 +13,7 @@
 								<p>
 									<b>Пожалуйста исправьте указанные ошибки:</b>
 									<ul>
-										<li class="alert alert-danger" role="alert" v-for="error in errors">{{ error }}</li>
+										<li class="alert alert-danger" role="alert" v-for="(error, index) in errors" :key="index">{{ error }}</li>
 									</ul>
 								</p>
 							</div>
@@ -176,7 +176,6 @@
 			},
 		},
 		computed:{
-			availDevs: function () {return this.$store.getters.AVAILABLE_DEVICES},
 		},
 	}
 </script>
