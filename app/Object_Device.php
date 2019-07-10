@@ -20,7 +20,15 @@ class Object_Device extends Model
         'lat',
     ];
 
-    protected $appends = ['type'];
+    protected $appends = ['type','params'];
+
+    public function getParamsAttribute(){
+        if($this->tbl_name == 'App\device_antenna'){
+            $type = $this->tbl_name.'_params'::class;
+            if(class_exists($type))
+                return $this->hasOne($type, 'device_id', 'id')->first();
+        }
+    }
 
     public function devicable(){
         return $this->morphTo(

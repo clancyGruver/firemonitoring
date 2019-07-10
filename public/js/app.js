@@ -2012,7 +2012,7 @@ __webpack_require__.r(__webpack_exports__);
       var filtered = this.$store.getters.ALL_SENSORS;
       var SS = this.searchString;
       if (SS) filtered = this.$store.getters.ALL_SENSORS.filter(function (s) {
-        return s.name.includes(SS);
+        return s.name.toLowerCase().includes(SS.toLowerCase());
       });
       return filtered;
     },
@@ -2182,6 +2182,73 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/alarmDevices.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/alarmDevices.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    deviceData: {
+      type: Object,
+      "default": function _default() {
+        return {};
+      }
+    }
+  },
+  data: function data() {
+    return {
+      searchString: ""
+    };
+  },
+  methods: {
+    addDevice: function addDevice(device, tbl_name) {
+      //device.tbl_name = tbl_name
+      this.$store.commit('ADD_ALARM', device);
+      this.$emit('end-adding');
+    },
+    cancel: function cancel() {
+      this.$emit('end-adding');
+    }
+  },
+  computed: {
+    availDevs: function availDevs() {
+      var filtered = this.$store.getters.AVAILABLE_ALARMS;
+      var SS = this.searchString;
+      if (SS) filtered = filtered.filter(function (s) {
+        return s.name.toLowerCase().includes(SS.toLowerCase());
+      });
+      return filtered;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/device-component.vue?vue&type=script&lang=js&":
 /*!***************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/device-component.vue?vue&type=script&lang=js& ***!
@@ -2287,7 +2354,8 @@ __webpack_require__.r(__webpack_exports__);
           lng: val.lng,
           lat: val.lat,
           icon: val.devicable.icon || 'default',
-          bti_files_id: val.bti_files_id
+          bti_files_id: val.bti_files_id,
+          params: val.params || {}
         };
 
         _this2.tree[val.tbl_name].items.push(treeEl);
@@ -2404,7 +2472,7 @@ __webpack_require__.r(__webpack_exports__);
     save: function save() {
       if (!this.check()) return false;
       console.log(this.deviceData);
-      this.$store.commit('UPDATE_ANTENNA', this.sensorData);
+      this.$store.commit('UPDATE_ANTENNA', this.deviceData);
       this.$emit('end-adding');
     },
     cancel: function cancel() {
@@ -2414,12 +2482,12 @@ __webpack_require__.r(__webpack_exports__);
       var res = true;
       this.errors = [];
 
-      if (!this.antennaData.setup_place) {
+      if (!this.deviceData.setup_place) {
         this.errors.push('Требуется указать место установки.');
         res = false;
       }
 
-      if (!this.antennaData.mast_isset) {
+      if (!this.deviceData.mast_isset) {
         this.errors.push('Требуется указать наличие мачты.');
         res = false;
       }
@@ -2991,7 +3059,10 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _add_device__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../add-device */ "./resources/js/components/add-device.vue");
 /* harmony import */ var _wireTree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wireTree */ "./resources/js/components/treeView/wireTree.vue");
-/* harmony import */ var _editForms_antenna__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../editForms/antenna */ "./resources/js/components/editForms/antenna.vue");
+/* harmony import */ var _alarmDevices__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../alarmDevices */ "./resources/js/components/alarmDevices.vue");
+/* harmony import */ var _editForms_antenna__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../editForms/antenna */ "./resources/js/components/editForms/antenna.vue");
+//
+//
 //
 //
 //
@@ -3024,18 +3095,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
- //import alarmDevices from './alarmDevices';
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     addDevice: _add_device__WEBPACK_IMPORTED_MODULE_0__["default"],
     wireTree: _wireTree__WEBPACK_IMPORTED_MODULE_1__["default"],
-    antennaDevice: _editForms_antenna__WEBPACK_IMPORTED_MODULE_2__["default"]
+    antennaDevice: _editForms_antenna__WEBPACK_IMPORTED_MODULE_3__["default"],
+    alarmDevices: _alarmDevices__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   props: {},
   data: function data() {
     return {
+      addAlarmShow: false,
       tData: {},
       addDeviceShow: false,
       atennaEdit: false,
@@ -3057,7 +3130,9 @@ __webpack_require__.r(__webpack_exports__);
     editDevice: function editDevice(typeIdx, device) {
       this.deviceFormShow = true;
       this.deviceFormMethod = 'edit';
-      this.deviceData = device;
+      if (!('device_id' in device.params)) device.params.device_id = device.id;
+      device.params.tbl_name = typeIdx;
+      this.deviceData = device.params;
       console.log(typeIdx);
       if (typeIdx == 'App\\device_antenna') this.atennaEdit = true;
     },
@@ -3315,6 +3390,7 @@ __webpack_require__.r(__webpack_exports__);
       addWireShow: false,
       FormMethodAllowed: ['new', 'edit'],
       wireData: {
+        description: this.wires.length + 1,
         is_good: true,
         type: 'unsafe'
       },
@@ -7850,7 +7926,45 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\nspan[data-v-18616717]{\n\t\tcursor: pointer;\n}\n.modal-mask[data-v-18616717] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-18616717] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-18616717] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-18616717] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-18616717] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-18616717] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-18616717] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-18616717] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-18616717]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-18616717] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-18616717]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-18616717]:hover {\n  color: white;\n}\n.modal-enter[data-v-18616717], .modal-leave-active[data-v-18616717] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-18616717], .modal-leave-active .modal-container[data-v-18616717] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/editForms/antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.modal-mask[data-v-0a9e7104] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-0a9e7104] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-content[data-v-0a9e7104] {\n  background-color: rgba(0,0,0,0);\n}\n.modal-mask .modal-container .modal-content[data-v-0a9e7104] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-0a9e7104] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-0a9e7104] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-0a9e7104] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-0a9e7104] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-0a9e7104] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-0a9e7104]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-0a9e7104] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-0a9e7104]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-0a9e7104]:hover {\n  color: white;\n}\n.modal-enter[data-v-0a9e7104], .modal-leave-active[data-v-0a9e7104] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-0a9e7104], .modal-leave-active .modal-container[data-v-0a9e7104] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -7888,7 +8002,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-30364831] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\r\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n\t\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -52913,6 +53027,66 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css&":
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/editForms/antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css& ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/leaflet/bti.vue?vue&type=style&index=0&id=1a5a0bca&scoped=true&lang=css&":
 /*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/leaflet/bti.vue?vue&type=style&index=0&id=1a5a0bca&scoped=true&lang=css& ***!
@@ -54550,6 +54724,100 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/alarmDevices.vue?vue&type=template&id=18616717&scoped=true&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/alarmDevices.vue?vue&type=template&id=18616717&scoped=true& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("transition", { attrs: { name: "modal" } }, [
+    _c(
+      "div",
+      {
+        staticClass: "modal-mask mb-4 ",
+        on: {
+          click: function($event) {
+            if ($event.target !== $event.currentTarget) {
+              return null
+            }
+            return _vm.cancel($event)
+          }
+        }
+      },
+      [
+        _c("div", { staticClass: "modal-container card card-stats" }, [
+          _c("div", { staticClass: "card-body" }, [
+            _c("h5", { staticClass: "card-title" }, [
+              _vm._v("Добавить извещатель")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.searchString,
+                    expression: "searchString"
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: { type: "text", placeholder: "Поиск" },
+                domProps: { value: _vm.searchString },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.searchString = $event.target.value
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "ul",
+                { staticClass: "list-unstyled" },
+                _vm._l(_vm.availDevs, function(device) {
+                  return _c("li", { key: device.id }, [
+                    _c(
+                      "span",
+                      {
+                        staticClass: "h2 font-weight-bold mb-0",
+                        on: {
+                          click: function($event) {
+                            return _vm.addDevice(device)
+                          }
+                        }
+                      },
+                      [_vm._v(_vm._s(device.name))]
+                    )
+                  ])
+                }),
+                0
+              )
+            ])
+          ])
+        ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/device-component.vue?vue&type=template&id=4e567591&":
 /*!*******************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/device-component.vue?vue&type=template&id=4e567591& ***!
@@ -54621,8 +54889,7 @@ var render = function() {
     _c(
       "div",
       {
-        staticClass:
-          "modal-dialog modal- modal-dialog-centered modal-xl modal-mask",
+        staticClass: "modal-mask mb-4",
         attrs: { role: "document" },
         on: {
           click: function($event) {
@@ -54639,18 +54906,16 @@ var render = function() {
             _c("div", { staticClass: "card bg-secondary shadow border-0" }, [
               _c(
                 "div",
-                { staticClass: "card-header bg-transparent pb-5 modal-header" },
+                { staticClass: "card-header bg-transparent modal-header" },
                 [
-                  _c(
-                    "div",
-                    { staticClass: "text-muted text-center mt-2 mb-3" },
-                    [_c("small", [_vm._v("Свойства антенны")])]
-                  ),
+                  _c("div", { staticClass: "text-muted text-center" }, [
+                    _c("small", [_vm._v("Свойства антенны")])
+                  ]),
                   _vm._v(" "),
                   _vm.errors.length
                     ? _c(
                         "div",
-                        { staticClass: "text-muted text-center mt-2 mb-3" },
+                        { staticClass: "text-muted text-center mt-2" },
                         [
                           _c("p", [
                             _c("b", [
@@ -54679,269 +54944,263 @@ var render = function() {
                 ]
               ),
               _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "card-body px-lg-5 py-lg-5 modal-body" },
-                [
-                  _c(
-                    "form",
-                    {
-                      on: {
-                        keyup: function($event) {
-                          if (
-                            !$event.type.indexOf("key") &&
-                            _vm._k(
-                              $event.keyCode,
-                              "enter",
-                              13,
-                              $event.key,
-                              "Enter"
-                            )
-                          ) {
-                            return null
-                          }
-                          return _vm.save($event)
+              _c("div", { staticClass: "card-body modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    on: {
+                      keyup: function($event) {
+                        if (
+                          !$event.type.indexOf("key") &&
+                          _vm._k(
+                            $event.keyCode,
+                            "enter",
+                            13,
+                            $event.key,
+                            "Enter"
+                          )
+                        ) {
+                          return null
                         }
+                        return _vm.save($event)
                       }
-                    },
-                    [
-                      _c("div", { staticClass: "form-group col" }, [
-                        _c("label", { attrs: { for: "setup_place" } }, [
-                          _vm._v("Место установки")
-                        ]),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.deviceData.name,
-                              expression: "deviceData.name"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            id: "setup_place",
-                            name: "setup_place",
-                            type: "text",
-                            placeholder: "Место установки"
-                          },
-                          domProps: { value: _vm.deviceData.name },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.deviceData,
-                                "name",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "form-group col" }, [
+                      _c("label", { attrs: { for: "setup_place" } }, [
+                        _vm._v("Место установки")
                       ]),
                       _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "form-group col custom-control" },
-                        [
-                          _c("label", { attrs: { for: "mast_isset" } }, [
-                            _vm._v("Имеется мачта")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "select",
-                            {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.deviceData.mast_isset,
-                                  expression: "deviceData.mast_isset"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              attrs: { id: "mast_isset", name: "mast_isset" },
-                              on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.deviceData,
-                                    "mast_isset",
-                                    $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  )
-                                }
-                              }
-                            },
-                            [
-                              _c(
-                                "option",
-                                { attrs: { disabled: "", value: "" } },
-                                [_vm._v("Выберите один из вариантов")]
-                              ),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "true" } }, [
-                                _vm._v("Есть")
-                              ]),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "false" } }, [
-                                _vm._v("Нет")
-                              ])
-                            ]
-                          )
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        {
-                          directives: [
-                            {
-                              name: "show",
-                              rawName: "v-show",
-                              value: _vm.deviceData.mast_isset == "true",
-                              expression: "deviceData.mast_isset == 'true'"
-                            }
-                          ]
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.deviceData.setup_place,
+                            expression: "deviceData.setup_place"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          id: "setup_place",
+                          name: "setup_place",
+                          type: "text",
+                          placeholder: "Место установки"
                         },
-                        [
-                          _c("div", { staticClass: "form-group col" }, [
-                            _c("label", { attrs: { for: "mast_height" } }, [
-                              _vm._v("Высота мачты")
+                        domProps: { value: _vm.deviceData.setup_place },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.deviceData,
+                              "setup_place",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "form-group col custom-control" },
+                      [
+                        _c("label", { attrs: { for: "mast_isset" } }, [
+                          _vm._v("Наличие мачты")
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.deviceData.mast_isset,
+                                expression: "deviceData.mast_isset"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { id: "mast_isset", name: "mast_isset" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.deviceData,
+                                  "mast_isset",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { disabled: "", value: "" } },
+                              [_vm._v("Выберите один из вариантов")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "1" } }, [
+                              _vm._v("Есть")
                             ]),
                             _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.deviceData.mast_height,
-                                  expression: "deviceData.mast_height"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              attrs: {
-                                id: "mast_height",
-                                name: "mast_height",
-                                type: "number"
-                              },
-                              domProps: { value: _vm.deviceData.mast_height },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.deviceData,
-                                    "mast_height",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            })
-                          ])
+                            _c("option", { attrs: { value: "0" } }, [
+                              _vm._v("Нет")
+                            ])
+                          ]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.deviceData.mast_isset == 1,
+                            expression: "deviceData.mast_isset == 1"
+                          }
                         ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "form-group col custom-control" },
-                        [
-                          _c("label", { attrs: { for: "cable_type" } }, [
-                            _vm._v("Тип кабеля")
+                      },
+                      [
+                        _c("div", { staticClass: "form-group col" }, [
+                          _c("label", { attrs: { for: "mast_height" } }, [
+                            _vm._v("Высота мачты")
                           ]),
                           _vm._v(" "),
-                          _c(
-                            "select",
-                            {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.deviceData.cable_type,
-                                  expression: "deviceData.cable_type"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              attrs: { id: "cable_type", name: "cable_type" },
-                              on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.deviceData,
-                                    "cable_type",
-                                    $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  )
-                                }
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.deviceData.mast_height,
+                                expression: "deviceData.mast_height"
                               }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              id: "mast_height",
+                              name: "mast_height",
+                              type: "number"
                             },
-                            [
-                              _c(
-                                "option",
-                                { attrs: { disabled: "", value: "" } },
-                                [_vm._v("Выберите один из вариантов")]
-                              ),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "true" } }, [
-                                _vm._v("RK 50")
-                              ]),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "false" } }, [
-                                _vm._v("RG 213")
-                              ])
-                            ]
-                          )
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c("div", {}, [
-                        _c("div", { staticClass: "form-group col btn-group" }, [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "cancel",
-                              attrs: { type: "button" },
-                              on: { click: _vm.cancel }
-                            },
-                            [_vm._v("Отмена")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "button",
-                            {
-                              staticClass: "save",
-                              attrs: { type: "button" },
-                              on: { click: _vm.save }
-                            },
-                            [_vm._v("Сохранить")]
-                          )
+                            domProps: { value: _vm.deviceData.mast_height },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.deviceData,
+                                  "mast_height",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          })
                         ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "form-group col custom-control" },
+                      [
+                        _c("label", { attrs: { for: "cable_type" } }, [
+                          _vm._v("Тип кабеля")
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.deviceData.cable_type,
+                                expression: "deviceData.cable_type"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { id: "cable_type", name: "cable_type" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.deviceData,
+                                  "cable_type",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { disabled: "", value: "" } },
+                              [_vm._v("Выберите один из вариантов")]
+                            ),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "RK 50" } }, [
+                              _vm._v("RK 50")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "RG 213" } }, [
+                              _vm._v("RG 213")
+                            ])
+                          ]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", {}, [
+                      _c("div", { staticClass: "form-group col btn-group" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "cancel",
+                            attrs: { type: "button" },
+                            on: { click: _vm.cancel }
+                          },
+                          [_vm._v("Отмена")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "save",
+                            attrs: { type: "button" },
+                            on: { click: _vm.save }
+                          },
+                          [_vm._v("Сохранить")]
+                        )
                       ])
-                    ]
-                  )
-                ]
-              )
+                    ])
+                  ]
+                )
+              ])
             ])
           ])
         ])
@@ -56293,7 +56552,29 @@ var render = function() {
             expression: "atennaEdit"
           }
         ],
-        attrs: { device: _vm.deviceData }
+        attrs: { deviceData: _vm.deviceData },
+        on: {
+          "end-adding": function($event) {
+            _vm.atennaEdit = false
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("alarm-devices", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.addAlarmShow,
+            expression: "addAlarmShow"
+          }
+        ],
+        attrs: { deviceData: _vm.deviceData },
+        on: {
+          "end-adding": function($event) {
+            _vm.addAlarmShow = false
+          }
+        }
       }),
       _vm._v(" "),
       _c("add-device", {
@@ -56393,13 +56674,40 @@ var render = function() {
                     })
                   ]),
                   _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value:
+                            device.isShow &&
+                            typeIdx == "App\\device_system_voice_alert",
+                          expression:
+                            "device.isShow && typeIdx == 'App\\\\device_system_voice_alert'"
+                        }
+                      ],
+                      staticClass: "btn btn-success mt-4",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.addAlarmShow = true
+                          _vm.deviceData = device
+                        }
+                      }
+                    },
+                    [_vm._v("Добавить извещатель")]
+                  ),
+                  _vm._v(" "),
                   _c("wire-tree", {
                     directives: [
                       {
                         name: "show",
                         rawName: "v-show",
-                        value: device.isShow,
-                        expression: "device.isShow"
+                        value: device.isShow && typeIdx == "App\\device_aps",
+                        expression:
+                          "device.isShow && typeIdx == 'App\\\\device_aps'"
                       }
                     ],
                     attrs: {
@@ -70313,6 +70621,93 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/alarmDevices.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/alarmDevices.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _alarmDevices_vue_vue_type_template_id_18616717_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./alarmDevices.vue?vue&type=template&id=18616717&scoped=true& */ "./resources/js/components/alarmDevices.vue?vue&type=template&id=18616717&scoped=true&");
+/* harmony import */ var _alarmDevices_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./alarmDevices.vue?vue&type=script&lang=js& */ "./resources/js/components/alarmDevices.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _alarmDevices_vue_vue_type_style_index_0_id_18616717_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css& */ "./resources/js/components/alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _alarmDevices_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _alarmDevices_vue_vue_type_template_id_18616717_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _alarmDevices_vue_vue_type_template_id_18616717_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "18616717",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/alarmDevices.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/alarmDevices.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/alarmDevices.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./alarmDevices.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/alarmDevices.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css&":
+/*!***********************************************************************************************************!*\
+  !*** ./resources/js/components/alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css& ***!
+  \***********************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_style_index_0_id_18616717_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/alarmDevices.vue?vue&type=style&index=0&id=18616717&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_style_index_0_id_18616717_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_style_index_0_id_18616717_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_style_index_0_id_18616717_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_style_index_0_id_18616717_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_style_index_0_id_18616717_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/alarmDevices.vue?vue&type=template&id=18616717&scoped=true&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/alarmDevices.vue?vue&type=template&id=18616717&scoped=true& ***!
+  \*********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_template_id_18616717_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./alarmDevices.vue?vue&type=template&id=18616717&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/alarmDevices.vue?vue&type=template&id=18616717&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_template_id_18616717_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_alarmDevices_vue_vue_type_template_id_18616717_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/device-component.vue":
 /*!******************************************************!*\
   !*** ./resources/js/components/device-component.vue ***!
@@ -70462,7 +70857,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _antenna_vue_vue_type_template_id_0a9e7104_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./antenna.vue?vue&type=template&id=0a9e7104&scoped=true& */ "./resources/js/components/editForms/antenna.vue?vue&type=template&id=0a9e7104&scoped=true&");
 /* harmony import */ var _antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antenna.vue?vue&type=script&lang=js& */ "./resources/js/components/editForms/antenna.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _antenna_vue_vue_type_style_index_0_id_0a9e7104_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css& */ "./resources/js/components/editForms/antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -70470,7 +70867,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _antenna_vue_vue_type_template_id_0a9e7104_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
   _antenna_vue_vue_type_template_id_0a9e7104_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -70499,6 +70896,22 @@ component.options.__file = "resources/js/components/editForms/antenna.vue"
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./antenna.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/antenna.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/editForms/antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css&":
+/*!****************************************************************************************************************!*\
+  !*** ./resources/js/components/editForms/antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css& ***!
+  \****************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_style_index_0_id_0a9e7104_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/antenna.vue?vue&type=style&index=0&id=0a9e7104&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_style_index_0_id_0a9e7104_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_style_index_0_id_0a9e7104_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_style_index_0_id_0a9e7104_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_style_index_0_id_0a9e7104_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_antenna_vue_vue_type_style_index_0_id_0a9e7104_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -71176,7 +71589,6 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         device_id: p.id,
         tbl_name: p.tbl_name
       }).then(function (response) {
-        console.log(response);
         state.devices[p.tbl_name].items.push({
           id: response.id,
           name: p.name,
@@ -71410,6 +71822,30 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         obj.lng = rd.lng;
         obj.bti_files_id = rd.bti_files_id;
       });
+    },
+    UPDATE_ANTENNA: function UPDATE_ANTENNA(state, payload) {
+      var p = _objectSpread({}, payload);
+
+      var id = p.id || '';
+      axios.post("/api/antenna/storeParams/".concat(id), p).then(function (response) {
+        var device_idx = state.devices[p.tbl_name].items.findIndex(function (device) {
+          return device.id == p.device_id;
+        });
+        state.devices[p.tbl_name].items[device_idx].params = p;
+      });
+    },
+    ADD_ALARM: function ADD_ALARM(state, payload) {
+      var p = _objectSpread({}, payload);
+
+      console.log(p);
+      /*const id = p.id || '';
+      axios.post(`/api/antenna/storeParams/${id}`,p)
+       .then(
+          response => {
+            const device_idx = state.devices[p.tbl_name].items.findIndex( device => device.id == p.device_id);
+            state.devices[p.tbl_name].items[device_idx].params = p;
+          }
+        )*/
     }
   },
   getters: {
@@ -71418,6 +71854,11 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     AVAILABLE_DEVICES: function AVAILABLE_DEVICES(state) {
       return state.availabledevices;
+    },
+    AVAILABLE_ALARMS: function AVAILABLE_ALARMS(state) {
+      return 'alerts' in state.availabledevices ? state.availabledevices.alerts.devices.filter(function (device) {
+        return ['sound', 'voice'].indexOf(device.type) > -1;
+      }) : [];
     },
     ALL_SENSORS: function ALL_SENSORS(state) {
       return state.sensors;
@@ -71497,8 +71938,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! e:\XAMPP\htdocs\firemonitoring\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! e:\XAMPP\htdocs\firemonitoring\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

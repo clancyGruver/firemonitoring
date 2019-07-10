@@ -41,14 +41,16 @@ export const store = new Vuex.Store({
         tbl_name: p.tbl_name,
       })
       .then(
-        response => { console.log(response); state.devices[p.tbl_name].items.push({
-          id: response.id,
-          name: p.name,
-          isShow:true,
-          tbl_name: p.tbl_name,
-          wires: [],
-          wires_count: p.wires_count,
-        })}
+        response => {
+          state.devices[p.tbl_name].items.push({
+            id: response.id,
+            name: p.name,
+            isShow:true,
+            tbl_name: p.tbl_name,
+            wires: [],
+            wires_count: p.wires_count,
+          })
+        }
       );
     },
     DELETE_DEVICE: (state, payload) => {
@@ -262,11 +264,35 @@ export const store = new Vuex.Store({
           }
         )
     },
+    UPDATE_ANTENNA:(state, payload) => {
+      const p = {...payload};
+      const id = p.id || '';
+      axios.post(`/api/antenna/storeParams/${id}`,p)
+       .then(
+          response => {
+            const device_idx = state.devices[p.tbl_name].items.findIndex( device => device.id == p.device_id);
+            state.devices[p.tbl_name].items[device_idx].params = p;
+          }
+        )
+    },
+    ADD_ALARM:(state, payload) => {
+      const p = {...payload};
+      console.log(p);
+      /*const id = p.id || '';
+      axios.post(`/api/antenna/storeParams/${id}`,p)
+       .then(
+          response => {
+            const device_idx = state.devices[p.tbl_name].items.findIndex( device => device.id == p.device_id);
+            state.devices[p.tbl_name].items[device_idx].params = p;
+          }
+        )*/
+    },
   },
 
   getters: {
 	  DEVICES: state => state.devices,
     AVAILABLE_DEVICES: state => state.availabledevices,
+    AVAILABLE_ALARMS: state => 'alerts' in state.availabledevices ? state.availabledevices.alerts.devices.filter( device => ['sound','voice'].indexOf(device.type) > -1 ) : [],
     ALL_SENSORS: state => state.sensors,
     SENSOR: (state, getters) => (id) => state.sensors.find( el => el.id == id ),
     BTI_PLANS: state => state.bti_plans,

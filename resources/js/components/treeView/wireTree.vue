@@ -46,6 +46,7 @@
 				addWireShow: false,
 				FormMethodAllowed: ['new','edit'],
 				wireData:{
+					description: this.wires.length + 1,
 					is_good: true,
 					type: 'unsafe',
 				},

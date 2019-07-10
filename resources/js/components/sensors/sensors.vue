@@ -3,8 +3,8 @@
 		<sensor-form :mode="mode" :sensorData="sensorData" :edit="edit" v-on:end-adding="edit = !edit" />
 		<div class="row">
 			<a class="btn btn-icon btn-3 btn-success" type="button" @click="addSensor">
-	            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>            
-	            <span class="btn-inner--text">Добавить извещатель</span>            
+	            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>
+	            <span class="btn-inner--text">Добавить извещатель</span>
 	        </a>
 		</div>
 		<div class="row">

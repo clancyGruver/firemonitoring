@@ -16,3 +16,9 @@ cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root
 
 # delete symlinks
 find -type l -delete
+
+# git update
+git pull origin master
+
+# git upload
+git push origin master

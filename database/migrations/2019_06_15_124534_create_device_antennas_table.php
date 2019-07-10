@@ -28,15 +28,15 @@ class CreateDeviceAntennasTable extends Migration
         Schema::create('device_antenna_params', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->unsignedBigInteger('device_antenna_id');
+            $table->unsignedBigInteger('device_id');
             $table->string('setup_place');
             $table->boolean('mast_isset')->default(0);
-            $table->double('mast_height',3,2)->nullable();
+            $table->double('mast_height',4,2)->nullable();
             $table->set('cable_type',['safety','unsfety','radio']);
             $table->unsignedBigInteger('created_user_id');
 
             $table->foreign('created_user_id')->references('id')->on('users');
-            $table->foreign('device_antenna_id')->references('id')->on('device_antenna');
+            $table->foreign('device_id')->references('device_id')->on('object_devices');
             $table->softDeletes();
             $table->timestamps();
         });

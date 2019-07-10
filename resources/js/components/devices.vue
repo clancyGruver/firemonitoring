@@ -65,6 +65,7 @@ export default {
 		            lat: val.lat,
 		            icon: val.devicable.icon || 'default',
 		            bti_files_id: val.bti_files_id,
+		            params: val.params || {},
 				};
 				this.tree[val.tbl_name].items.push(treeEl);
 			})

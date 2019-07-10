@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<antenna-device v-show="atennaEdit" :device="deviceData" />
+		<antenna-device v-show="atennaEdit" :deviceData="deviceData" v-on:end-adding="atennaEdit=false"/>
+		<alarm-devices v-show="addAlarmShow" :deviceData="deviceData" v-on:end-adding="addAlarmShow = false"/>
 		<add-device :creating="addDeviceShow" v-on:end-adding="addDeviceShow = !addDeviceShow" />
 		<ul class="list-unstyled" v-for="(type, typeIdx) in treeData" :key="typeIdx">
 			<h3 class="underline">{{type.name}}</h3>
@@ -21,7 +22,8 @@
 					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteDevice(typeIdx, device)"></i>
 					<i class="ml-2 fas fa-map-marker text-danger pointer" @click="setMarker(typeIdx, device)"></i>
 				</h4>
-				<wire-tree v-show="device.isShow" :wires="device.wires" :wires_count="device.wires_count" :typeIdx="typeIdx" :ObjectDeviceId="device.id" />
+				<button v-show="device.isShow && typeIdx == 'App\\device_system_voice_alert'"  type="button" class="btn btn-success mt-4" @click="addAlarmShow = true; deviceData = device">Добавить извещатель</button>
+				<wire-tree v-show="device.isShow && typeIdx == 'App\\device_aps'" :wires="device.wires" :wires_count="device.wires_count" :typeIdx="typeIdx" :ObjectDeviceId="device.id" />
 			</li>
 		</ul>
 		<hr class="mt-2">
@@ -32,7 +34,7 @@
 <script>
 	import addDevice from '../add-device';
 	import wireTree from './wireTree';
-	//import alarmDevices from './alarmDevices';
+	import alarmDevices from '../alarmDevices';
 	import antennaDevice from '../editForms/antenna';
 
 	export default
@@ -41,11 +43,13 @@
 			addDevice,
 			wireTree,
 			antennaDevice,
+			alarmDevices,
 		},
 		props: {
 		},
 		data: function () {
 			return {
+				addAlarmShow:false,
 				tData: {},
 				addDeviceShow: false,
 				atennaEdit: false,
@@ -67,7 +71,10 @@
 			editDevice(typeIdx, device){
 				this.deviceFormShow = true;
 				this.deviceFormMethod = 'edit';
-				this.deviceData = device;
+				if(!('device_id' in device.params))
+					device.params.device_id = device.id;
+				device.params.tbl_name = typeIdx;
+				this.deviceData = device.params;
 				console.log(typeIdx);
 				if(typeIdx == 'App\\device_antenna')
 					this.atennaEdit = true;

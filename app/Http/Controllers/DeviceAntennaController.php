@@ -5,12 +5,26 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\device_antenna as DA;
 use Illuminate\Support\Facades\Auth;
+use App\device_antenna_params as DAP;
 
 class DeviceAntennaController extends Controller
 {
     public function index(){
         $items = DA::all();
         return view('admin.antennas.index',['items' => $items]);
+    }
+
+    public function storeParams(Request $request){
+        $params = $request->all();
+        $params['created_user_id'] = $request->header('x-user');
+        if(isset($params['id'])){
+            $item = DAP::find($params['id']);
+            $item->update($params);
+        }
+        else{
+            $item = new DAP($params);
+            $item->save();
+        }
     }
 
     public function getJson(){

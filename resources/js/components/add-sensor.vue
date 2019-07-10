@@ -189,7 +189,7 @@
         let filtered = this.$store.getters.ALL_SENSORS;
         const SS = this.searchString;
         if(SS)
-          filtered = this.$store.getters.ALL_SENSORS.filter(s => s.name.includes(SS) )
+          filtered = this.$store.getters.ALL_SENSORS.filter(s => s.name.toLowerCase().includes(SS.toLowerCase()) )
         return filtered;
       },
       currentSensor(){
