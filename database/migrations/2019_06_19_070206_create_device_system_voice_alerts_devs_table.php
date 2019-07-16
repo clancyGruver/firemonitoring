@@ -20,7 +20,7 @@ class CreateDeviceSystemVoiceAlertsDevsTable extends Migration
             $table->unsignedBigInteger('created_user_id');
 
             $table->foreign('device_alerts_id')->references('id')->on('device_alerts');
-            $table->foreign('device_system_voice_alerts_id','fk_dsva')->references('id')->on('device_system_voice_alerts');
+            $table->foreign('device_system_voice_alerts_id','fk_dsva')->references('id')->on('object_devices');
             $table->foreign('created_user_id')->references('id')->on('users');
             $table->softDeletes();
             $table->timestamps();

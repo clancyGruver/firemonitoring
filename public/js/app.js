@@ -2228,7 +2228,11 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     addDevice: function addDevice(device, tbl_name) {
       //device.tbl_name = tbl_name
-      this.$store.commit('ADD_ALARM', device);
+      var result = {
+        'device_system_voice_alerts_id': this.deviceData.id,
+        'device_alerts_id': device.id
+      };
+      this.$store.commit('ADD_ALARM', result);
       this.$emit('end-adding');
     },
     cancel: function cancel() {
@@ -2336,6 +2340,16 @@ __webpack_require__.r(__webpack_exports__);
           el.isShow = false;
           wireEl.push(el);
         });
+        var alarmEl = [];
+
+        if ('alerts' in val) {
+          val.alerts.forEach(function (el) {
+            var curEl = el.alert_device;
+            curEl.dsvad = el.id;
+            curEl.parent_device_id = val.id;
+            alarmEl.push(curEl);
+          });
+        }
 
         if (!(val.tbl_name in _this2.tree)) {
           _this2.tree[val.tbl_name] = {
@@ -2349,6 +2363,7 @@ __webpack_require__.r(__webpack_exports__);
           tbl_name: val.tbl_name,
           isShow: false,
           id: val.id,
+          alarms: alarmEl,
           wires: wireEl,
           wires_count: val.devicable.wires_count,
           lng: val.lng,
@@ -2630,6 +2645,9 @@ __webpack_require__.r(__webpack_exports__);
             coords: e.latlng,
             bti_plan_id: self.imgs[_this.curImg].id
           });else if (markerType == 'sensor') _this.$store.commit('SET_SENSOR_COORDS', {
+            coords: e.latlng,
+            bti_plan_id: self.imgs[_this.curImg].id
+          });else if (markerType == 'alert') _this.$store.commit('SET_ALERT_COORDS', {
             coords: e.latlng,
             bti_plan_id: self.imgs[_this.curImg].id
           });
@@ -3048,6 +3066,51 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {},
+  props: ['items'],
+  data: function data() {
+    return {};
+  },
+  methods: {
+    setMarker: function setMarker(device) {
+      var typeIdx = 'App\\device_system_voice_alert';
+      this.$store.commit('TOGGLE_MAP');
+      this.$store.commit('SET_MAP_ACTIVE_ALARM', {
+        typeIdx: typeIdx,
+        alertId: device.id,
+        deviceId: device.parent_device_id
+      });
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/treeview.vue?vue&type=script&lang=js&":
 /*!****************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/treeview.vue?vue&type=script&lang=js& ***!
@@ -3061,6 +3124,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wireTree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wireTree */ "./resources/js/components/treeView/wireTree.vue");
 /* harmony import */ var _alarmDevices__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../alarmDevices */ "./resources/js/components/alarmDevices.vue");
 /* harmony import */ var _editForms_antenna__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../editForms/antenna */ "./resources/js/components/editForms/antenna.vue");
+/* harmony import */ var _alertSystemDevices__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./alertSystemDevices */ "./resources/js/components/treeView/alertSystemDevices.vue");
 //
 //
 //
@@ -3094,6 +3158,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+
 
 
 
@@ -3103,7 +3171,8 @@ __webpack_require__.r(__webpack_exports__);
     addDevice: _add_device__WEBPACK_IMPORTED_MODULE_0__["default"],
     wireTree: _wireTree__WEBPACK_IMPORTED_MODULE_1__["default"],
     antennaDevice: _editForms_antenna__WEBPACK_IMPORTED_MODULE_3__["default"],
-    alarmDevices: _alarmDevices__WEBPACK_IMPORTED_MODULE_2__["default"]
+    alarmDevices: _alarmDevices__WEBPACK_IMPORTED_MODULE_2__["default"],
+    alertSystemDevices: _alertSystemDevices__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   props: {},
   data: function data() {
@@ -8003,6 +8072,25 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 // module
 exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css&":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css& ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.underline[data-v-166de83a]{\n\ttext-decoration: underline;\n}\n.pointer[data-v-166de83a]{\n\tcursor:pointer;\n}\n", ""]);
 
 // exports
 
@@ -53147,6 +53235,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css&":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css& ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/treeview.vue?vue&type=style&index=0&id=62028b98&scoped=true&lang=css&":
 /*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/treeview.vue?vue&type=style&index=0&id=62028b98&scoped=true&lang=css& ***!
@@ -56525,6 +56643,69 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=template&id=166de83a&scoped=true&":
+/*!******************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=template&id=166de83a&scoped=true& ***!
+  \******************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c(
+      "ul",
+      { staticClass: "list-unstyled" },
+      _vm._l(_vm.items, function(item, itemIdx) {
+        return _c("li", { key: itemIdx }, [
+          _c("h4", { staticClass: "pl-4 ml-4" }, [
+            _vm._v("\n\t\t\t\t" + _vm._s(item.name) + "\n\t\t\t\t"),
+            _c("i", {
+              staticClass: "ml-4 fas fa-edit text-warning pointer",
+              on: {
+                click: function($event) {
+                  return _vm.editDevice(item)
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("i", {
+              staticClass: "ml-2 fas fa-times text-danger pointer",
+              on: {
+                click: function($event) {
+                  return _vm.deleteDevice(item)
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("i", {
+              staticClass: "ml-2 fas fa-map-marker text-danger pointer",
+              on: {
+                click: function($event) {
+                  return _vm.setMarker(item)
+                }
+              }
+            })
+          ])
+        ])
+      }),
+      0
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/treeview.vue?vue&type=template&id=62028b98&scoped=true&":
 /*!********************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/treeview.vue?vue&type=template&id=62028b98&scoped=true& ***!
@@ -56675,7 +56856,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c(
-                    "button",
+                    "div",
                     {
                       directives: [
                         {
@@ -56687,17 +56868,29 @@ var render = function() {
                           expression:
                             "device.isShow && typeIdx == 'App\\\\device_system_voice_alert'"
                         }
-                      ],
-                      staticClass: "btn btn-success mt-4",
-                      attrs: { type: "button" },
-                      on: {
-                        click: function($event) {
-                          _vm.addAlarmShow = true
-                          _vm.deviceData = device
-                        }
-                      }
+                      ]
                     },
-                    [_vm._v("Добавить извещатель")]
+                    [
+                      _c("alert-system-devices", {
+                        attrs: { items: device.alarms }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-success mt-4",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              _vm.addAlarmShow = true
+                              _vm.deviceData = device
+                            }
+                          }
+                        },
+                        [_vm._v("Добавить извещатель")]
+                      )
+                    ],
+                    1
                   ),
                   _vm._v(" "),
                   _c("wire-tree", {
@@ -71245,6 +71438,93 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/treeView/alertSystemDevices.vue":
+/*!*****************************************************************!*\
+  !*** ./resources/js/components/treeView/alertSystemDevices.vue ***!
+  \*****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _alertSystemDevices_vue_vue_type_template_id_166de83a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./alertSystemDevices.vue?vue&type=template&id=166de83a&scoped=true& */ "./resources/js/components/treeView/alertSystemDevices.vue?vue&type=template&id=166de83a&scoped=true&");
+/* harmony import */ var _alertSystemDevices_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./alertSystemDevices.vue?vue&type=script&lang=js& */ "./resources/js/components/treeView/alertSystemDevices.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _alertSystemDevices_vue_vue_type_style_index_0_id_166de83a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css& */ "./resources/js/components/treeView/alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _alertSystemDevices_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _alertSystemDevices_vue_vue_type_template_id_166de83a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _alertSystemDevices_vue_vue_type_template_id_166de83a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "166de83a",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/treeView/alertSystemDevices.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/alertSystemDevices.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/treeView/alertSystemDevices.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./alertSystemDevices.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css&":
+/*!**************************************************************************************************************************!*\
+  !*** ./resources/js/components/treeView/alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css& ***!
+  \**************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_style_index_0_id_166de83a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=style&index=0&id=166de83a&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_style_index_0_id_166de83a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_style_index_0_id_166de83a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_style_index_0_id_166de83a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_style_index_0_id_166de83a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_style_index_0_id_166de83a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/alertSystemDevices.vue?vue&type=template&id=166de83a&scoped=true&":
+/*!************************************************************************************************************!*\
+  !*** ./resources/js/components/treeView/alertSystemDevices.vue?vue&type=template&id=166de83a&scoped=true& ***!
+  \************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_template_id_166de83a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./alertSystemDevices.vue?vue&type=template&id=166de83a&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/alertSystemDevices.vue?vue&type=template&id=166de83a&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_template_id_166de83a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_template_id_166de83a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/treeView/treeview.vue":
 /*!*******************************************************!*\
   !*** ./resources/js/components/treeView/treeview.vue ***!
@@ -71791,6 +72071,21 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       state.markerObj.sensorIdx = sensor_id;
       state.markerObj.type = 'sensor';
     },
+    SET_MAP_ACTIVE_ALARM: function SET_MAP_ACTIVE_ALARM(state, payload) {
+      var p = _objectSpread({}, payload);
+
+      var idx = state.devices[p.typeIdx].items.findIndex(function (obj) {
+        return obj.id == p.deviceId;
+      });
+      var alarmIdx = state.devices[p.typeIdx].items[idx].alarms.findIndex(function (obj) {
+        return obj.id == alertId.wid;
+      });
+      state.markerObj = state.devices[p.typeIdx].items[idx].alarms[alarmIdx];
+      state.markerObj.typeIdx = p.typeIdx;
+      state.markerObj.itemsIdx = idx;
+      state.markerObj.alarmIdx = alarmIdx;
+      state.markerObj.type = 'alarm';
+    },
     SET_DEVICE_COORDS: function SET_DEVICE_COORDS(state, payload) {
       var p = _objectSpread({}, payload);
 
@@ -71823,6 +72118,23 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         obj.bti_files_id = rd.bti_files_id;
       });
     },
+    SET_ALERT_COORDS: function SET_ALERT_COORDS(state, payload) {
+      var p = _objectSpread({}, payload);
+
+      state.markerObj.lng = p.coords.lng;
+      state.markerObj.lat = p.coords.lat;
+      state.markerObj.bti_files_id = p.bti_plan_id;
+      console.log(state.markerObj);
+      return false;
+      axios.post("/api/sys_alert_dev/storeCoords/".concat(state.markerObj.id), state.markerObj).then(function (response) {
+        var rd = response.data;
+        var mo = state.markerObj;
+        var obj = state.devices[mo.typeIdx].items[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx];
+        obj.lat = rd.lat;
+        obj.lng = rd.lng;
+        obj.bti_files_id = rd.bti_files_id;
+      });
+    },
     UPDATE_ANTENNA: function UPDATE_ANTENNA(state, payload) {
       var p = _objectSpread({}, payload);
 
@@ -71837,18 +72149,23 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     ADD_ALARM: function ADD_ALARM(state, payload) {
       var p = _objectSpread({}, payload);
 
-      console.log(p);
-      /*const id = p.id || '';
-      axios.post(`/api/antenna/storeParams/${id}`,p)
-       .then(
-          response => {
-            const device_idx = state.devices[p.tbl_name].items.findIndex( device => device.id == p.device_id);
-            state.devices[p.tbl_name].items[device_idx].params = p;
-          }
-        )*/
+      var tbl_name = 'App\\device_system_voice_alert';
+      axios.post("/api/sys_alert_dev/store", p).then(function (response) {
+        var device_idx = state.devices[tbl_name].items.findIndex(function (device) {
+          return device.id == p.device_system_voice_alerts_id;
+        });
+        state.devices[tbl_name].items[device_idx].alarms = response.data;
+      });
     }
   },
   getters: {
+    ALERT_DEVICE_BY_NAME: function ALERT_DEVICE_BY_NAME(state) {
+      return function (name) {
+        return state.availabledevices.voice_alerts.devices.find(function (el) {
+          return el.name == name;
+        });
+      };
+    },
     DEVICES: function DEVICES(state) {
       return state.devices;
     },
@@ -71863,7 +72180,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     ALL_SENSORS: function ALL_SENSORS(state) {
       return state.sensors;
     },
-    SENSOR: function SENSOR(state, getters) {
+    SENSOR: function SENSOR(state) {
       return function (id) {
         return state.sensors.find(function (el) {
           return el.id == id;
@@ -71905,6 +72222,16 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
                 });
               });
             }
+          });
+          if (device.alarms && device.alarms.length > 0) device.alarms.map(function (alarm) {
+            if (!markers[alarm.bti_files_id]) markers[alarm.bti_files_id] = [];
+            markers[alarm.bti_files_id].push({
+              lng: alarm.lng,
+              lat: alarm.lat,
+              icon: alarm.icon,
+              sensorId: alarm.id,
+              deviceType: 'alarm'
+            });
           });
         });
       };

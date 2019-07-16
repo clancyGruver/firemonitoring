@@ -34,7 +34,11 @@
 		methods: {
 			addDevice(device, tbl_name){
         //device.tbl_name = tbl_name
-				this.$store.commit('ADD_ALARM', device);
+        const result = {
+          'device_system_voice_alerts_id': this.deviceData.id,
+          'device_alerts_id':device.id,
+        }
+				this.$store.commit('ADD_ALARM', result);
 				this.$emit('end-adding')
 			},
 			cancel () {

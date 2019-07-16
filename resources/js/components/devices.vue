@@ -48,6 +48,15 @@ export default {
 			devices.map(val => {
 				const wireEl = [];
 				val.wires.forEach( el => {el.isShow=false; wireEl.push(el)} );
+				const alarmEl = [];
+				if('alerts' in val){
+					val.alerts.forEach( el => {
+						const curEl = el.alert_device;
+						curEl.dsvad = el.id;
+						curEl.parent_device_id = val.id;
+						alarmEl.push( curEl );
+					});
+				}
 				if(!(val.tbl_name in this.tree)){
 					this.tree[val.tbl_name] = {
 						name: val.type,
@@ -59,6 +68,7 @@ export default {
 					tbl_name: val.tbl_name,
 					isShow: false,
 					id: val.id,
+					alarms:alarmEl,
 		            wires: wireEl,
 		            wires_count: val.devicable.wires_count,
 		            lng: val.lng,

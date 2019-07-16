@@ -48,6 +48,7 @@ class ObjectdevicesController extends Controller
     public function getJson($id, Request $request){
         $installed_dev_categories = OD::where('object_id',$id)
                                     ->with('wires')
+                                    ->with('alerts')
                                     ->with('devicable')
                                     ->get()
                                     ?? null;

@@ -22,7 +22,10 @@
 					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteDevice(typeIdx, device)"></i>
 					<i class="ml-2 fas fa-map-marker text-danger pointer" @click="setMarker(typeIdx, device)"></i>
 				</h4>
-				<button v-show="device.isShow && typeIdx == 'App\\device_system_voice_alert'"  type="button" class="btn btn-success mt-4" @click="addAlarmShow = true; deviceData = device">Добавить извещатель</button>
+				<div v-show="device.isShow && typeIdx == 'App\\device_system_voice_alert'"  >
+					<alert-system-devices :items="device.alarms" />
+					<button type="button" class="btn btn-success mt-4" @click="addAlarmShow = true; deviceData = device">Добавить извещатель</button>
+				</div>
 				<wire-tree v-show="device.isShow && typeIdx == 'App\\device_aps'" :wires="device.wires" :wires_count="device.wires_count" :typeIdx="typeIdx" :ObjectDeviceId="device.id" />
 			</li>
 		</ul>
@@ -36,6 +39,7 @@
 	import wireTree from './wireTree';
 	import alarmDevices from '../alarmDevices';
 	import antennaDevice from '../editForms/antenna';
+	import alertSystemDevices from './alertSystemDevices';
 
 	export default
 	{
@@ -44,6 +48,7 @@
 			wireTree,
 			antennaDevice,
 			alarmDevices,
+			alertSystemDevices,
 		},
 		props: {
 		},

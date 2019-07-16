@@ -161,21 +161,21 @@ DROP TABLE IF EXISTS `device_antenna_params`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `device_antenna_params` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `device_antenna_id` bigint(20) unsigned NOT NULL,
+  `device_id` bigint(20) unsigned NOT NULL,
   `setup_place` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `mast_isset` tinyint(1) NOT NULL DEFAULT '0',
-  `mast_height` double(3,2) DEFAULT NULL,
-  `cable_type` set('safety','unsfety','radio') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mast_height` double(4,2) DEFAULT NULL,
+  `cable_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_user_id` bigint(20) unsigned NOT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `device_antenna_params_created_user_id_foreign` (`created_user_id`),
-  KEY `device_antenna_params_device_antenna_id_foreign` (`device_antenna_id`),
+  KEY `device_antenna_params_device_antenna_id_foreign_idx` (`device_id`),
   CONSTRAINT `device_antenna_params_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `device_antenna_params_device_antenna_id_foreign` FOREIGN KEY (`device_antenna_id`) REFERENCES `device_antenna` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `device_antenna_params_device_antenna_id_foreign` FOREIGN KEY (`device_id`) REFERENCES `object_devices` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,6 +184,7 @@ CREATE TABLE `device_antenna_params` (
 
 LOCK TABLES `device_antenna_params` WRITE;
 /*!40000 ALTER TABLE `device_antenna_params` DISABLE KEYS */;
+INSERT INTO `device_antenna_params` VALUES (2,16,'Roof2',1,40.00,'RK 50',3,NULL,'2019-07-10 07:24:01','2019-07-10 08:26:45');
 /*!40000 ALTER TABLE `device_antenna_params` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -456,14 +457,17 @@ CREATE TABLE `device_system_voice_alerts_devs` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `bti_files_id` bigint(20) unsigned DEFAULT NULL,
+  `lng` decimal(10,7) DEFAULT NULL,
+  `lat` decimal(10,7) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `device_system_voice_alerts_devs_device_alerts_id_foreign` (`device_alerts_id`),
-  KEY `fk_dsva` (`device_system_voice_alerts_id`),
   KEY `device_system_voice_alerts_devs_created_user_id_foreign` (`created_user_id`),
+  KEY `device_system_voice_alerts_devs_bti_files_id_foreign` (`bti_files_id`),
+  CONSTRAINT `device_system_voice_alerts_devs_bti_files_id_foreign` FOREIGN KEY (`bti_files_id`) REFERENCES `bti_files` (`id`),
   CONSTRAINT `device_system_voice_alerts_devs_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `device_system_voice_alerts_devs_device_alerts_id_foreign` FOREIGN KEY (`device_alerts_id`) REFERENCES `device_alerts` (`id`),
-  CONSTRAINT `fk_dsva` FOREIGN KEY (`device_system_voice_alerts_id`) REFERENCES `device_system_voice_alerts` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `device_system_voice_alerts_devs_device_alerts_id_foreign` FOREIGN KEY (`device_alerts_id`) REFERENCES `device_alerts` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -472,6 +476,7 @@ CREATE TABLE `device_system_voice_alerts_devs` (
 
 LOCK TABLES `device_system_voice_alerts_devs` WRITE;
 /*!40000 ALTER TABLE `device_system_voice_alerts_devs` DISABLE KEYS */;
+INSERT INTO `device_system_voice_alerts_devs` VALUES (3,19,1,3,NULL,'2019-07-16 11:00:54','2019-07-16 11:00:54',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `device_system_voice_alerts_devs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -487,7 +492,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -496,7 +501,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'2014_10_12_000000_create_users_table',1),(2,'2014_10_12_100000_create_password_resets_table',1),(3,'2019_05_15_055415_raions',2),(4,'2019_05_15_060541_objects',2),(7,'2019_05_15_060035_device_class',3),(8,'2019_05_15_061317_devices',4),(9,'2019_05_15_061835_device_reglament',4),(10,'2019_05_15_065432_device_reglament_element',5),(11,'2019_05_15_065712_device_limitations',6),(12,'2019_05_15_065946_object_devices',7),(13,'2019_05_15_070921_wires',7),(15,'2019_05_15_071538_sensors',8),(16,'2019_05_15_080205_wire_sensor',9),(17,'2019_05_15_080205_wire_sensor_previous_state',10),(18,'2019_05_15_081024_wire_sensor_reglament',10),(19,'2019_05_15_081306_wire_previous_state',10),(20,'2019_05_15_082055_object_device_reglament',11),(21,'2019_05_15_082057_object_device_reglament_limitations',12),(22,'2019_05_15_083012_object_repair_queue',12),(23,'2019_05_15_084106_calendar',12),(24,'2019_05_19_121046_user',13),(25,'2016_06_01_000001_create_oauth_auth_codes_table',14),(26,'2016_06_01_000002_create_oauth_access_tokens_table',14),(27,'2016_06_01_000003_create_oauth_refresh_tokens_table',14),(28,'2016_06_01_000004_create_oauth_clients_table',14),(29,'2016_06_01_000005_create_oauth_personal_access_clients_table',14),(31,'2019_05_26_091713_add_objects_documentation',15),(32,'2019_05_27_110628_change_device',16),(33,'2019_06_07_110528_add_sensor_name',17),(34,'2019_06_10_080205_wire_sensor_previous_state_change',18),(35,'2019_06_10_225405_user_add_raion',19),(36,'2019_06_12_091544_wire_sensor_add_comment',19),(37,'2019_06_12_151353_mediafiles_for_object',20),(38,'2019_06_13_064804_add_setup_place_device',21),(39,'2019_06_15_124504_create_device_rspis_table',22),(40,'2019_06_15_124534_create_device_antennas_table',22),(41,'2019_06_15_124544_create_device_aps_table',22),(42,'2019_06_15_124555_create_device_alerts_table',22),(43,'2019_06_15_213344_object_add_souetype',23),(44,'2019_06_16_082729_create_device_system_voice_alerts_table',23),(45,'2019_06_19_070206_create_device_system_voice_alerts_devs_table',24),(46,'2019_06_19_080458_device_aps_softdelete',24),(47,'2019_06_19_084014_od_device_tabl',25),(48,'2019_06_23_084014_as_device_tbl_chng',26),(49,'2019_06_23_112635_create_bti_files_table',27),(50,'2019_06_09_044231_users_add_fk_raions',28),(51,'2019_07_04_065531_wiresensor_add_soft_delete',29),(52,'2019_07_04_112337_wiresensor_add_lonlat',30);
+INSERT INTO `migrations` VALUES (1,'2014_10_12_000000_create_users_table',1),(2,'2014_10_12_100000_create_password_resets_table',1),(3,'2019_05_15_055415_raions',2),(4,'2019_05_15_060541_objects',2),(7,'2019_05_15_060035_device_class',3),(8,'2019_05_15_061317_devices',4),(9,'2019_05_15_061835_device_reglament',4),(10,'2019_05_15_065432_device_reglament_element',5),(11,'2019_05_15_065712_device_limitations',6),(12,'2019_05_15_065946_object_devices',7),(13,'2019_05_15_070921_wires',7),(15,'2019_05_15_071538_sensors',8),(16,'2019_05_15_080205_wire_sensor',9),(17,'2019_05_15_080205_wire_sensor_previous_state',10),(18,'2019_05_15_081024_wire_sensor_reglament',10),(19,'2019_05_15_081306_wire_previous_state',10),(20,'2019_05_15_082055_object_device_reglament',11),(21,'2019_05_15_082057_object_device_reglament_limitations',12),(22,'2019_05_15_083012_object_repair_queue',12),(23,'2019_05_15_084106_calendar',12),(24,'2019_05_19_121046_user',13),(25,'2016_06_01_000001_create_oauth_auth_codes_table',14),(26,'2016_06_01_000002_create_oauth_access_tokens_table',14),(27,'2016_06_01_000003_create_oauth_refresh_tokens_table',14),(28,'2016_06_01_000004_create_oauth_clients_table',14),(29,'2016_06_01_000005_create_oauth_personal_access_clients_table',14),(31,'2019_05_26_091713_add_objects_documentation',15),(32,'2019_05_27_110628_change_device',16),(33,'2019_06_07_110528_add_sensor_name',17),(34,'2019_06_10_080205_wire_sensor_previous_state_change',18),(35,'2019_06_10_225405_user_add_raion',19),(36,'2019_06_12_091544_wire_sensor_add_comment',19),(37,'2019_06_12_151353_mediafiles_for_object',20),(38,'2019_06_13_064804_add_setup_place_device',21),(39,'2019_06_15_124504_create_device_rspis_table',22),(40,'2019_06_15_124534_create_device_antennas_table',22),(41,'2019_06_15_124544_create_device_aps_table',22),(42,'2019_06_15_124555_create_device_alerts_table',22),(43,'2019_06_15_213344_object_add_souetype',23),(44,'2019_06_16_082729_create_device_system_voice_alerts_table',23),(45,'2019_06_19_070206_create_device_system_voice_alerts_devs_table',24),(46,'2019_06_19_080458_device_aps_softdelete',24),(47,'2019_06_19_084014_od_device_tabl',25),(48,'2019_06_23_084014_as_device_tbl_chng',26),(49,'2019_06_23_112635_create_bti_files_table',27),(50,'2019_06_09_044231_users_add_fk_raions',28),(51,'2019_07_04_065531_wiresensor_add_soft_delete',29),(52,'2019_07_04_112337_wiresensor_add_lonlat',30),(53,'2019_07_10_065258_change_antenna_cable',31),(54,'2019_07_01_071526_add_od_ll',32),(55,'2019_07_16_120204_d_s_v_a_d_add_params',32);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -751,7 +756,7 @@ CREATE TABLE `object_devices` (
 
 LOCK TABLES `object_devices` WRITE;
 /*!40000 ALTER TABLE `object_devices` DISABLE KEYS */;
-INSERT INTO `object_devices` VALUES (1,6,9,3,'2019-05-27 17:05:27','2019-07-07 12:38:06','','App\\device_aps',NULL,1,118.3306482,-54.5000000),(13,6,9,3,'2019-06-19 08:31:43','2019-07-01 10:20:20','','App\\device_aps',NULL,3,41.3594979,-98.8750000),(14,6,10,3,'2019-06-20 06:24:46','2019-06-20 06:28:16','','App\\device_aps','2019-06-20 06:28:16',0,0.0000000,0.0000000),(15,6,10,3,'2019-06-20 06:28:19','2019-07-01 10:27:20','','App\\device_aps',NULL,1,59.8525665,-119.0000000),(16,6,1,3,'2019-06-28 06:49:25','2019-07-03 10:39:03','','App\\device_antenna',NULL,1,17.8328962,-93.1250000),(17,6,3,3,'2019-06-28 07:08:08','2019-06-28 07:08:08','','App\\device_rspi',NULL,0,0.0000000,0.0000000),(18,6,1,3,'2019-06-28 07:08:14','2019-07-01 10:48:58','','App\\device_alert',NULL,1,104.3358936,-94.5000000),(19,6,1,3,'2019-06-28 07:08:21','2019-06-28 07:08:21','','App\\device_system_voice_alert',NULL,0,0.0000000,0.0000000),(20,6,3,3,'2019-07-01 11:01:33','2019-07-01 11:02:39','','App\\device_alert',NULL,1,98.3381416,-146.8750000),(21,6,2,3,'2019-07-01 11:01:40','2019-07-01 11:02:43','','App\\device_alert',NULL,1,26.8649307,-140.8750000);
+INSERT INTO `object_devices` VALUES (1,6,9,3,'2019-05-27 17:05:27','2019-07-07 12:38:06','','App\\device_aps',NULL,1,118.3306482,-54.5000000),(13,6,9,3,'2019-06-19 08:31:43','2019-07-01 10:20:20','','App\\device_aps',NULL,3,41.3594979,-98.8750000),(14,6,10,3,'2019-06-20 06:24:46','2019-06-20 06:28:16','','App\\device_aps','2019-06-20 06:28:16',0,0.0000000,0.0000000),(15,6,10,3,'2019-06-20 06:28:19','2019-07-01 10:27:20','','App\\device_aps',NULL,1,59.8525665,-119.0000000),(16,6,1,3,'2019-06-28 06:49:25','2019-07-03 10:39:03','','App\\device_antenna',NULL,1,17.8328962,-93.1250000),(17,6,3,3,'2019-06-28 07:08:08','2019-06-28 07:08:08','','App\\device_rspi',NULL,0,0.0000000,0.0000000),(18,6,1,3,'2019-06-28 07:08:14','2019-07-01 10:48:58','','App\\device_alert',NULL,1,104.3358936,-94.5000000),(19,6,1,3,'2019-06-28 07:08:21','2019-07-16 12:39:42','','App\\device_system_voice_alert',NULL,1,116.3313975,-186.6250000),(20,6,3,3,'2019-07-01 11:01:33','2019-07-01 11:02:39','','App\\device_alert',NULL,1,98.3381416,-146.8750000),(21,6,2,3,'2019-07-01 11:01:40','2019-07-01 11:02:43','','App\\device_alert',NULL,1,26.8649307,-140.8750000);
 /*!40000 ALTER TABLE `object_devices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1074,7 +1079,7 @@ CREATE TABLE `wire_sensor` (
 
 LOCK TABLES `wire_sensor` WRITE;
 /*!40000 ALTER TABLE `wire_sensor` DISABLE KEYS */;
-INSERT INTO `wire_sensor` VALUES (1,1,5,3,'1',3,'32',1,1,'2019-06-11 07:56:34','2019-07-07 12:52:20','',NULL,1,51.5596756,-64.7500000),(2,1,1,3,'2',1,'11',1,0,'2019-06-12 12:48:39','2019-07-04 09:19:46','Перенесен из 12 кабинета',NULL,NULL,NULL,NULL),(3,1,1,3,'3',1,'12',1,1,'2019-06-12 12:48:46','2019-06-12 13:21:36','После ремонта',NULL,NULL,NULL,NULL),(4,1,1,3,'4',1,'14',1,1,'2019-06-12 12:52:20','2019-06-12 12:52:20','',NULL,NULL,NULL,NULL),(5,1,1,3,'5',1,'15',1,1,'2019-06-12 12:54:23','2019-06-12 12:54:23','',NULL,NULL,NULL,NULL),(6,1,1,3,'6',1,'16',1,1,'2019-06-12 12:56:01','2019-06-12 12:56:01','',NULL,NULL,NULL,NULL),(7,1,1,3,'7',1,'ddd',1,1,'2019-07-04 04:45:37','2019-07-04 07:08:28',NULL,'2019-07-04 07:08:28',NULL,NULL,NULL),(8,1,1,3,'8',1,'qqq',0,0,'2019-07-04 06:28:35','2019-07-04 07:03:04',NULL,'2019-07-04 07:03:04',NULL,NULL,NULL),(9,1,1,3,'7',1,'16',1,0,'2019-07-04 10:26:23','2019-07-04 10:34:12','Проба пера','2019-07-04 10:34:12',NULL,NULL,NULL);
+INSERT INTO `wire_sensor` VALUES (1,1,5,3,'1',3,'32',1,1,'2019-06-11 07:56:34','2019-07-16 11:43:55',NULL,NULL,1,51.5596756,-64.7500000),(2,1,1,3,'2',1,'11',1,0,'2019-06-12 12:48:39','2019-07-04 09:19:46','Перенесен из 12 кабинета',NULL,NULL,NULL,NULL),(3,1,1,3,'3',1,'12',1,1,'2019-06-12 12:48:46','2019-06-12 13:21:36','После ремонта',NULL,NULL,NULL,NULL),(4,1,1,3,'4',1,'14',1,1,'2019-06-12 12:52:20','2019-06-12 12:52:20','',NULL,NULL,NULL,NULL),(5,1,1,3,'5',1,'15',1,1,'2019-06-12 12:54:23','2019-06-12 12:54:23','',NULL,NULL,NULL,NULL),(6,1,1,3,'6',1,'16',1,1,'2019-06-12 12:56:01','2019-06-12 12:56:01','',NULL,NULL,NULL,NULL),(7,1,1,3,'7',1,'ddd',1,1,'2019-07-04 04:45:37','2019-07-04 07:08:28',NULL,'2019-07-04 07:08:28',NULL,NULL,NULL),(8,1,1,3,'8',1,'qqq',0,0,'2019-07-04 06:28:35','2019-07-04 07:03:04',NULL,'2019-07-04 07:03:04',NULL,NULL,NULL),(9,1,1,3,'7',1,'16',1,0,'2019-07-04 10:26:23','2019-07-04 10:34:12','Проба пера','2019-07-04 10:34:12',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `wire_sensor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1104,7 +1109,7 @@ CREATE TABLE `wire_sensor_previous_state` (
   KEY `wire_sensor_previous_state_wire_sensor_id_foreign` (`wire_sensor_id`),
   CONSTRAINT `wire_sensor_previous_state_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `wire_sensor_previous_state_wire_sensor_id_foreign` FOREIGN KEY (`wire_sensor_id`) REFERENCES `wire_sensor` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1113,7 +1118,7 @@ CREATE TABLE `wire_sensor_previous_state` (
 
 LOCK TABLES `wire_sensor_previous_state` WRITE;
 /*!40000 ALTER TABLE `wire_sensor_previous_state` DISABLE KEYS */;
-INSERT INTO `wire_sensor_previous_state` VALUES (1,1,3,'1',12,'321',1,1,1,'2019-06-11 09:25:06','2019-06-11 09:25:06',1,1),(2,1,3,'1',12,'321',1,1,1,'2019-06-11 09:25:47','2019-06-11 09:25:47',1,1),(3,1,3,'1',12,'321',1,1,1,'2019-06-11 09:28:20','2019-06-11 09:28:20',1,1),(4,1,3,'1',12,'321',1,1,1,'2019-06-11 09:32:26','2019-06-11 09:32:26',1,1),(5,1,3,'1',12,'321',1,1,1,'2019-06-11 09:35:14','2019-06-11 09:35:14',1,1),(6,1,3,'1',12,'321',1,1,1,'2019-06-11 09:35:59','2019-06-11 09:35:59',1,1),(7,1,3,'1',12,'321',1,1,1,'2019-06-11 09:38:20','2019-06-11 09:38:20',1,1),(8,1,3,'1',12,'321',1,1,1,'2019-06-11 09:39:59','2019-06-11 09:39:59',1,1),(9,1,3,'15',126,'3217',1,1,1,'2019-06-11 09:40:51','2019-06-11 09:40:51',1,4),(10,1,3,'2',3,'32',1,1,1,'2019-06-12 12:59:04','2019-06-12 12:59:04',1,5),(11,3,3,'2',1,'12',1,1,1,'2019-06-12 13:00:14','2019-06-12 13:00:14',1,1),(12,2,3,'2',1,'11',0,1,1,'2019-06-12 13:19:21','2019-06-12 13:19:21',1,1),(13,2,3,'2',1,'11',0,1,1,'2019-06-12 13:21:18','2019-06-12 13:21:18',1,1),(14,3,3,'3',1,'12',1,1,1,'2019-06-12 13:21:36','2019-06-12 13:21:36',1,1),(15,2,3,'2',1,'11',0,1,1,'2019-07-04 04:35:46','2019-07-04 04:35:46',1,1),(16,8,3,'8',1,'qqq',1,1,1,'2019-07-04 06:38:44','2019-07-04 06:38:44',1,1),(17,8,3,'8',1,'qqq',1,1,1,'2019-07-04 06:38:50','2019-07-04 06:38:50',1,1),(18,8,3,'8',1,'qqq',0,1,1,'2019-07-04 06:40:34','2019-07-04 06:40:34',1,1),(19,8,3,'8',1,'qqq',0,0,1,'2019-07-04 06:54:36','2019-07-04 06:54:36',1,1),(20,8,3,'8',1,'qqq',0,0,1,'2019-07-04 06:58:57','2019-07-04 06:58:57',1,1),(21,8,3,'8',1,'qqq',0,0,1,'2019-07-04 07:03:04','2019-07-04 07:03:04',1,1),(22,7,3,'7',1,'ddd',1,1,1,'2019-07-04 07:08:28','2019-07-04 07:08:28',1,1),(23,2,3,'2',1,'11',0,0,1,'2019-07-04 09:19:46','2019-07-04 09:19:46',1,1),(24,2,3,'2',1,'11',1,0,1,'2019-07-04 10:23:55','2019-07-04 10:23:55',1,1),(25,9,3,'7',1,'16',1,0,1,'2019-07-04 10:29:56','2019-07-04 10:29:56',1,1),(26,9,3,'7',1,'16',1,0,1,'2019-07-04 10:34:12','2019-07-04 10:34:12',1,1);
+INSERT INTO `wire_sensor_previous_state` VALUES (1,1,3,'1',12,'321',1,1,1,'2019-06-11 09:25:06','2019-06-11 09:25:06',1,1),(2,1,3,'1',12,'321',1,1,1,'2019-06-11 09:25:47','2019-06-11 09:25:47',1,1),(3,1,3,'1',12,'321',1,1,1,'2019-06-11 09:28:20','2019-06-11 09:28:20',1,1),(4,1,3,'1',12,'321',1,1,1,'2019-06-11 09:32:26','2019-06-11 09:32:26',1,1),(5,1,3,'1',12,'321',1,1,1,'2019-06-11 09:35:14','2019-06-11 09:35:14',1,1),(6,1,3,'1',12,'321',1,1,1,'2019-06-11 09:35:59','2019-06-11 09:35:59',1,1),(7,1,3,'1',12,'321',1,1,1,'2019-06-11 09:38:20','2019-06-11 09:38:20',1,1),(8,1,3,'1',12,'321',1,1,1,'2019-06-11 09:39:59','2019-06-11 09:39:59',1,1),(9,1,3,'15',126,'3217',1,1,1,'2019-06-11 09:40:51','2019-06-11 09:40:51',1,4),(10,1,3,'2',3,'32',1,1,1,'2019-06-12 12:59:04','2019-06-12 12:59:04',1,5),(11,3,3,'2',1,'12',1,1,1,'2019-06-12 13:00:14','2019-06-12 13:00:14',1,1),(12,2,3,'2',1,'11',0,1,1,'2019-06-12 13:19:21','2019-06-12 13:19:21',1,1),(13,2,3,'2',1,'11',0,1,1,'2019-06-12 13:21:18','2019-06-12 13:21:18',1,1),(14,3,3,'3',1,'12',1,1,1,'2019-06-12 13:21:36','2019-06-12 13:21:36',1,1),(15,2,3,'2',1,'11',0,1,1,'2019-07-04 04:35:46','2019-07-04 04:35:46',1,1),(16,8,3,'8',1,'qqq',1,1,1,'2019-07-04 06:38:44','2019-07-04 06:38:44',1,1),(17,8,3,'8',1,'qqq',1,1,1,'2019-07-04 06:38:50','2019-07-04 06:38:50',1,1),(18,8,3,'8',1,'qqq',0,1,1,'2019-07-04 06:40:34','2019-07-04 06:40:34',1,1),(19,8,3,'8',1,'qqq',0,0,1,'2019-07-04 06:54:36','2019-07-04 06:54:36',1,1),(20,8,3,'8',1,'qqq',0,0,1,'2019-07-04 06:58:57','2019-07-04 06:58:57',1,1),(21,8,3,'8',1,'qqq',0,0,1,'2019-07-04 07:03:04','2019-07-04 07:03:04',1,1),(22,7,3,'7',1,'ddd',1,1,1,'2019-07-04 07:08:28','2019-07-04 07:08:28',1,1),(23,2,3,'2',1,'11',0,0,1,'2019-07-04 09:19:46','2019-07-04 09:19:46',1,1),(24,2,3,'2',1,'11',1,0,1,'2019-07-04 10:23:55','2019-07-04 10:23:55',1,1),(25,9,3,'7',1,'16',1,0,1,'2019-07-04 10:29:56','2019-07-04 10:29:56',1,1),(26,9,3,'7',1,'16',1,0,1,'2019-07-04 10:34:12','2019-07-04 10:34:12',1,1),(27,1,3,'1',3,'32',1,1,1,'2019-07-16 11:43:54','2019-07-16 11:43:54',1,5);
 /*!40000 ALTER TABLE `wire_sensor_previous_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1193,4 +1198,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-07-07 14:18:37
+-- Dump completed on 2019-07-16 17:24:23

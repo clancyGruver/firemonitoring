@@ -60,4 +60,8 @@ class Object_Device extends Model
     public function wires(){
         return $this->hasMany('App\Wire', 'object_device_id', 'id')->with('sensors');
     }
+
+    public function alerts(){
+        return $this->hasMany('App\device_system_voice_alerts_dev', 'device_system_voice_alerts_id', 'id')->with('alertDevice');
+    }
 }

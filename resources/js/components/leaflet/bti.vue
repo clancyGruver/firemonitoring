@@ -115,6 +115,8 @@
 							this.$store.commit('SET_DEVICE_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id});
 						else if(markerType == 'sensor')
 							this.$store.commit('SET_SENSOR_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id});
+						else if(markerType == 'alert')
+							this.$store.commit('SET_ALERT_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id});
 						self.setMarkers();
 					}
 				});

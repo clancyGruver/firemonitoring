@@ -230,6 +230,16 @@ export const store = new Vuex.Store({
       state.markerObj.sensorIdx = sensor_id;
       state.markerObj.type = 'sensor';
     },
+    SET_MAP_ACTIVE_ALARM:(state, payload) => {
+      const p = {...payload};
+      const idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.deviceId );
+      const alarmIdx = state.devices[p.typeIdx].items[idx].alarms.findIndex(obj => obj.id == alertId.wid );
+      state.markerObj = state.devices[p.typeIdx].items[idx].alarms[alarmIdx];
+      state.markerObj.typeIdx = p.typeIdx;
+      state.markerObj.itemsIdx = idx;
+      state.markerObj.alarmIdx = alarmIdx;
+      state.markerObj.type = 'alarm';
+    },
     SET_DEVICE_COORDS:(state, payload) => {
       const p = {...payload};
       state.markerObj.lng = p.coords.lng;
@@ -264,6 +274,25 @@ export const store = new Vuex.Store({
           }
         )
     },
+    SET_ALERT_COORDS:(state, payload) => {
+      const p = {...payload};
+      state.markerObj.lng = p.coords.lng;
+      state.markerObj.lat = p.coords.lat;
+      state.markerObj.bti_files_id = p.bti_plan_id;
+      console.log(state.markerObj);
+      return false;
+      axios.post(`/api/sys_alert_dev/storeCoords/${state.markerObj.id}`,state.markerObj)
+       .then(
+          response => {
+            const rd = response.data;
+            const mo = state.markerObj;
+            const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx]
+            obj.lat = rd.lat;
+            obj.lng = rd.lng;
+            obj.bti_files_id = rd.bti_files_id;
+          }
+        )
+    },
     UPDATE_ANTENNA:(state, payload) => {
       const p = {...payload};
       const id = p.id || '';
@@ -277,24 +306,24 @@ export const store = new Vuex.Store({
     },
     ADD_ALARM:(state, payload) => {
       const p = {...payload};
-      console.log(p);
-      /*const id = p.id || '';
-      axios.post(`/api/antenna/storeParams/${id}`,p)
+      const tbl_name = 'App\\device_system_voice_alert';
+      axios.post(`/api/sys_alert_dev/store`,p)
        .then(
           response => {
-            const device_idx = state.devices[p.tbl_name].items.findIndex( device => device.id == p.device_id);
-            state.devices[p.tbl_name].items[device_idx].params = p;
+            const device_idx = state.devices[tbl_name].items.findIndex( device => device.id == p.device_system_voice_alerts_id);
+            state.devices[tbl_name].items[device_idx].alarms = response.data;
           }
-        )*/
+        )
     },
   },
 
   getters: {
+    ALERT_DEVICE_BY_NAME: state => name => state.availabledevices.voice_alerts.devices.find( el => el.name == name),
 	  DEVICES: state => state.devices,
     AVAILABLE_DEVICES: state => state.availabledevices,
     AVAILABLE_ALARMS: state => 'alerts' in state.availabledevices ? state.availabledevices.alerts.devices.filter( device => ['sound','voice'].indexOf(device.type) > -1 ) : [],
     ALL_SENSORS: state => state.sensors,
-    SENSOR: (state, getters) => (id) => state.sensors.find( el => el.id == id ),
+    SENSOR: state => id => state.sensors.find( el => el.id == id ),
     BTI_PLANS: state => state.bti_plans,
     MARKER_SETTABLE: state => state.setMarker,
     MARKER_OBJECT: state => state.markerObj,
@@ -330,6 +359,20 @@ export const store = new Vuex.Store({
                       }
                     )
                   }
+                }
+              )
+            if( device.alarms && device.alarms.length > 0 )
+              device.alarms.map(
+                alarm => {
+                  if(!markers[alarm.bti_files_id])
+                    markers[alarm.bti_files_id] = [];
+                  markers[alarm.bti_files_id].push({
+                    lng: alarm.lng,
+                    lat: alarm.lat,
+                    icon: alarm.icon,
+                    sensorId: alarm.id,
+                    deviceType: 'alarm'
+                  })
                 }
               )
           }
