@@ -1,6 +1,6 @@
 version: '2'
 
-services: 
+services:
   nginx:
     build:
       context: ./
@@ -21,43 +21,53 @@ services:
         - ./:/var/www
       links:
         - db
-        - redis
+      #  - redis
       environment:
         DB_PORT: 3306
         DB_HOST: db
-        REDIS_PORT: 6379
-        REDIS_HOST: redis
-        
-  php-cli:
-      build:
-        context: ./
-        dockerfile: docker/php-cli.docker
-      volumes:
-        - ./:/var/www
-      links:
-        - db
-        - redis
-      environment:
-        DB_PORT: 3306
-        DB_HOST: db
-        REDIS_PORT: 6379
-        REDIS_HOST: redis
-      tty: true
-        
+      #  REDIS_PORT: 6379
+      #  REDIS_HOST: redis
+
+  #php-cli:
+  #    build:
+  #      context: ./
+  #      dockerfile: docker/php-cli.docker
+  #    volumes:
+  #      - ./:/var/www
+  #    links:
+  #      - db
+  #      - redis
+  #    environment:
+  #      DB_PORT: 3306
+  #      DB_HOST: db
+  #      REDIS_PORT: 6379
+  #      REDIS_HOST: redis
+  #    tty: true
+
   db:
     image: mysql:5.7
     restart:  always
     volumes:
       - ./storage/docker/mysql:/var/lib/mysql
-    environment: 
+    environment:
       MYSQL_DATABASE: 'app'
       MYSQL_USER: 'app'
       MYSQL_PASSWORD: 'secret'
       MYSQL_ROOT_PASSWORD: 'secret'
-    ports: 
+    ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '33060:3306'
-  redis:
-    image: redis:3.2
+  #redis:
+  #  image: redis:3.2
+  #  ports:
+  #    - '63791:6379'
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
     ports:
-      - '63791:6379'
+      - 8090:8090
+    environment:
+      - MYSQL_ROOT_PASSWORD='secret'
+    depends_on:
+      - db

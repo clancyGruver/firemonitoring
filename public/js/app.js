@@ -2344,9 +2344,13 @@ __webpack_require__.r(__webpack_exports__);
 
         if ('alerts' in val) {
           val.alerts.forEach(function (el) {
-            var curEl = el.alert_device;
+            var curEl = el;
             curEl.dsvad = el.id;
             curEl.parent_device_id = val.id;
+            curEl.icon = el.alert_device.icon;
+            curEl.name = el.alert_device.name;
+            curEl.type = el.alert_device.type;
+            curEl.power = el.alert_device.power;
             alarmEl.push(curEl);
           });
         }
@@ -2647,7 +2651,7 @@ __webpack_require__.r(__webpack_exports__);
           });else if (markerType == 'sensor') _this.$store.commit('SET_SENSOR_COORDS', {
             coords: e.latlng,
             bti_plan_id: self.imgs[_this.curImg].id
-          });else if (markerType == 'alert') _this.$store.commit('SET_ALERT_COORDS', {
+          });else if (markerType == 'alarm') _this.$store.commit('SET_ALERT_COORDS', {
             coords: e.latlng,
             bti_plan_id: self.imgs[_this.curImg].id
           });
@@ -72078,7 +72082,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         return obj.id == p.deviceId;
       });
       var alarmIdx = state.devices[p.typeIdx].items[idx].alarms.findIndex(function (obj) {
-        return obj.id == alertId.wid;
+        return obj.id == p.alertId;
       });
       state.markerObj = state.devices[p.typeIdx].items[idx].alarms[alarmIdx];
       state.markerObj.typeIdx = p.typeIdx;
@@ -72124,12 +72128,10 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       state.markerObj.lng = p.coords.lng;
       state.markerObj.lat = p.coords.lat;
       state.markerObj.bti_files_id = p.bti_plan_id;
-      console.log(state.markerObj);
-      return false;
-      axios.post("/api/sys_alert_dev/storeCoords/".concat(state.markerObj.id), state.markerObj).then(function (response) {
+      axios.post("/api/sys_alert_dev/storeCoords/".concat(state.markerObj.dsvad), state.markerObj).then(function (response) {
         var rd = response.data;
         var mo = state.markerObj;
-        var obj = state.devices[mo.typeIdx].items[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx];
+        var obj = state.devices[mo.typeIdx].items[mo.itemsIdx].alarms[mo.alarmIdx];
         obj.lat = rd.lat;
         obj.lng = rd.lng;
         obj.bti_files_id = rd.bti_files_id;
@@ -72224,12 +72226,13 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
             }
           });
           if (device.alarms && device.alarms.length > 0) device.alarms.map(function (alarm) {
+            console.log(alarm);
             if (!markers[alarm.bti_files_id]) markers[alarm.bti_files_id] = [];
             markers[alarm.bti_files_id].push({
               lng: alarm.lng,
               lat: alarm.lat,
               icon: alarm.icon,
-              sensorId: alarm.id,
+              alarmId: alarm.id,
               deviceType: 'alarm'
             });
           });

@@ -34,7 +34,7 @@ Route::post('/rspi/delete/{id}', 'DeviceRspiController@delete')->name('rspi.dele
 Route::post('/sys_alert/delete/{id}', 'DeviceSystemVoiceAlertController@delete')->name('sys_alert.delete');
 Route::post('/alert/delete/{id}', 'DeviceAlertController@delete')->name('alert.delete');
 Route::post('/sys_alert_dev/store', 'DeviceSystemVoiceAlertsDevController@store')->name('sys_alert_dev.store');
-Route::post('/sys_alert_dev/storeCoords', 'DeviceSystemVoiceAlertsDevController@storeCoords')->name('sys_alert_dev.storeCoords');
+Route::post('/sys_alert_dev/storeCoords/{id}', 'DeviceSystemVoiceAlertsDevController@storeCoords')->name('sys_alert_dev.storeCoords');
 
 Route::post('/objects/delete/{id}', 'ObjectsController@delete')->name('objects.delete');
 Route::post('/objects/fileUpload', 'ObjectsController@fileUpload')->name('objects.fileUpload');

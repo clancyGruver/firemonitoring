@@ -233,7 +233,7 @@ export const store = new Vuex.Store({
     SET_MAP_ACTIVE_ALARM:(state, payload) => {
       const p = {...payload};
       const idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.deviceId );
-      const alarmIdx = state.devices[p.typeIdx].items[idx].alarms.findIndex(obj => obj.id == alertId.wid );
+      const alarmIdx = state.devices[p.typeIdx].items[idx].alarms.findIndex(obj => obj.id == p.alertId );
       state.markerObj = state.devices[p.typeIdx].items[idx].alarms[alarmIdx];
       state.markerObj.typeIdx = p.typeIdx;
       state.markerObj.itemsIdx = idx;
@@ -279,14 +279,12 @@ export const store = new Vuex.Store({
       state.markerObj.lng = p.coords.lng;
       state.markerObj.lat = p.coords.lat;
       state.markerObj.bti_files_id = p.bti_plan_id;
-      console.log(state.markerObj);
-      return false;
-      axios.post(`/api/sys_alert_dev/storeCoords/${state.markerObj.id}`,state.markerObj)
+      axios.post(`/api/sys_alert_dev/storeCoords/${state.markerObj.dsvad}`,state.markerObj)
        .then(
           response => {
             const rd = response.data;
             const mo = state.markerObj;
-            const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx]
+            const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].alarms[mo.alarmIdx]
             obj.lat = rd.lat;
             obj.lng = rd.lng;
             obj.bti_files_id = rd.bti_files_id;
@@ -364,13 +362,14 @@ export const store = new Vuex.Store({
             if( device.alarms && device.alarms.length > 0 )
               device.alarms.map(
                 alarm => {
+                  console.log(alarm);
                   if(!markers[alarm.bti_files_id])
                     markers[alarm.bti_files_id] = [];
                   markers[alarm.bti_files_id].push({
                     lng: alarm.lng,
                     lat: alarm.lat,
                     icon: alarm.icon,
-                    sensorId: alarm.id,
+                    alarmId: alarm.id,
                     deviceType: 'alarm'
                   })
                 }

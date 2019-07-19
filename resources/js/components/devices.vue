@@ -51,9 +51,13 @@ export default {
 				const alarmEl = [];
 				if('alerts' in val){
 					val.alerts.forEach( el => {
-						const curEl = el.alert_device;
+						const curEl = el;
 						curEl.dsvad = el.id;
 						curEl.parent_device_id = val.id;
+						curEl.icon = el.alert_device.icon;
+						curEl.name = el.alert_device.name;
+						curEl.type = el.alert_device.type;
+						curEl.power = el.alert_device.power;
 						alarmEl.push( curEl );
 					});
 				}
