@@ -12,8 +12,13 @@ class RaionController extends Controller
         return view('admin.raions',['raions' => $raions]);
 
     }
+
+    public function indexJson(Request $request){
+        $raions = Raion::where('is_active',1)->get();
+        return response()->json($raions);
+    }
+
     public function update($id, Request $request){
-        
       $raion = Raion::find($id);
       $raion->update($request->all());
       return response()->json('successfully updated');

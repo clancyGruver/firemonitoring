@@ -3,10 +3,25 @@
 		<antenna-device v-show="atennaEdit" :deviceData="deviceData" v-on:end-adding="atennaEdit=false"/>
 		<alarm-devices v-show="addAlarmShow" :deviceData="deviceData" v-on:end-adding="addAlarmShow = false"/>
 		<add-device :creating="addDeviceShow" v-on:end-adding="addDeviceShow = !addDeviceShow" />
+		<rspi-params
+			v-show="rspiParamsShow"
+			v-on:end-adding="rspiParamsShow = false"
+			:deviceData="deviceData"
+		/>
 		<ul class="list-unstyled" v-for="(type, typeIdx) in treeData" :key="typeIdx">
 			<h3 class="underline">{{type.name}}</h3>
 			<li v-for="(device, index) in type.items" :key="device.id">
 				<h4>
+					<i
+						class="ml-2 fas pointer"
+						:class="{
+							'fa-times-circle': !device.is_good,
+							'text-danger': !device.is_good,
+							'fa-check-circle': device.is_good,
+							'text-success': device.is_good
+						}"
+						@click="changeIsGood(typeIdx, device)">
+					</i>
 					<span @click="toggle(typeIdx, index)" class="pointer" v-if="['App\\device_aps','App\\device_system_voice_alert'].indexOf(typeIdx) >-1 ">
 						<span v-if="device.isShow">-</span>
 						<span v-else>+</span>
@@ -38,17 +53,21 @@
 	import addDevice from '../add-device';
 	import wireTree from './wireTree';
 	import alarmDevices from '../alarmDevices';
-	import antennaDevice from '../editForms/antenna';
 	import alertSystemDevices from './alertSystemDevices';
+//edit params forms
+	import antennaDevice from '../editForms/antenna';
+	import rspiParams from '../editForms/rspiParams';
 
 	export default
 	{
 		components: {
 			addDevice,
 			wireTree,
-			antennaDevice,
 			alarmDevices,
 			alertSystemDevices,
+
+			rspiParams,
+			antennaDevice,
 		},
 		props: {
 		},
@@ -66,6 +85,8 @@
 				deviceFormShow: false,
 				deviceFormMethod: 'edit',
 				deviceData:{},
+
+				rspiParamsShow: false,
 			}
 		},
 		methods: {
@@ -80,9 +101,10 @@
 					device.params.device_id = device.id;
 				device.params.tbl_name = typeIdx;
 				this.deviceData = device.params;
-				console.log(typeIdx);
 				if(typeIdx == 'App\\device_antenna')
 					this.atennaEdit = true;
+				else if(typeIdx == 'App\\device_rspi')
+					this.rspiParamsShow = true;
 			},
 			deleteDevice(typeIdx, device){
 				if(confirm(`Вы действительно хотите удалить ${device.name}`)){
@@ -93,6 +115,9 @@
 				this.$store.commit('TOGGLE_MAP');
 				this.$store.commit('SET_MAP_ACTIVE_DEVICE',{typeIdx:typeIdx, deviceId:device.id});
 			},
+			changeIsGood(typeIdx, device){
+				this.$store.commit('TOGGLE_DEVICE_ISGOOD',{typeIdx:typeIdx, deviceId:device.id});
+			}
 		},
 		computed: {
 			treeData() {return this.$store.getters.DEVICES},

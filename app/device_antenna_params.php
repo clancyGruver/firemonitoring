@@ -11,7 +11,7 @@ class device_antenna_params extends Model
     protected $table = 'device_antenna_params';
 
     protected $fillable = [
-        'device_antenna_id',
+        'device_id',
         'setup_place',
         'mast_isset',
         'mast_height',

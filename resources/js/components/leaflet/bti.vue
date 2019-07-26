@@ -49,8 +49,7 @@
 	    	prevImg: function(){
 				if(this.curImg <= 0)
 					this.curImg = this.imgs.length;
-				else
-					--this.curImg;
+				--this.curImg;
 				this.addImageToMap();
 	    	},
 			addImageToMap: function (w,h) {
@@ -60,7 +59,10 @@
 					  northEast = this.map.unproject([img.width, 0], this.map.getMaxZoom()-1),
 					  bounds = new L.LatLngBounds(southWest, northEast);
 			  	L.imageOverlay(this.imgUrl, bounds).addTo(this.map);
-				this.map.setMaxBounds(bounds);
+				//this.map.setMaxBounds(bounds);
+				//this.map.fitBounds(bounds);
+				this.map.invalidateSize(bounds);
+				this.map.panTo([southWest.lat/2, northEast.lng/2]);
 				this.setMarkers();
 			},
 	    	setMarkers(){
@@ -92,7 +94,6 @@
 			markerSetable() {return this.$store.getters.MARKER_SETTABLE;},
 			markers() {
 				const markers = this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];
-				console.log(markers);
 				return markers;
 			},
 		},
@@ -124,8 +125,8 @@
 			let timerId = setTimeout(function tick() {
 			  const flag = self.checkPlans();
 			  if(!flag)
-			  	timerId = setTimeout(tick, 100);
-			}, 100);
+			  	timerId = setTimeout(tick, 500);
+			}, 500);
 		}
 	}
 </script>

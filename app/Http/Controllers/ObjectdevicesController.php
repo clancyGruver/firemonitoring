@@ -58,4 +58,11 @@ class ObjectdevicesController extends Controller
     public function deleteJson($id, Request $request){
         OD::find($id)->delete();
     }
+
+    public function isgood($id, Request $request){
+        $obj = OD::find($id);
+        $data = $request->only('is_good');
+        $data['created_user_id'] = $request->header('x-user');
+        $obj->update($data);
+    }
 }

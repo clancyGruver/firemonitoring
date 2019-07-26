@@ -39,7 +39,7 @@
 										v-model="deviceData.battery"
 									>
 									<label for="battery" class="custom-control-label">
-										Наличие АКБ<
+										Наличие АКБ
 									</label>
 						        </div>
 
@@ -110,12 +110,11 @@
 			save(){
 				if(!this.check())
 					return false;
-				console.log(this.deviceData);
-				this.$store.commit('UPDATE_ANTENNA', this.deviceData);
-				this.$emit('end-adding')
+				this.$store.commit('UPDATE_RSPI', this.deviceData);
+				this.$emit('end-adding');
 			},
 			cancel () {
-				this.$emit('end-adding')
+				this.$emit('end-adding');
 			},
 			check(){
 				let res = true;
@@ -124,8 +123,8 @@
 					this.errors.push('Требуется указать место установки.');
 					res = false;
 				}
-				if (!this.deviceData.mast_isset) {
-					this.errors.push('Требуется указать наличие мачты.');
+				if (!this.deviceData.coupling) {
+					this.errors.push('Требуется указать сопряжение с АПС.');
 					res = false;
 				}
 				return res;

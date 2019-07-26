@@ -16,6 +16,7 @@ class Object_Device extends Model
         'object_id',
         'device_id',
         'bti_files_id',
+        'is_good',
         'lng',
         'lat',
     ];
@@ -23,7 +24,7 @@ class Object_Device extends Model
     protected $appends = ['type','params'];
 
     public function getParamsAttribute(){
-        if($this->tbl_name == 'App\device_antenna'){
+        if($this->tbl_name == 'App\device_antenna' || $this->tbl_name == 'App\device_rspi'){
             $type = $this->tbl_name.'_params'::class;
             if(class_exists($type))
                 return $this->hasOne($type, 'device_id', 'id')->first();

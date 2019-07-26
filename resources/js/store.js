@@ -6,6 +6,8 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
 
   state: {
+    raions: {},
+    objects: {},
     user: null,
     object_id: null,
     devices: {},
@@ -20,6 +22,43 @@ export const store = new Vuex.Store({
   },
 
   mutations: {
+    LOAD_RAIONS: (state, payload) => {
+      axios.post(`/api/raions`)
+      .then(
+        response => {
+          state.raions = response.data;
+        }
+      );
+    },
+    LOAD_OBJECTS: (state, payload) => {
+      axios.post(`/api/objects`)
+      .then(
+        response => {
+          state.objects = response.data;
+        }
+      );
+    },
+    DELETE_OBJECT: (state, payload) => {
+      const p = {...payload}
+      axios.post(`/api/objects/delete/${p.id}`)
+      .then(
+        response => {
+          const idx = state.objects.findIndex(obj => obj.id == p.id );
+          Vue.delete(state.objects,idx);
+        }
+      );
+    },
+    CHANGE_OBJECT_LL: (state, payload) => {
+      const p = {...payload}
+      axios.post(`/api/objects/storeCoords/${state.object_id}`,p)
+      .then(
+        response => {
+          const idx = state.objects.findIndex(obj => obj.id == state.object_id );
+          state.objects[idx].lat = p.lat;
+          state.objects[idx].lng = p.lng;
+        }
+      );
+    },
     SET_OBJECT_ID: (state, payload) => {
       state.object_id = payload;
     },
@@ -30,7 +69,9 @@ export const store = new Vuex.Store({
       state.devices = {...payload};
     },
     SET_AVAILABLE_DEVICES: (state, payload) => {
-      state.availabledevices = payload;
+      axios
+        .post(`/api/devices/getbyclass`)
+        .then( response => state.availabledevices = response.data);
     },
     ADD_DEVICE: (state, payload) => {
       const p = {...payload}
@@ -68,6 +109,17 @@ export const store = new Vuex.Store({
       const isShow = !state.devices[p.typeIdx].items[p.idx].isShow;
       Vue.set(state.devices[p.typeIdx].items[p.idx], 'isShow', isShow);
       //state.devices[payload.typeIdx].items[payload.idx].isShow = !state.devices[payload.typeIdx].items[payload.idx].isShow;
+    },
+    TOGGLE_DEVICE_ISGOOD: (state,payload) => {
+      const p = {... payload };
+      const device_idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.deviceId)
+      const is_good = !state.devices[p.typeIdx].items[device_idx].is_good;
+      axios.post(`/api/objectdevice/isgood/${p.deviceId}`,{is_good})
+      .then(
+        response => {
+          Vue.set(state.devices[p.typeIdx].items[device_idx], 'is_good', is_good);
+        }
+      );
     },
     ADD_WIRE: (state, payload) => {
       const idx = state.devices[payload.typeIdx].items.findIndex(obj => obj.id == payload.odid );
@@ -294,7 +346,17 @@ export const store = new Vuex.Store({
     UPDATE_ANTENNA:(state, payload) => {
       const p = {...payload};
       const id = p.id || '';
-      axios.post(`/api/antenna/storeParams/${id}`,p)
+      axios.post(`/api/antennas/storeParams/${id}`,p)
+       .then(
+          response => {
+            const device_idx = state.devices[p.tbl_name].items.findIndex( device => device.id == p.device_id);
+            state.devices[p.tbl_name].items[device_idx].params = p;
+          }
+        )
+    },
+    UPDATE_RSPI:(state, payload) => {
+      const p = {...payload};
+      axios.post(`/api/rspi/storeParams`,p)
        .then(
           response => {
             const device_idx = state.devices[p.tbl_name].items.findIndex( device => device.id == p.device_id);
@@ -316,6 +378,7 @@ export const store = new Vuex.Store({
   },
 
   getters: {
+    RAIONS: state => state.raions,
     ALERT_DEVICE_BY_NAME: state => name => state.availabledevices.voice_alerts.devices.find( el => el.name == name),
 	  DEVICES: state => state.devices,
     AVAILABLE_DEVICES: state => state.availabledevices,
@@ -325,6 +388,8 @@ export const store = new Vuex.Store({
     BTI_PLANS: state => state.bti_plans,
     MARKER_SETTABLE: state => state.setMarker,
     MARKER_OBJECT: state => state.markerObj,
+    OBJECTS: state => state.objects,
+    OBJECT: state => id => state.objects.find( el => el.id == id),
     DEVICE_MARKERS: state => {
       const markers = [];
       for(let deviceType in state.devices){
@@ -362,7 +427,6 @@ export const store = new Vuex.Store({
             if( device.alarms && device.alarms.length > 0 )
               device.alarms.map(
                 alarm => {
-                  console.log(alarm);
                   if(!markers[alarm.bti_files_id])
                     markers[alarm.bti_files_id] = [];
                   markers[alarm.bti_files_id].push({

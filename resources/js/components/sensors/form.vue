@@ -1,4 +1,4 @@
-<template>	
+<template>
 	<transition name="modal">
 		<div class="modal-dialog modal- modal-dialog-centered modal-xl modal-mask" role="document" v-show="edit" @click.self="cancel">
 			<div class="modal-content card-body modal-wrapper">
@@ -72,7 +72,7 @@
 										  <option value="true">Автономный пожарный извещатель радиоизотопный</option>
 										  <option value="false">Автономный пожарный извещатель оптико-электронный</option>
 										</select>
-							        </div>								
+							        </div>
 								</div>
 
 								<div v-show="sensorData.is_automate == 'true'">
@@ -98,7 +98,7 @@
 										  <option value="differincial">Дифференциальный</option>
 										  <option value="max-diff">Максимально-дифференциальный</option>
 										</select>
-							        </div>								
+							        </div>
 								</div>
 
 
@@ -106,8 +106,8 @@
 							        <div class="form-group col btn-group">
 										<button type="button" @click="cancel" class="cancel">Отмена</button>
 										<button type="button" @click="save" class="save">Сохранить</button>
-									</div>                
-								</div>                
+									</div>
+								</div>
 							</form>
 		                </div>
 		            </div>
@@ -130,22 +130,21 @@
 			edit: {
 				type: Boolean,
 				default: false
-			},			
+			},
 			sensorData: {
 				type: Object,
 				default: () => {}
 			}
-		},		
+		},
 		data: function () {
 			return {
 				errors: [],
 			}
 		},
-		methods: {		
+		methods: {
 			save(){
 				if(!this.check())
 					return false;
-				console.log(this.sensorData);
 				const method = this.mode == 'new' ? 'ADD_SENSOR' : 'UPDATE_SENSOR';
 				this.$store.commit(method, this.sensorData);
 				this.$emit('end-adding')
@@ -172,7 +171,7 @@
 					this.errors.push('Требуется указать возможность установки адреса.');
 					res = false;
 				}
-				return res;	
+				return res;
 			},
 		},
 		computed:{

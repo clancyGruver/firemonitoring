@@ -1,16 +1,19 @@
 require('./bootstrap');
 
-window.Vue = require('vue');
-
-Vue.component('devices', require('./components/devices.vue').default);
-Vue.component('sensors', require('./components/sensors/sensors.vue').default);
+import Vue from 'vue';
 
 import { store } from './store';
+import { router } from './router';
 import isLoggedMixin from './mixins/auth.js';
+
+//components
+import App from './components/main.vue';
 
 const app = new Vue({
     el: '#app',
+    components: { App },
     store,
+    router,
     mixins:[isLoggedMixin],
     data: {
         user: false

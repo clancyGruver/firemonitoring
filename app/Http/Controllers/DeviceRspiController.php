@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\device_rspi as DR;
+use App\device_rspi_params as DRP;
 use Illuminate\Support\Facades\Auth;
 
 class DeviceRspiController extends Controller
@@ -64,5 +65,18 @@ class DeviceRspiController extends Controller
         }
         $obj->save();
         return redirect('admin/rspi');
+    }
+
+    public function storeParams(Request $request){
+        $params = $request->all();
+        $params['created_user_id'] = $request->header('x-user');
+        if(isset($params['id'])){
+            $item = DRP::find($params['id']);
+            $item->update($params);
+        }
+        else{
+            $item = new DRP($params);
+            $item->save();
+        }
     }
 }

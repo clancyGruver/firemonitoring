@@ -44,7 +44,7 @@
 									<th scope="col">По принципу обнаружения пожара</th>
 									<td v-if="sensorData.standalon_smoke_is_radioisotop">Автономный пожарный извещатель радиоизотопный</td>
 									<td v-else>Автономный пожарный извещатель оптико-электронный</td>
-								</tr>	
+								</tr>
 
 								<tr v-show="sensorData.is_automate">
 									<th scope="col" colspan="2" class="text-center">Общая классификация автоматических ПИ</th>
@@ -62,7 +62,7 @@
 									<td v-if="sensorData.automate_attribute == 'maximal'">Максимальный</td>
 									<td v-else-if="sensorData.automate_attribute == 'differincial'">Дифференциальный</td>
 									<td v-else>Максимально-дифференциальный</td>
-								</tr>	
+								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -71,7 +71,6 @@
 			</div>
 		</div>
 	</transition>
-	
 </template>
 
 <script>

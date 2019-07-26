@@ -3,11 +3,10 @@
 @section('content')
 <div class="header bg-gradient-primary pb-3 pt-5">
     <div class="container-fluid">
-        
     </div>
 </div>
 <div class="container-fluid mt-3">
-    <div class="row">    
+    <div class="row">
         <div id="mapid"></div>
     </div>
     <div class="row">
@@ -21,7 +20,7 @@
                 </div>
             </div>
 
-            <div class="form-row">      
+            <div class="form-row">
                 <div class="form-group col">
                     <label for="raion_id">Район</label>
                     <input id="address" name="address" type="text" class="form-control" value="{{ $item->raion->name }}" disabled>

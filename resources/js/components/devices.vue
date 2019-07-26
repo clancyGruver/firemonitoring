@@ -25,25 +25,13 @@ export default {
 		btiMap,
 	},
 	mounted: function(){
-		const oid = this.objectid;
-		this.$store.commit('SET_OBJECT_ID', oid);
-
 		axios
 			.post(`/api/objectdevice/get/${oid}`)
 			.then( response => this.createTree(response.data) );
-
-		axios
-			.post(`/api/devices/getbyclass`)
-			.then( response => this.$store.commit('SET_AVAILABLE_DEVICES', response.data) )
-
-		this.$store.commit('SET_BTIPLANS');
-
-		this.$store.commit('FILL_SENSORS');
 	},
 
 	methods:{
 		createTree: function (devices) {
-			console.log(devices)
 			const tree = {};
 			devices.map(val => {
 				const wireEl = [];
@@ -71,6 +59,7 @@ export default {
 					name: val.devicable.name,
 					tbl_name: val.tbl_name,
 					isShow: false,
+					is_good: val.is_good,
 					id: val.id,
 					alarms:alarmEl,
 		            wires: wireEl,
@@ -83,7 +72,7 @@ export default {
 				};
 				this.tree[val.tbl_name].items.push(treeEl);
 			})
-				console.log(this.tree);
+			//console.log(this.tree);
 			this.$store.commit('SET_DEVICES', this.tree);
 		}
 	}

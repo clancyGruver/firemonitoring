@@ -1,9 +1,9 @@
-<template>	
+<template>
 	<transition name="modal">
 		<div class="modal-mask mb-4 " v-show="creating" @click.self="cancel">
 			<div class="modal-container card card-stats">
 				<div class="modal-content card-body">
-					<h5 class="card-title">Добавить сенсор</h5> 
+					<h5 class="card-title">Добавить сенсор</h5>
 
           <div class="alert alert-danger" v-show="errors.length > 0">
               <ul>
@@ -12,8 +12,8 @@
           </div>
 
           <div class="row">
-            <div class="col">        
-              <div class="form-group">                  
+            <div class="col">
+              <div class="form-group">
                 <div class="input-group mb-4">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -25,12 +25,12 @@
                 <li v-for="sensor in availSensors">
                   <span class="mb-0" @click="addSensor(sensor)">
                     <strong v-if="sensor.id == sensorData.sensor_id">{{sensor.name}}</strong>
-                    <span v-else>{{sensor.name}}</span>                    
+                    <span v-else>{{sensor.name}}</span>
                   </span>
                 </li>
-              </ul>  
+              </ul>
             </div>
-            <div class="col">  
+            <div class="col">
               <form>
                 <div class="form-group col">
                   <label for="name">Наименование</label>
@@ -91,21 +91,21 @@
           return ['new','edit'].indexOf(value) > -1
         },
       }
-		},		
-		data: function () {
+		},
+    data: function () {
 			return {
         searchString: '',
         errors: [],
 			}
 		},
-		methods: {		
+		methods: {
       cancel () {
         this.$emit('end-adding',this.sensorData)
       },
 			addSensor(sensor){
         if(!this.validate()) return false;
         const data = {
-          sensor:   sensor, 
+          sensor:   sensor,
           sensorData: this.sensorData
         };
         if(this.method == 'new')
@@ -122,7 +122,7 @@
         if(!Number.isInteger(this.sensorData.floor)){
           this.errors.push('Этаж должен быть числом');
           checked = false;
-        } 
+        }
         else if(this.sensorData.floor === ''){
           this.errors.push('Этаж не заплнен');
           checked = false;
@@ -164,7 +164,7 @@
 </script>
 
 <style scoped>
-	span{		
+	span{
 		cursor: pointer;
 	}
 .modal-mask {

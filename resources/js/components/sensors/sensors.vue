@@ -77,11 +77,10 @@ export default {
 	},
 
 	computed: {
-		sensorsData: function () {return this.$store.getters.ALL_SENSORS},			
+		sensorsData: function () {return this.$store.getters.ALL_SENSORS},
 	}
 }
 </script>
 
 <style scoped>
-	
 </style>

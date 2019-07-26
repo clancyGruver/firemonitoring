@@ -14,8 +14,12 @@ use App\bti_files as BTI;
 class ObjectsController extends Controller
 {
     public function index(){
-        $items = MO::where('is_active',1)->get();
-        return view('admin.objects.index',['items' => $items]);
+        return view('admin.objects.index');
+    }
+
+    public function indexJson(){
+        $items = MO::where('is_active',1)->with('raion')->get();
+        return response()->json($items);
     }
 
     public function edit($id, Request $request){
@@ -60,7 +64,7 @@ class ObjectsController extends Controller
         $obj = MO::find($id);
         $params = $request->all();
         $param['created_user_id'] = Auth::user()->id;
-        if($params['bti_files']){
+        if(isset($params['bti_files']) && count($params['bti_files']) > 0){
             $this->save_bti_plans($params['bti_files'], $id, $param['created_user_id']);
         }
         $params['project_isset'] = isset($params['project_isset']) ? 1 : 0;
