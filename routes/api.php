@@ -44,7 +44,7 @@ Route::post('/objects/delete/{id}', 'ObjectsController@delete')->name('objects.d
 Route::post('/objects/fileUpload', 'ObjectsController@fileUpload')->name('objects.fileUpload');
 Route::post('/objects/fileDelete/{id}', 'ObjectsController@fileDelete')->name('objects.fileDelete');
 Route::post('/objects/btiFiles/{id}', 'ObjectsController@btiFiles')->name('objects.btiFiles');
-Route::post('/objects/soreCoords/{id}', 'ObjectsController@storeCoords')->name('objects.storeCoords');
+Route::post('/objects/storeCoords/{id}', 'ObjectsController@storeCoords')->name('objects.storeCoords');
 
 Route::post('/objectdevice/add', 'ObjectdevicesController@add')->name('od.add');
 Route::post('/objectdevice/get/{id}', 'ObjectdevicesController@getJson')->name('od.getJson');

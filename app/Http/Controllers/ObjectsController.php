@@ -128,4 +128,10 @@ class ObjectsController extends Controller
         $items = BTI::where('object_id',$id)->get();
         return response()->json($items);
     }
+
+    public function storeCoords($id, Request $request){
+        $item = MO::find($id);
+        $item->update($request->all());
+        return response('ok', 200);
+    }
 }

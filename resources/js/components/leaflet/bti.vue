@@ -3,14 +3,14 @@
 		<div id="btiMap"></div>
 		<nav aria-label="Page navigation example">
 			<ul class="pagination">
-				<li @click="prevImg()" class="page-item">
-					<a @click.prevent="" class="page-link" href="#" aria-label="Назад">
+				<li class="page-item">
+					<a @click.prevent="prevImg()" class="page-link" href="#" aria-label="Назад">
 						<span aria-hidden="true">&laquo;</span>
         				<span class="sr-only">Назад</span>
 					</a>
 				</li>
-			    <li class="page-item" @click="nextImg()">
-			      <a class="page-link" @click.prevent="" href="#" aria-label="Вперед">
+			    <li class="page-item">
+			      <a class="page-link" @click.prevent="nextImg()" href="#" aria-label="Вперед">
 			        <span aria-hidden="true">&raquo;</span>
 			        <span class="sr-only">Вперед</span>
 			      </a>
