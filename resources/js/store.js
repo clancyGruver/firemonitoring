@@ -8,6 +8,7 @@ export const store = new Vuex.Store({
   state: {
     raions: {},
     objects: {},
+    current_object: {},
     user: null,
     object_id: null,
     devices: {},
@@ -15,10 +16,6 @@ export const store = new Vuex.Store({
     sensors: [],
     setMarker: false,
     markerObj: {},
-    bti_plans: {
-                status: false,
-                items: []
-              },
   },
 
   mutations: {
@@ -48,6 +45,9 @@ export const store = new Vuex.Store({
         }
       );
     },
+    OBJECT_UPDATE: (state) => {
+      console.log(state.current_object);
+    },
     CHANGE_OBJECT_LL: (state, payload) => {
       const p = {...payload}
       axios.post(`/api/objects/storeCoords/${state.object_id}`,p)
@@ -59,9 +59,49 @@ export const store = new Vuex.Store({
         }
       );
     },
-    SET_OBJECT_ID: (state, payload) => {
+    SET_CURRENT_OBJECT: (state, {payload, getters}) => {
       state.object_id = payload;
+      state.current_object = getters.OBJECT(payload);
     },
+
+    MEDIAFILE_UPLOAD:(state, payload) => {
+      let fd = new FormData();
+      fd.append('object_id', state.object_id)
+      fd.append('image', payload.image)
+      fd.append('description', payload.description)
+      let url = '';
+      if(payload.type == 'media')
+        url = '/api/objects/fileUpload';
+      else if(payload.type == 'bti_files')
+        url = '/api/objects/btiUpload';
+      const config = {
+        headers: { 'content-type': 'multipart/form-data' }
+      }
+      axios.post(url, fd, config).then(response => {
+        if(payload.type == 'media')
+          state.current_object.mediafiles.push(response.data);
+        else if(payload.type == 'bti_files')
+          state.current_object.btifiles.push(response.data);
+      });
+    },
+
+    MEDIAFILE_DELETE:(state, payload) => {
+      const p = {...payload};
+      const url = `/api/objects/${p.type == 'media' ? 'fileDelete' : 'btiDelete'}/${p.id}`;
+      console.log(p,url);
+      let idx = -1;
+      axios.post(url).then(response => {
+        if(p.type == 'media'){
+          idx = state.current_object.mediafiles.findIndex((item) => item.id == p.id)
+          Vue.delete(state.current_object.mediafiles,idx);
+        }
+        else if(p.type == 'bti_files'){
+          idx = state.current_object.btifiles.findIndex((item) => item.id == p.id)
+          Vue.delete(state.current_object.btifiles,idx);
+        }
+      });
+    },
+
     SET_USER: (state, payload) => {
       state.user = {...payload};
     },
@@ -252,15 +292,6 @@ export const store = new Vuex.Store({
               }
             );
     },
-    SET_BTIPLANS: (state, payload) => {
-      axios.post(`/api/objects/btiFiles/${state.object_id}`)
-           .then(
-              response => state.bti_plans = {
-                status: true,
-                items: response.data
-              }
-            )
-    },
     TOGGLE_MAP: state => {
       state.setMarker = !state.setMarker;
     },
@@ -385,11 +416,11 @@ export const store = new Vuex.Store({
     AVAILABLE_ALARMS: state => 'alerts' in state.availabledevices ? state.availabledevices.alerts.devices.filter( device => ['sound','voice'].indexOf(device.type) > -1 ) : [],
     ALL_SENSORS: state => state.sensors,
     SENSOR: state => id => state.sensors.find( el => el.id == id ),
-    BTI_PLANS: state => state.bti_plans,
     MARKER_SETTABLE: state => state.setMarker,
     MARKER_OBJECT: state => state.markerObj,
     OBJECTS: state => state.objects,
     OBJECT: state => id => state.objects.find( el => el.id == id),
+    CURRENT_OBJECT: state => state.current_object,
     DEVICE_MARKERS: state => {
       const markers = [];
       for(let deviceType in state.devices){
@@ -443,5 +474,11 @@ export const store = new Vuex.Store({
       }
       return markers;
     },
-	}
+	},
+
+  actions:{
+    setCurrentObjectAction({commit, getters}, payload){
+      commit('SET_CURRENT_OBJECT', {payload, getters})
+    }
+  }
 });

@@ -41,8 +41,11 @@ Route::post('/sys_alert_dev/storeCoords/{id}', 'DeviceSystemVoiceAlertsDevContro
 
 Route::post('/objects', 'ObjectsController@indexJson')->name('objects.indexJson');
 Route::post('/objects/delete/{id}', 'ObjectsController@delete')->name('objects.delete');
+Route::post('/objects/update/{id}', 'ObjectsController@updateJson')->name('objects.updateJson');
 Route::post('/objects/fileUpload', 'ObjectsController@fileUpload')->name('objects.fileUpload');
 Route::post('/objects/fileDelete/{id}', 'ObjectsController@fileDelete')->name('objects.fileDelete');
+Route::post('/objects/btiUpload', 'ObjectsController@btiUpload')->name('objects.btiUpload');
+Route::post('/objects/btiDelete/{id}', 'ObjectsController@btiDelete')->name('objects.btiDelete');
 Route::post('/objects/btiFiles/{id}', 'ObjectsController@btiFiles')->name('objects.btiFiles');
 Route::post('/objects/storeCoords/{id}', 'ObjectsController@storeCoords')->name('objects.storeCoords');
 

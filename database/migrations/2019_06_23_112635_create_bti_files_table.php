@@ -17,7 +17,8 @@ class CreateBtiFilesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('object_id');
             $table->unsignedBigInteger('created_user_id');
-            $table->string('name');
+            $table->string('filename');
+            $table->string('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
 

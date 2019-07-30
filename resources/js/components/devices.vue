@@ -25,6 +25,7 @@ export default {
 		btiMap,
 	},
 	mounted: function(){
+		const oid = this.$route.params.id;
 		axios
 			.post(`/api/objectdevice/get/${oid}`)
 			.then( response => this.createTree(response.data) );

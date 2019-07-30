@@ -31,7 +31,8 @@
 
 <script>
 import Map from '../leaflet/map';
-import EditForm from '../editForms/monitoringObject';
+import EditForm from './edit/monitoringObject';
+import Devices from '../devices';
 
 export default {
 	props:{},
@@ -41,11 +42,10 @@ export default {
 		}
 	},
 
-	components:{Map,EditForm},
+	components:{Map,EditForm,Devices},
 
 	mounted: function(){
-		this.$store.commit('SET_OBJECT_ID', this.$route.params.id);
-		this.$store.commit('SET_BTIPLANS');
+		this.$store.dispatch('setCurrentObjectAction', this.$route.params.id);
 	},
 
 	methods:{
@@ -54,7 +54,7 @@ export default {
 	},
 
 	computed: {
-		object() {return this.$store.getters.OBJECT(this.$route.params.id)},
+		object() {return this.$store.getters.CURRENT_OBJECT},
 	}
 }
 </script>

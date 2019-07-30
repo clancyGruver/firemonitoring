@@ -18,7 +18,7 @@ class ObjectsController extends Controller
     }
 
     public function indexJson(){
-        $items = MO::where('is_active',1)->with('raion')->get();
+        $items = MO::where('is_active',1)->with('raion')->with('btifiles')->with('mediafiles')->get();
         return response()->json($items);
     }
 
@@ -64,12 +64,27 @@ class ObjectsController extends Controller
         $obj = MO::find($id);
         $params = $request->all();
         $param['created_user_id'] = Auth::user()->id;
-        if(isset($params['bti_files']) && count($params['bti_files']) > 0){
-            $this->save_bti_plans($params['bti_files'], $id, $param['created_user_id']);
-        }
         $params['project_isset'] = isset($params['project_isset']) ? 1 : 0;
         $obj->update($params);
         return redirect('admin/objects');
+    }
+
+    public function updateJson($id, Request $request){
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'raion_id' => 'required',
+            'address' => 'required|max:255',
+            'director_name' => 'required|max:255',
+            'director_phone' => 'required|max:255',
+            'contact_name' => 'required|max:255',
+            'contact_phone' => 'required|max:255',
+            'project_year'=>'digits:4',
+        ]);
+        $obj = MO::find($id);
+        $params = $request->all();
+        $params['created_user_id'] = $request->header('x-user');
+        $params['project_isset'] = isset($params['project_isset']) ? 1 : 0;
+        $obj->update($params);
     }
 
     public function store( Request $request){
@@ -94,13 +109,29 @@ class ObjectsController extends Controller
     }
 
     public function fileUpload( Request $request){
-        if($request->file){
+        if($request->image){
             $params = [];
-            $params['filename'] = $request->file->getClientOriginalName();
+            $params['filename'] = $request->image->getClientOriginalName();
+            $params['description'] = $request->description ? $request->description : $params['filename'];
+            $params['created_user_id'] = $request->header('x-user');
+            $params['object_id'] = $request->object_id;
+            $request->image->storeAs('objectMedia/'.$request->object_id, $request->image->getClientOriginalName());
+            $obj = new OMedia($params);
+            $obj->save();
+            return response()->json($obj);
+        }
+        return response(403);
+    }
+
+    public function btiUpload( Request $request){
+        if($request->image){
+            $params = [];
+            $params['filename'] = $request->image->getClientOriginalName();
             $params['description'] = $request->description ? $request->description : $params['filename'];
             $params['object_id'] = $request->object_id;
-            $request->file->storeAs('objectMedia/'.$request->object_id, $request->file->getClientOriginalName());
-            $obj = new OMedia($params);
+            $params['created_user_id'] = $request->header('x-user');
+            $request->image->storeAs('bti/'.$request->object_id, $request->image->getClientOriginalName());
+            $obj = new BTI($params);
             $obj->save();
             return response()->json($obj);
         }
@@ -113,15 +144,10 @@ class ObjectsController extends Controller
         return response()->json(200);
     }
 
-    private function save_bti_plans($files, $obj_id, $user_id){
-        foreach ($files as $file) {
-            $params['name'] = $file->getClientOriginalName();
-            $params['object_id'] = $obj_id;
-            $params['created_user_id'] = $user_id;
-            $file->storeAs('bti/'.$obj_id, $params['name']);
-            $obj = new BTI($params);
-            $obj->save();
-        }
+    public function btiDelete($id, Request $request){
+        $obj = BTI::find($id);
+        $obj->delete();
+        return response()->json(200);
     }
 
     public function btiFiles($id, Request $request){

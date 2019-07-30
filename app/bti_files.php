@@ -13,7 +13,8 @@ class bti_files extends Model
     protected $table="bti_files";
     protected $primaryKey = 'id';
     protected $fillable = [
-        'name',
+        'filename',
+        'description',
         'object_id',
         'created_user_id',
     ];
@@ -26,6 +27,6 @@ class bti_files extends Model
 	}
 
 	public function getPathAttribute(){
-		return $this->url = Storage::url('bti/'.$this->object_id.'/'.$this->name);
+		return $this->url = Storage::url('bti/'.$this->object_id.'/'.$this->filename);
 	}
 }

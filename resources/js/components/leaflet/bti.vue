@@ -21,36 +21,28 @@
 </template>
 
 <script>
-	import L from 'leaflet';
 
 	export default{
 	    data () {
 	      return {
 	      	map:{},
-	      	curImg: 0,
+	      	curImg: -1,
 	      	mapMarkers: [],
+	      	imageOverlay: {}
 	      }
 	    },
 
 	    methods: {
-	    	checkPlans: function() {
-	    		const status = this.$store.getters.BTI_PLANS.status;
-				if(status)
-					this.addImageToMap();
-				return status;
-	    	},
 	    	nextImg: function(){
 				if(this.curImg >= this.imgs.length-1)
 					this.curImg = 0;
 				else
 					++this.curImg;
-				this.addImageToMap();
 	    	},
 	    	prevImg: function(){
 				if(this.curImg <= 0)
 					this.curImg = this.imgs.length;
 				--this.curImg;
-				this.addImageToMap();
 	    	},
 			addImageToMap: function (w,h) {
 				const img = new Image();
@@ -58,56 +50,44 @@
 				const southWest = this.map.unproject([0, img.height], this.map.getMaxZoom()-1),
 					  northEast = this.map.unproject([img.width, 0], this.map.getMaxZoom()-1),
 					  bounds = new L.LatLngBounds(southWest, northEast);
-			  	L.imageOverlay(this.imgUrl, bounds).addTo(this.map);
-				//this.map.setMaxBounds(bounds);
-				//this.map.fitBounds(bounds);
+				if(this.imageOverlay instanceof L.imageOverlay)
+					this.imageOverlay.remove();
+				this.imageOverlay = L.imageOverlay(this.imgUrl, bounds);
+			  	this.imageOverlay.addTo(this.map);
+			  	this.map.fitBounds(bounds);
 				this.map.invalidateSize(bounds);
 				this.map.panTo([southWest.lat/2, northEast.lng/2]);
-				this.setMarkers();
 			},
 	    	setMarkers(){
 	    		const self = this;
-	    		const markers = this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id]
 	    		if(this.mapMarkers.length > 0){
 		    		this.mapMarkers.map(marker => marker.remove())
 		    		this.mapMarkers = [];
 	    		}
-	    		if(typeof(markers) == "undefined" || markers.length < 1)
+	    		if(typeof(this.markers) == "undefined" || this.markers.length < 1)
 	    			return false;
-	    		markers.map(marker => {
-	    			const markerParams = {};
-	    			if(marker.icon != 'default')
+	    		this.markers.map(marker => {
+	    			const markerParams = {}
+	    			if(marker.icon != 'default'){
 	    				markerParams.icon = L.icon({
 	    					iconUrl: marker.icon,
 	    					iconSize: [38, 38],
 	    				});
+	    			}
 	    			const theMarker = L.marker({lat: marker.lat, lng: marker.lng}, markerParams);
+	    			theMarker.on('click',(e)=>console.log(e));
 	    			self.mapMarkers.push(theMarker);
 	    			theMarker.addTo(self.map);
 	    		});
 	    	},
-	    },
-
-	    computed: {
-			imgUrl() {return this.imgs[this.curImg].path;},
-			imgs() {return this.$store.getters.BTI_PLANS.items;},
-			markerSetable() {return this.$store.getters.MARKER_SETTABLE;},
-			markers() {
-				const markers = this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];
-				return markers;
-			},
-		},
-
-		mounted(){
-			this.map = L.map('btiMap', {
-				crs: L.CRS.Simple,
-				minZoom: 1,
-				maxZoom: 4,
-				center: [0,0],
-				zoom: 1
-			})
-			const self = this;
-			this.map.whenReady((e)=>{
+	    	mapInit(){
+				this.map = L.map('btiMap', {
+					crs: L.CRS.Simple,
+					minZoom: 1,
+					maxZoom: 4,
+					zoom: 1
+				})
+				const self = this;
 				this.map.on('click', (e)=>{
 					if(self.markerSetable){
 						this.$store.commit('TOGGLE_MAP');
@@ -118,15 +98,39 @@
 							this.$store.commit('SET_SENSOR_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id});
 						else if(markerType == 'alarm')
 							this.$store.commit('SET_ALERT_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id});
-						self.setMarkers();
 					}
 				});
+	    	},
+	    },
+
+	    computed: {
+	    	object() {return this.$store.getters.CURRENT_OBJECT;},
+			imgUrl() {return this.imgs[this.curImg].path;},
+			imgs() {return this.object.btifiles;},
+			markerSetable() {return this.$store.getters.MARKER_SETTABLE;},
+			markers() {
+				const markers = this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];
+				return markers;
+			},
+		},
+
+		watch:{
+			curImg: 'addImageToMap',
+		},
+
+		mounted(){
+			this.$nextTick(function () {
+				this.mapInit();
+				this.$store.watch(
+					(state)=>{
+						if(this.imgs && this.curImg > -1)
+							return this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id]
+					},
+					(newValue, oldValue)=>{
+						this.setMarkers();
+					}
+				);
 			});
-			let timerId = setTimeout(function tick() {
-			  const flag = self.checkPlans();
-			  if(!flag)
-			  	timerId = setTimeout(tick, 500);
-			}, 500);
 		}
 	}
 </script>

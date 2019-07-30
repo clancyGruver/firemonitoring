@@ -18,6 +18,7 @@ class MediafilesForObject extends Migration
             $table->unsignedBigInteger('object_id');
             $table->string('filename');
             $table->string('description')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('object_id')->references('id')->on('objects');
