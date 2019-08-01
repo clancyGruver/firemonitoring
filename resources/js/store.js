@@ -47,6 +47,7 @@ export const store = new Vuex.Store({
     },
     OBJECT_UPDATE: (state) => {
       console.log(state.current_object);
+      axios.post(`/api/objects/update/${state.current_object.id}`,state.current_object)
     },
     CHANGE_OBJECT_LL: (state, payload) => {
       const p = {...payload}

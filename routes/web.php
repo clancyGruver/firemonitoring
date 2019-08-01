@@ -29,8 +29,8 @@ Route::middleware(['auth'])->group(function(){
         Route::prefix('objects')->group(function(){
             Route::get('/{id?}', 'ObjectsController@index')->name('objects');
             Route::get('/detail/{id}', 'ObjectsController@detail')->name('objects.detail');
-            Route::get('/edit/{id}', 'ObjectsController@edit')->name('objects.edit');
-            Route::post('/update/{id}', 'ObjectsController@update')->name('objects.update');
+            //Route::get('/edit/{id}', 'ObjectsController@edit')->name('objects.edit');
+            //Route::post('/update/{id}', 'ObjectsController@update')->name('objects.update');
             Route::get('/add', 'ObjectsController@add')->name('objects.add');
             Route::post('/store', 'ObjectsController@store')->name('objects.store');
         });
@@ -99,6 +99,9 @@ Route::middleware(['auth'])->group(function(){
             Route::post('/update/{id}', 'DeviceAlertController@update')->name('alert.update');
             Route::get('/add', 'DeviceAlertController@add')->name('alert.add');
             Route::post('/store', 'DeviceAlertController@store')->name('alert.store');
+        });
+        Route::prefix('limitations')->group(function(){
+            Route::get('/{any}', 'DeviceLimitationsController@index')->name('limitations');
         });
     });
 

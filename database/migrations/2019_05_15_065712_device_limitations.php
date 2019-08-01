@@ -18,7 +18,7 @@ class DeviceLimitations extends Migration
             $table->unsignedBigInteger('device_id');
             $table->string('text');
             $table->unsignedBigInteger('created_user_id');
-            $table->boolean('is_active')->default(1);
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('created_user_id')->references('id')->on('users');
