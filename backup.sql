@@ -260,15 +260,15 @@ CREATE TABLE `device_limitations` (
   `device_id` bigint(20) unsigned NOT NULL,
   `text` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_user_id` bigint(20) unsigned NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `model_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `device_limitations_created_user_id_foreign` (`created_user_id`),
   KEY `device_limitations_device_id_foreign` (`device_id`),
-  CONSTRAINT `device_limitations_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `device_limitations_device_id_foreign` FOREIGN KEY (`device_id`) REFERENCES `device_aps` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `device_limitations_created_user_id_foreign` FOREIGN KEY (`created_user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,6 +277,7 @@ CREATE TABLE `device_limitations` (
 
 LOCK TABLES `device_limitations` WRITE;
 /*!40000 ALTER TABLE `device_limitations` DISABLE KEYS */;
+INSERT INTO `device_limitations` VALUES (1,1,'Недостаток 1',3,NULL,NULL,NULL,'App\\device_antenna'),(2,1,'Недостаток 2',3,NULL,NULL,NULL,'App\\device_antenna');
 /*!40000 ALTER TABLE `device_limitations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -759,7 +760,7 @@ CREATE TABLE `object_devices` (
 
 LOCK TABLES `object_devices` WRITE;
 /*!40000 ALTER TABLE `object_devices` DISABLE KEYS */;
-INSERT INTO `object_devices` VALUES (1,6,9,3,'2019-05-27 17:05:27','2019-07-26 08:01:44','','App\\device_aps',NULL,1,17.2530893,-43.0000000,0),(13,6,9,3,'2019-06-19 08:31:43','2019-07-01 10:20:20','','App\\device_aps',NULL,3,41.3594979,-98.8750000,1),(14,6,10,3,'2019-06-20 06:24:46','2019-06-20 06:28:16','','App\\device_aps','2019-06-20 06:28:16',0,0.0000000,0.0000000,1),(15,6,10,3,'2019-06-20 06:28:19','2019-07-01 10:27:20','','App\\device_aps',NULL,1,59.8525665,-119.0000000,1),(16,6,1,3,'2019-06-28 06:49:25','2019-07-19 07:37:22','','App\\device_antenna',NULL,1,16.7528143,-70.1250000,1),(17,6,3,3,'2019-06-28 07:08:08','2019-07-25 09:23:51','','App\\device_rspi',NULL,1,71.7830685,-87.7500000,0),(18,6,1,3,'2019-06-28 07:08:14','2019-07-25 09:23:46','','App\\device_alert',NULL,1,104.3358936,-94.5000000,1),(19,6,1,3,'2019-06-28 07:08:21','2019-07-19 07:37:10','','App\\device_system_voice_alert',NULL,1,125.3124976,-150.6250000,1),(20,6,3,3,'2019-07-01 11:01:33','2019-07-01 11:02:39','','App\\device_alert',NULL,1,98.3381416,-146.8750000,1),(21,6,2,3,'2019-07-01 11:01:40','2019-07-01 11:02:43','','App\\device_alert',NULL,1,26.8649307,-140.8750000,1);
+INSERT INTO `object_devices` VALUES (1,6,9,3,'2019-05-27 17:05:27','2019-07-31 06:40:48','','App\\device_aps',NULL,1,17.2530893,-43.0000000,1),(13,6,9,3,'2019-06-19 08:31:43','2019-07-01 10:20:20','','App\\device_aps',NULL,3,41.3594979,-98.8750000,1),(14,6,10,3,'2019-06-20 06:24:46','2019-06-20 06:28:16','','App\\device_aps','2019-06-20 06:28:16',0,0.0000000,0.0000000,1),(15,6,10,3,'2019-06-20 06:28:19','2019-07-01 10:27:20','','App\\device_aps',NULL,1,59.8525665,-119.0000000,1),(16,6,1,3,'2019-06-28 06:49:25','2019-07-19 07:37:22','','App\\device_antenna',NULL,1,16.7528143,-70.1250000,1),(17,6,3,3,'2019-06-28 07:08:08','2019-07-25 09:23:51','','App\\device_rspi',NULL,1,71.7830685,-87.7500000,0),(18,6,1,3,'2019-06-28 07:08:14','2019-07-25 09:23:46','','App\\device_alert',NULL,1,104.3358936,-94.5000000,1),(19,6,1,3,'2019-06-28 07:08:21','2019-07-19 07:37:10','','App\\device_system_voice_alert',NULL,1,125.3124976,-150.6250000,1),(20,6,3,3,'2019-07-01 11:01:33','2019-07-01 11:02:39','','App\\device_alert',NULL,1,98.3381416,-146.8750000,1),(21,6,2,3,'2019-07-01 11:01:40','2019-07-01 11:02:43','','App\\device_alert',NULL,1,26.8649307,-140.8750000,1);
 /*!40000 ALTER TABLE `object_devices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -844,7 +845,7 @@ CREATE TABLE `objects` (
 
 LOCK TABLES `objects` WRITE;
 /*!40000 ALTER TABLE `objects` DISABLE KEYS */;
-INSERT INTO `objects` VALUES (1,'Детский сад',42,'Сталеваров 16',61.4012139,55.2661825,1,'Петров','654321','Иванов','123456',NULL,'2019-05-19 17:18:00','2019-05-23 10:00:57',0,NULL,NULL,'1'),(2,'ТЕст2',42,'Сталеваров, 15',61.4034160,55.2575960,0,'ПППП','456','ИИИ','123',NULL,'2019-05-19 17:51:42','2019-05-22 06:05:58',0,NULL,NULL,'1'),(3,'Ntcn 3',42,'Худякова 15',61.3739600,55.1473250,0,'ЙЙЙЙ','654','ККК','123',NULL,'2019-05-19 17:52:40','2019-05-22 19:27:19',0,NULL,NULL,'1'),(4,'кккк',42,'Пушкина 68',61.4096140,55.1567490,1,'ЕЕЕ','645','РРР','123',NULL,'2019-05-19 17:54:28','2019-05-19 17:54:28',0,NULL,NULL,'1'),(5,'Иванов Иван',11,'erwer',58.2225649,54.6835573,1,'qwerea','2342','werw','23423',3,'2019-05-22 08:49:40','2019-05-22 08:49:40',0,NULL,NULL,'1'),(6,'Школа №137',42,'прапврп',61.3854861,55.1857041,1,'аврвар','456456','првар','45645',3,'2019-05-26 11:23:19','2019-07-29 08:14:59',1,'ш-21б-56',2015,'3'),(7,'Детский сад \"Березка\"',1,'с. Агаповка , ул Советская, 45',59.1301774,53.2955676,1,'Петров Петр','123456','Иванов Иван','123456',3,'2019-07-26 10:14:32','2019-07-26 10:14:32',1,'Ш-125-1987',1984,'1');
+INSERT INTO `objects` VALUES (1,'Детский сад',42,'Сталеваров 16',61.4012139,55.2661825,1,'Петров','654321','Иванов','123456',NULL,'2019-05-19 17:18:00','2019-05-23 10:00:57',0,NULL,NULL,'1'),(2,'ТЕст2',42,'Сталеваров, 15',61.4034160,55.2575960,0,'ПППП','456','ИИИ','123',NULL,'2019-05-19 17:51:42','2019-05-22 06:05:58',0,NULL,NULL,'1'),(3,'Ntcn 3',42,'Худякова 15',61.3739600,55.1473250,0,'ЙЙЙЙ','654','ККК','123',NULL,'2019-05-19 17:52:40','2019-05-22 19:27:19',0,NULL,NULL,'1'),(4,'кккк',42,'Пушкина 68',61.4096140,55.1567490,1,'ЕЕЕ','645','РРР','123',NULL,'2019-05-19 17:54:28','2019-05-19 17:54:28',0,NULL,NULL,'1'),(5,'Иванов Иван',11,'erwer',58.2225649,54.6835573,1,'qwerea','2342','werw','23423',3,'2019-05-22 08:49:40','2019-05-22 08:49:40',0,NULL,NULL,'1'),(6,'Школа №137',42,'прапврп',61.3854861,55.1857041,1,'аврвар','456456','првар','45645',3,'2019-05-26 11:23:19','2019-07-31 06:37:14',1,'ш-21б-56',2010,'3'),(7,'Детский сад \"Березка\"',1,'с. Агаповка , ул Советская, 45',59.1301774,53.2955676,1,'Петров Петр','123456','Иванов Иван','123456',3,'2019-07-26 10:14:32','2019-07-26 10:14:32',1,'Ш-125-1987',1984,'1');
 /*!40000 ALTER TABLE `objects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -890,7 +891,7 @@ CREATE TABLE `password_resets` (
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  KEY `password_resets_email_index` (`email`)
+  KEY `password_resets_email_index` (`email`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1202,4 +1203,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-07-30 17:30:01
+-- Dump completed on 2019-08-03 16:44:01

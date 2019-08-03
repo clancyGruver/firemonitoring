@@ -13,6 +13,7 @@ docker exec app_db_1 /usr/bin/mysqldump -u root --password=secret app > backup.s
 
 # Restore
 cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root DATABASE
+cat firemonitoring.sql | docker exec -i app_db_1 /usr/bin/mysql -u root --password=secret app
 
 # delete symlinks
 find -type l -delete

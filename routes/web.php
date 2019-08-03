@@ -101,7 +101,7 @@ Route::middleware(['auth'])->group(function(){
             Route::post('/store', 'DeviceAlertController@store')->name('alert.store');
         });
         Route::prefix('limitations')->group(function(){
-            Route::get('/{any}', 'DeviceLimitationsController@index')->name('limitations');
+            Route::get('/', 'DeviceLimitationsController@index')->name('limitations');
         });
     });
 
@@ -112,7 +112,7 @@ Route::middleware(['auth'])->group(function(){
 //Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
-	Route::resource('user', 'UserController', ['except' => ['show']]);    
+	Route::resource('user', 'UserController', ['except' => ['show']]);
     Route::get('user/logout', 'UserController@logout')->name('logout');
 	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'ProfileController@edit']);
 	Route::put('profile', ['as' => 'profile.update', 'uses' => 'ProfileController@update']);

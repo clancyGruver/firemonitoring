@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Device extends Model
 {
     use SoftDeletes;
+	use Limitations;
     protected $primaryKey = 'id';
     protected $fillable = [
         'name',

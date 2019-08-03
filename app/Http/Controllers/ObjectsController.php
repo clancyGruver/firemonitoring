@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\MonitoringObject as MO;
 use Illuminate\Support\Facades\Auth;
 use App\Raion;
-use App\DeviceClass;
 use App\Object_Device as OD;
 use App\ObjectMediafile as OMedia;
 use App\bti_files as BTI;
