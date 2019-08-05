@@ -6,6 +6,7 @@ Vue.use(VueRouter)
 import Devices from './components/devices';
 import Sensors from './components/sensors/sensors';
 import MonitoringObjects from './components/monitoringObjects/index';
+import MonitoringObjectEdit from './components/monitoringObjects/edit/monitoringObject';
 import ObjectEdit from './components/monitoringObjects/edit';
 import LimitationsIndex from './components/limitations/index';
 import limitationsEdit from './components/limitations/edit';
@@ -17,12 +18,25 @@ export const router = new VueRouter({
 		{
 			path: '/objects',
 			name: 'objects',
-			component: MonitoringObjects
+			component: MonitoringObjects,
 		},
 		{
-			path: '/objects/:id',
+			path: '/objects/:id/',
 			name: 'objectEdit',
-			component: ObjectEdit
+			component: ObjectEdit,
+			children: [
+				{
+				  path: 'devices',
+				  name: 'objectEditDevices',
+				  component: Devices
+				},				
+				{
+					path: '/',
+					name: 'MonitoringObjectEdit',
+					component: MonitoringObjectEdit
+				  }
+
+			  ]
 		},
 		{
 			path: '/limitations',

@@ -4,28 +4,19 @@
 			<Map />
 		</div>
 		<h1>{{ object.name }}</h1>
-		<ul class="nav nav-pills mt-3 mb-3" id="pills-tab" role="tablist">
+		<ul class="nav nav-pills">
 			<li class="nav-item">
-				<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Оснвные</a>
+				<router-link :active-class="active" class="nav-link" :to="{ name: 'MonitoringObjectEdit' }">
+					Оснвные
+				</router-link>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Оборудование</a>
+				<router-link :active-class="active" class="nav-link" :to="{ name: 'objectEditDevices' }">
+					Оборудование
+				</router-link>
 			</li>
-			<!--li class="nav-item">
-				<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</a>
-			</li-->
 		</ul>
-		<div class="tab-content" id="pills-tabContent">
-			<div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-				<edit-form :object="object" />
-			</div>
-			<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-				<div id="app">
-					<devices :object="object"></devices>
-				</div>
-			</div>
-			<div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
-		</div>
+		<router-view></router-view>
 	</div>
 </template>
 

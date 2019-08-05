@@ -19,21 +19,11 @@ export const store = new Vuex.Store({
   },
 
   mutations: {
-    LOAD_RAIONS: (state, payload) => {
-      axios.post(`/api/raions`)
-      .then(
-        response => {
-          state.raions = response.data;
-        }
-      );
+    SET_RAIONS: (state, payload) => {
+      state.raions = payload;
     },
-    LOAD_OBJECTS: (state, payload) => {
-      axios.post(`/api/objects`)
-      .then(
-        response => {
-          state.objects = response.data;
-        }
-      );
+    SET_OBJECTS: (state, payload) => {
+      state.objects = payload;
     },
     DELETE_OBJECT: (state, payload) => {
       const p = {...payload}
@@ -45,20 +35,10 @@ export const store = new Vuex.Store({
         }
       );
     },
-    OBJECT_UPDATE: (state) => {
-      console.log(state.current_object);
-      axios.post(`/api/objects/update/${state.current_object.id}`,state.current_object)
-    },
-    CHANGE_OBJECT_LL: (state, payload) => {
-      const p = {...payload}
-      axios.post(`/api/objects/storeCoords/${state.object_id}`,p)
-      .then(
-        response => {
-          const idx = state.objects.findIndex(obj => obj.id == state.object_id );
-          state.objects[idx].lat = p.lat;
-          state.objects[idx].lng = p.lng;
-        }
-      );
+    SET_OBJECT_LL: (state, {p, getters}) => {
+      const idx = getters.FIND_CURRENT_OBJECT_INDEX;
+      state.objects[idx].lat = p.lat;
+      state.objects[idx].lng = p.lng;
     },
     SET_CURRENT_OBJECT: (state, {payload, getters}) => {
       state.object_id = payload;
@@ -110,9 +90,7 @@ export const store = new Vuex.Store({
       state.devices = {...payload};
     },
     SET_AVAILABLE_DEVICES: (state, payload) => {
-      axios
-        .post(`/api/devices/getbyclass`)
-        .then( response => state.availabledevices = response.data);
+      state.availabledevices = payload;
     },
     ADD_DEVICE: (state, payload) => {
       const p = {...payload}
@@ -208,13 +186,8 @@ export const store = new Vuex.Store({
       const device_idx = state.devices[p.tid].items.findIndex(obj => obj.id == p.odid );
       state.devices[p.tid].items[device_idx].wires[p.wireIdx].isShow = !state.devices[p.tid].items[device_idx].wires[p.wireIdx].isShow;
     },
-    FILL_SENSORS: (state) => {
-      axios.post('/api/sensors/getall',{})
-      .then(
-        response => {
-          state.sensors = response.data;
-        }
-      );
+    SET_SENSORS: (state, payload) => {
+      state.sensors = payload;
     },
     ADD_SENSOR: (state, payload) => {
       axios.post('/api/sensors/store',{
@@ -324,56 +297,29 @@ export const store = new Vuex.Store({
       state.markerObj.alarmIdx = alarmIdx;
       state.markerObj.type = 'alarm';
     },
-    SET_DEVICE_COORDS:(state, payload) => {
+    UPDATE_DEVICE_COORDS:(state, {getters, payload}) => {
       const p = {...payload};
-      state.markerObj.lng = p.coords.lng;
-      state.markerObj.lat = p.coords.lat;
-      state.markerObj.bti_files_id = p.bti_plan_id;
-      axios.post(`/api/objectdevice/storeCoords/${state.markerObj.id}`,state.markerObj)
-       .then(
-          response => {
-            const rd = response.data;
-            const idx = state.devices[rd.tbl_name].items.findIndex(obj => obj.id == rd.id );
-            const obj = state.devices[rd.tbl_name].items[idx];
-            obj.lat = rd.lat;
-            obj.lng = rd.lng;
-            obj.bti_files_id = rd.bti_files_id;
-          }
-        )
+      const idx = getters.FIND_DEVICE_INDEX(p.tbl_name, p.id);
+      const obj = state.devices[p.tbl_name].items[idx];
+      state.markerObj.lng = obj.lng = p.coords.lng;
+      state.markerObj.lat = obj.lat = p.coords.lat;
+      state.markerObj.bti_files_id = obj.bti_files_id = p.bti_plan_id;
     },
-    SET_SENSOR_COORDS:(state, payload) => {
+    UPDATE_SENSOR_COORDS:(state, payload) => {
       const p = {...payload};
-      state.markerObj.lng = p.coords.lng;
-      state.markerObj.lat = p.coords.lat;
-      state.markerObj.bti_files_id = p.bti_plan_id;
-      axios.post(`/api/sensorwire/storeCoords/${state.markerObj.id}`,state.markerObj)
-       .then(
-          response => {
-            const rd = response.data;
-            const mo = state.markerObj;
-            const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx]
-            obj.lat = rd.lat;
-            obj.lng = rd.lng;
-            obj.bti_files_id = rd.bti_files_id;
-          }
-        )
+      const mo = state.markerObj;
+      const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx]
+      state.markerObj.lng = obj.lng = p.coords.lng;
+      state.markerObj.lat = obj.lat = p.coords.lat;
+      state.markerObj.bti_files_id = obj.bti_files_id = p.bti_plan_id;
     },
-    SET_ALERT_COORDS:(state, payload) => {
+    UPDATE_ALERT_COORDS:(state, payload) => {
       const p = {...payload};
-      state.markerObj.lng = p.coords.lng;
-      state.markerObj.lat = p.coords.lat;
-      state.markerObj.bti_files_id = p.bti_plan_id;
-      axios.post(`/api/sys_alert_dev/storeCoords/${state.markerObj.dsvad}`,state.markerObj)
-       .then(
-          response => {
-            const rd = response.data;
-            const mo = state.markerObj;
-            const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].alarms[mo.alarmIdx]
-            obj.lat = rd.lat;
-            obj.lng = rd.lng;
-            obj.bti_files_id = rd.bti_files_id;
-          }
-        )
+      const mo = state.markerObj;
+      const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].alarms[mo.alarmIdx]
+      state.markerObj.lng = obj.lng = p.coords.lng;
+      state.markerObj.lat = obj.lat = p.coords.lat;
+      state.markerObj.bti_files_id = obj.bti_files_id = p.bti_plan_id;
     },
     UPDATE_ANTENNA:(state, payload) => {
       const p = {...payload};
@@ -414,6 +360,7 @@ export const store = new Vuex.Store({
     ALERT_DEVICE_BY_NAME: state => name => state.availabledevices.voice_alerts.devices.find( el => el.name == name),
 	  DEVICES: state => state.devices,
     AVAILABLE_DEVICES: state => state.availabledevices,
+    FIND_DEVICE_INDEX: state => (tbl_name, id) => state.devices[tbl_name].items.findIndex(obj => obj.id == id ),
     AVAILABLE_ALARMS: state => 'alerts' in state.availabledevices ? state.availabledevices.alerts.devices.filter( device => ['sound','voice'].indexOf(device.type) > -1 ) : [],
     ALL_SENSORS: state => state.sensors,
     SENSOR: state => id => state.sensors.find( el => el.id == id ),
@@ -421,6 +368,7 @@ export const store = new Vuex.Store({
     MARKER_OBJECT: state => state.markerObj,
     OBJECTS: state => state.objects,
     OBJECT: state => id => state.objects.find( el => el.id == id),
+    FIND_CURRENT_OBJECT_INDEX: state => state.objects.findIndex(obj => obj.id == state.object_id ),
     CURRENT_OBJECT: state => state.current_object,
     DEVICE_MARKERS: state => {
       const markers = [];
@@ -480,6 +428,58 @@ export const store = new Vuex.Store({
   actions:{
     setCurrentObjectAction({commit, getters}, payload){
       commit('SET_CURRENT_OBJECT', {payload, getters})
-    }
+    },
+    async LOAD_OBJECTS({commit}) {      
+      await axios.post(`/api/objects`)
+        .then( response => commit('SET_OBJECTS', response.data));      
+    },
+    async LOAD_RAIONS({commit}) {
+      await axios.post(`/api/raions`)
+        .then(response => commit('SET_RAIONS', response.data));
+    },
+    async LOAD_SENSORS({commit}) {
+      await axios.post('/api/sensors/getall')
+        .then( response => commit('SET_SENSORS', response.data));
+    },    
+    async LOAD_AVAILABLE_DEVICES({commit}){
+      await axios
+        .post(`/api/devices/getbyclass`)
+        .then( response => commit('SET_AVAILABLE_DEVICES', response.data));
+    },
+    async CHANGE_OBJECT_LL({state, commit, getters}, payload){
+      const p = {...payload}
+      await axios.post(`/api/objects/storeCoords/${state.object_id}`,p)
+        .then(response => commit('SET_OBJECT_LL', {p,getters}));
+    },
+    async OBJECT_UPDATE({state}){
+      await axios.post(`/api/objects/update/${state.current_object.id}`,state.current_object);
+    },
+    async SET_DEVICE_COORDS({commit, state, getters}, payload){      
+      const p = {...payload};
+      await axios.post(`/api/objectdevice/storeCoords/${state.markerObj.id}`, {
+        lat: p.coords.lat,
+        lng: p.coords.lng,
+        bti_files_id: p.bti_files_id,
+      })
+        .then( response => commit('UPDATE_DEVICE_COORDS', {payload: {...p, ...response.data}, getters}))
+    },
+    async SET_SENSOR_COORDS({commit, state}, payload){
+      const p = {...payload};
+      await axios.post(`/api/sensorwire/storeCoords/${state.markerObj.id}`, {
+        lat: p.coords.lat,
+        lng: p.coords.lng,
+        bti_files_id: p.bti_plan_id,
+      })
+        .then(response => commit('UPDATE_SENSOR_COORDS', {...p, ...response.data}) );
+    },
+    async SET_ALERT_COORDS({commit, state}, payload){
+      const p = {...payload};
+      axios.post(`/api/sys_alert_dev/storeCoords/${state.markerObj.dsvad}`,{
+        lat: p.coords.lat,
+        lng: p.coords.lng,
+        bti_files_id: p.bti_files_id,
+      })
+       .then(response => commit('UPDATE_ALERT_COORDS', {...p, ...response.data}))
+    },
   }
 });

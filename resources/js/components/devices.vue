@@ -11,9 +11,7 @@ import TreeView from './treeView/treeview';
 import btiMap from './leaflet/bti';
 
 export default {
-	props:[
-		'objectid',
-	],
+	props:[],
 	data() {
 		return {
 			tree: {},

@@ -1,6 +1,6 @@
 <template>
 	<div class="map-wrapper">
-		<div id="btiMap"></div>
+		<div id="btiMap" ref="btiMap"></div>
 		<nav aria-label="Page navigation example">
 			<ul class="pagination">
 				<li class="page-item">
@@ -28,7 +28,8 @@
 	      	map:{},
 	      	curImg: -1,
 	      	mapMarkers: [],
-	      	imageOverlay: {}
+			imageOverlay: {},
+			height: 0,  
 	      }
 	    },
 
@@ -47,16 +48,23 @@
 			addImageToMap: function (w,h) {
 				const img = new Image();
 				img.src = this.imgUrl;
-				const southWest = this.map.unproject([0, img.height], this.map.getMaxZoom()-1),
-					  northEast = this.map.unproject([img.width, 0], this.map.getMaxZoom()-1),
-					  bounds = new L.LatLngBounds(southWest, northEast);
-				if(this.imageOverlay instanceof L.imageOverlay)
-					this.imageOverlay.remove();
-				this.imageOverlay = L.imageOverlay(this.imgUrl, bounds);
-			  	this.imageOverlay.addTo(this.map);
-			  	this.map.fitBounds(bounds);
-				this.map.invalidateSize(bounds);
-				this.map.panTo([southWest.lat/2, northEast.lng/2]);
+				img.onload = (e) => {
+					const southWest = this.map.unproject([0, img.height], this.map.getMaxZoom()-1),
+						northEast = this.map.unproject([img.width, 0], this.map.getMaxZoom()-1),
+						bounds = new L.LatLngBounds(southWest, northEast);
+					if(this.map.hasLayer(this.imageOverlay))
+						this.map.removeLayer(this.imageOverlay);
+					this.imageOverlay = L.imageOverlay(this.imgUrl, bounds);
+					this.imageOverlay.addTo(this.map);
+					this.map.setMaxBounds(bounds);
+					this.map.fitBounds(bounds);
+					this.map.invalidateSize(bounds);
+					this.map.panTo(bounds.getCenter());
+
+					const m = this.map;
+					console.log('getSize',m.getSize());
+				}
+				
 			},
 	    	setMarkers(){
 	    		const self = this;
@@ -93,13 +101,21 @@
 						this.$store.commit('TOGGLE_MAP');
 						const markerType = this.$store.getters.MARKER_OBJECT.type;
 						if(markerType == 'device')
-							this.$store.commit('SET_DEVICE_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id});
+							this.$store.dispatch('SET_DEVICE_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id})
+								.then( success => this.$awn.success('Координаты сохранены') )
+								.catch( error => this.$awn.alert('Координаты не сохранены'));
 						else if(markerType == 'sensor')
-							this.$store.commit('SET_SENSOR_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id});
+							this.$store.dispatch('SET_SENSOR_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id})
+								.then( success => this.$awn.success('Координаты сохранены') )
+								.catch( error => this.$awn.alert('Координаты не сохранены'));
 						else if(markerType == 'alarm')
-							this.$store.commit('SET_ALERT_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id});
+							this.$store.dispatch('SET_ALERT_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id})
+								.then( success => this.$awn.success('Координаты сохранены') )
+								.catch( error => this.$awn.alert('Координаты не сохранены'));
 					}
 				});
+				this.nextImg();
+				console.log(this.$refs.btiMap.clientHeight);
 	    	},
 	    },
 
@@ -130,6 +146,7 @@
 						this.setMarkers();
 					}
 				);
+				
 			});
 		}
 	}

@@ -17,6 +17,16 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
+//Awesome Notifications
+import VueAWN from "vue-awesome-notifications"
+const AWNparams = {
+    labels:{
+        success: 'Успешно',
+        alert: 'Ошибка'
+    }
+};
+require("vue-awesome-notifications/dist/styles/style.css");
+Vue.use(VueAWN, AWNparams);
 
 //components
 import App from './components/main.vue';

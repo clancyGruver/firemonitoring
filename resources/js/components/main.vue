@@ -1,5 +1,5 @@
 <template>
-  <transition name="page" mode="out-in">
+  <transition name="slide">
     <router-view></router-view>
   </transition>
 </template>
@@ -18,11 +18,15 @@
     methods: {
     },
 
-    mounted: function(){
-      this.$store.commit('LOAD_OBJECTS');
-      this.$store.commit('LOAD_RAIONS');
-      this.$store.commit('FILL_SENSORS');
-      this.$store.commit('SET_AVAILABLE_DEVICES');
+    mounted: async function(){
+      this.$store.dispatch('LOAD_OBJECTS')
+        .catch( error => this.$awn.alert('Объекты мониторинга не загружены'));
+      this.$store.dispatch('LOAD_RAIONS')
+        .catch( error => this.$awn.alert('Доступные районы не загружены'));
+      this.$store.dispatch('LOAD_SENSORS')
+        .catch( error => this.$awn.alert('Доступные извещатели не загружены'));
+      this.$store.dispatch('LOAD_AVAILABLE_DEVICES')
+        .catch( error => this.$awn.alert('Доступные устройства не загружены'));
     },
   }
 </script>

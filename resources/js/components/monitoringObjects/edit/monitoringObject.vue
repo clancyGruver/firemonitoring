@@ -186,7 +186,9 @@ export default {
 
 	methods:{
         updateObject() {
-            this.$store.commit('OBJECT_UPDATE');
+            this.$store.dispatch('OBJECT_UPDATE')
+                .then( success => this.$awn.success('Данные объекта сохранены'))
+                .catch( error => this.$awn.alert('При обновлении данных возникла ошибка'));
         },
 	},
 

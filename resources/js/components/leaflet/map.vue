@@ -36,26 +36,30 @@ export default {
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41]
             });
-            var marker =
+            const marker =
                 L.marker(objCoords,{
                     icon:myIcon,
                     draggable:true,
                 })
                 .addTo(this.map)
                 .on('dragend', function() {
-                    var coord = marker.getLatLng();
-                    store.commit('CHANGE_OBJECT_LL',{
+                    const coord = marker.getLatLng();
+                    store.dispatch('CHANGE_OBJECT_LL',{
                         lat: coord.lat,
                         lng: coord.lng,
                     })
+                        .then( success => this.$awn.success('Координаты сохранены') )
+                        .catch( error => this.$awn.alert('Координаты не сохранены'));
                 });
             this.map.on('click', (val) => {
-                coord = val.latlng;
+                const coord = val.latlng;
                 marker.setLatLng(coord);
-                    store.commit('CHANGE_OBJECT_LL',{
-                        lat: coord.lat,
-                        lng: coord.lng,
-                    })
+                store.dispatch('CHANGE_OBJECT_LL',{
+                    lat: coord.lat,
+                    lng: coord.lng,
+                })
+                    .then( success => this.$awn.success('Координаты сохранены') )
+                    .catch( error => this.$awn.alert('Координаты не сохранены'));
             });
             this.tileLayer.addTo(this.map);
         },
