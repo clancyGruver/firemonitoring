@@ -158,17 +158,10 @@
                 </div>
             </div>
         </form>
-
-        <hr class="mt-4 mb-4"/>
-        <media-file-list :header="'Планы БТИ'" :fileList="object.btifiles" :type="'bti_files'" />
-
-        <hr class="mt-4 mb-4"/>
-        <media-file-list :header="'Медиафайлы'" :fileList="object.mediafiles" :type="'media'" />
 	</div>
 </template>
 
 <script>
-import MediaFileList from '../mediaFilelist';
 
 export default {
 	props:{
@@ -179,7 +172,7 @@ export default {
 		}
 	},
 
-	components:{MediaFileList},
+	components:{},
 
 	mounted: function(){
 	},

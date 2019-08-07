@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid">
+    <div class="container">
         <h3 class="text-center text-capitalize">{{ header }}</h3>
         <ul>
             <li v-for="file in fileList" :key="file.id">

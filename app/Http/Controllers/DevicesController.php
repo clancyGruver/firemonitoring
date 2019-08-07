@@ -33,10 +33,10 @@ class DevicesController extends Controller
 
     public function getByClassJson(){
         $antennas = device_antenna::with('limitations')->get();
-        $rspi = device_rspi::all();
-        $alerts = device_alert::all();
-        $voice_alerts = device_system_voice_alert::all();
-        $aps = Device_aps::all();
+        $rspi = device_rspi::with('limitations')->get();
+        $alerts = device_alert::with('limitations')->get();
+        $voice_alerts = device_system_voice_alert::with('limitations')->get();
+        $aps = Device_aps::with('limitations')->get();
         $res = [
             'antennas'=> [
                 'name' => 'Антенна',

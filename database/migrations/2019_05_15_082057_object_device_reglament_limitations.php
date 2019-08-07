@@ -15,11 +15,11 @@ class ObjectDeviceReglamentLimitations extends Migration
     {
         Schema::create('object_device_reglament_limitations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('object_device_id');            
-            $table->unsignedBigInteger('ODR_id');
+            $table->unsignedBigInteger('object_device_id');
+            $table->unsignedBigInteger('ODR_id')->nullable();
             $table->unsignedSmallInteger('DL_id');
             $table->unsignedBigInteger('created_user_id');
-            $table->string('additional_limitation')->nullable();            
+            $table->string('additional_limitation')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
 

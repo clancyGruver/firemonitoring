@@ -69,3 +69,7 @@ Route::post('/sensorwire/storeCoords/{id}', 'SensorWireController@storeCoordsJso
 Route::post('/wire/store', 'WiresController@storeJson')->name('wires.storeJson');
 Route::post('/wire/update/{id}', 'WiresController@updateJson')->name('wires.updateJson');
 Route::post('/wire/delete/{id}', 'WiresController@deleteJson')->name('wires.deleteJson');
+
+Route::post('/limitations/update/{id}', 'DeviceLimitationsController@update');
+Route::post('/limitations/insert', 'DeviceLimitationsController@insert');
+Route::post('/limitations/delete/{id}', 'DeviceLimitationsController@delete');

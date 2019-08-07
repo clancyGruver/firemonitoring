@@ -1,11 +1,22 @@
 <template>
-  <transition name="slide">
-    <router-view></router-view>
-  </transition>
+  <div class="">
+    <left-side-bar />
+    <div class="main-content">
+      <div class="container-fluid mt-3">
+        <h3>{{ $route.meta.title }}</h3>
+        <transition name="slide">
+          <router-view></router-view>
+        </transition>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
+  import LeftSideBar from './leftSideBar';
+
   export default {
     components: {
+      LeftSideBar
     },
     data () {
       return {

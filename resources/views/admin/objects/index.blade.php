@@ -6,14 +6,10 @@
     </div>
 </div>
 <div class="container-fluid mt-3">
-    <div id="app">
-        <app></app>
-    </div>
 </div>
 
 @endsection
 
 
 @push('js')
-<script src="{{ asset('js/app.js') }}"></script>
 @endpush

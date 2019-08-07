@@ -1,22 +1,20 @@
 <template>
 	<div class="map-wrapper">
-		<div id="btiMap" ref="btiMap"></div>
-		<nav aria-label="Page navigation example">
-			<ul class="pagination">
+		<nav aria-label="bti map navigation">
+			<ul class="pagination justify-content-center">
 				<li class="page-item">
-					<a @click.prevent="prevImg()" class="page-link" href="#" aria-label="Назад">
-						<span aria-hidden="true">&laquo;</span>
-        				<span class="sr-only">Назад</span>
-					</a>
+      				<span class="page-link" @click.prevent="prevImg()">Назад</span>
 				</li>
-			    <li class="page-item">
-			      <a class="page-link" @click.prevent="nextImg()" href="#" aria-label="Вперед">
-			        <span aria-hidden="true">&raquo;</span>
-			        <span class="sr-only">Вперед</span>
-			      </a>
-			    </li>
+				<li class="page-item" v-for="(img, index) in imgs" :key="img.id">
+      				<span class="page-link" @click.prevent="setImg(index)">{{++index}}</span>
+				</li>
+				<li class="page-item">
+      				<span class="page-link" @click.prevent="nextImg()">Вперед</span>
+				</li>
 			</ul>
 		</nav>
+		<h3 class="text-center">{{ name }}</h3>
+		<div id="btiMap" ref="btiMap"></div>
 	</div>
 </template>
 
@@ -29,7 +27,7 @@
 	      	curImg: -1,
 	      	mapMarkers: [],
 			imageOverlay: {},
-			height: 0,  
+			height: 0,
 	      }
 	    },
 
@@ -45,6 +43,9 @@
 					this.curImg = this.imgs.length;
 				--this.curImg;
 	    	},
+	    	setImg: function(index){
+	    		this.curImg = index;
+	    	},
 			addImageToMap: function (w,h) {
 				const img = new Image();
 				img.src = this.imgUrl;
@@ -56,15 +57,10 @@
 						this.map.removeLayer(this.imageOverlay);
 					this.imageOverlay = L.imageOverlay(this.imgUrl, bounds);
 					this.imageOverlay.addTo(this.map);
-					this.map.setMaxBounds(bounds);
 					this.map.fitBounds(bounds);
 					this.map.invalidateSize(bounds);
 					this.map.panTo(bounds.getCenter());
-
-					const m = this.map;
-					console.log('getSize',m.getSize());
 				}
-				
 			},
 	    	setMarkers(){
 	    		const self = this;
@@ -84,6 +80,7 @@
 	    			}
 	    			const theMarker = L.marker({lat: marker.lat, lng: marker.lng}, markerParams);
 	    			theMarker.on('click',(e)=>console.log(e));
+	    			theMarker.bindPopup(`${marker.name}`);
 	    			self.mapMarkers.push(theMarker);
 	    			theMarker.addTo(self.map);
 	    		});
@@ -92,7 +89,7 @@
 				this.map = L.map('btiMap', {
 					crs: L.CRS.Simple,
 					minZoom: 1,
-					maxZoom: 4,
+					maxZoom: 3,
 					zoom: 1
 				})
 				const self = this;
@@ -122,6 +119,11 @@
 	    computed: {
 	    	object() {return this.$store.getters.CURRENT_OBJECT;},
 			imgUrl() {return this.imgs[this.curImg].path;},
+			name(){
+				if (typeof this.imgs[this.curImg] === "undefined")
+					return null;
+				return this.imgs[this.curImg].description || this.imgs[this.curImg].filename;
+			},
 			imgs() {return this.object.btifiles;},
 			markerSetable() {return this.$store.getters.MARKER_SETTABLE;},
 			markers() {
@@ -146,7 +148,6 @@
 						this.setMarkers();
 					}
 				);
-				
 			});
 		}
 	}

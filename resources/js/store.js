@@ -353,6 +353,23 @@ export const store = new Vuex.Store({
           }
         )
     },
+    CHANGE_LIMITATION:(state, {getters, payload}) => {
+      const p = {...payload};
+      const limitation = getters.LIMITATION_BY_ID(p.type, p.id);
+      limitation.text = p.text;
+    },
+    ADD_LIMITATION:(state, {getters, payload}) => {
+      const p = {...payload};
+      const avail_device = getters.AVAILABLE_DEVICE(p.type, p.device_id)
+      const limitation_id = avail_device.limitations.findIndex( obj => obj.id == p.fake_id);
+      avail_device.limitations[limitation_id] = p;
+    },
+    REMOVE_LIMITATION:(state, {getters, payload}) => {
+      const p = {...payload};
+      const avail_device = getters.AVAILABLE_DEVICE(p.type, p.device_id)
+      const limitation_id = avail_device.limitations.findIndex( obj => obj.id == p.id);
+      Vue.delete(avail_device.limitations,limitation_id);
+    },
   },
 
   getters: {
@@ -360,6 +377,8 @@ export const store = new Vuex.Store({
     ALERT_DEVICE_BY_NAME: state => name => state.availabledevices.voice_alerts.devices.find( el => el.name == name),
 	  DEVICES: state => state.devices,
     AVAILABLE_DEVICES: state => state.availabledevices,
+    AVAILABLE_DEVICE: state => (type, id) => state.availabledevices[type].devices.find(obj => obj.id == id),
+    AVAILABLE_DEVICE_MODEL: state => type => state.availabledevices[type].tbl_name,
     FIND_DEVICE_INDEX: state => (tbl_name, id) => state.devices[tbl_name].items.findIndex(obj => obj.id == id ),
     AVAILABLE_ALARMS: state => 'alerts' in state.availabledevices ? state.availabledevices.alerts.devices.filter( device => ['sound','voice'].indexOf(device.type) > -1 ) : [],
     ALL_SENSORS: state => state.sensors,
@@ -382,7 +401,8 @@ export const store = new Vuex.Store({
               lat: device.lat,
               icon: device.icon,
               deviceId: device.id,
-              deviceType: deviceType
+              deviceType: deviceType,
+              name: device.name,
             })
             if( device.wires && device.wires.length > 0 )
               device.wires.map(
@@ -397,7 +417,8 @@ export const store = new Vuex.Store({
                           lat: sensor.lat,
                           icon: sensor.icon,
                           sensorId: sensor.id,
-                          deviceType: 'sensor'
+                          deviceType: 'sensor',
+                          name: `Извещатель ${device.name}/${wire.description}/${sensor.name}`,
                         })
                       }
                     )
@@ -414,7 +435,8 @@ export const store = new Vuex.Store({
                     lat: alarm.lat,
                     icon: alarm.icon,
                     alarmId: alarm.id,
-                    deviceType: 'alarm'
+                    deviceType: 'alarm',
+                    name: alarm.name,
                   })
                 }
               )
@@ -423,15 +445,25 @@ export const store = new Vuex.Store({
       }
       return markers;
     },
+    LIMITATION_BY_ID: state => (type, id) => {
+      state.availabledevices[type].devices.map(
+        device => device.limitations.find( obj => obj.id == id )
+      )
+    },
+    LIMITATION_ID: state => (type, id) => {
+      state.availabledevices[type].devices.map(
+        device => device.limitations.findIndex( obj => obj.id == id )
+      )
+    },
 	},
 
   actions:{
     setCurrentObjectAction({commit, getters}, payload){
       commit('SET_CURRENT_OBJECT', {payload, getters})
     },
-    async LOAD_OBJECTS({commit}) {      
+    async LOAD_OBJECTS({commit}) {
       await axios.post(`/api/objects`)
-        .then( response => commit('SET_OBJECTS', response.data));      
+        .then( response => commit('SET_OBJECTS', response.data));
     },
     async LOAD_RAIONS({commit}) {
       await axios.post(`/api/raions`)
@@ -440,7 +472,7 @@ export const store = new Vuex.Store({
     async LOAD_SENSORS({commit}) {
       await axios.post('/api/sensors/getall')
         .then( response => commit('SET_SENSORS', response.data));
-    },    
+    },
     async LOAD_AVAILABLE_DEVICES({commit}){
       await axios
         .post(`/api/devices/getbyclass`)
@@ -454,7 +486,7 @@ export const store = new Vuex.Store({
     async OBJECT_UPDATE({state}){
       await axios.post(`/api/objects/update/${state.current_object.id}`,state.current_object);
     },
-    async SET_DEVICE_COORDS({commit, state, getters}, payload){      
+    async SET_DEVICE_COORDS({commit, state, getters}, payload){
       const p = {...payload};
       await axios.post(`/api/objectdevice/storeCoords/${state.markerObj.id}`, {
         lat: p.coords.lat,
@@ -480,6 +512,29 @@ export const store = new Vuex.Store({
         bti_files_id: p.bti_files_id,
       })
        .then(response => commit('UPDATE_ALERT_COORDS', {...p, ...response.data}))
+    },
+    async UPDATE_LIMITATION({commit, getters}, payload){
+      const p = {...payload};
+      axios.post(`/api/limitations/update/${p.id}`,{
+        text: p.text
+      })
+       .then(response => commit('CHANGE_LIMITATION', {payload: p, getters}))
+    },
+    async INSERT_LIMITATION({commit, getters}, payload){
+      const p = {...payload};
+      axios.post(`/api/limitations/insert`,p)
+       .then(response => commit('ADD_LIMITATION', {payload: {
+          ...response.data,
+          fake_id: p.id,
+          type: p.type,
+          device_id: p.device_id
+        }, getters}))
+    },
+    async DELETE_LIMITATION({commit, getters}, payload){
+      const p = {...payload}
+      console.log(p);
+      axios.post(`/api/limitations/delete/${p.id}`)
+      .then(response => commit('REMOVE_LIMITATION', {payload, getters}));
     },
   }
 });

@@ -1,5 +1,5 @@
 <template>
-    <form action="" id="mediafileupload"  class="col-md-6 offset-md-3">
+    <form action="" id="mediafileupload">
         <div class="form-row">
             <div class="form-group col">
                 <label for="project_year">Файл</label>

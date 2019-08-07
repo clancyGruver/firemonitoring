@@ -6,13 +6,18 @@
 		<h1>{{ object.name }}</h1>
 		<ul class="nav nav-pills">
 			<li class="nav-item">
-				<router-link :active-class="active" class="nav-link" :to="{ name: 'MonitoringObjectEdit' }">
+				<router-link :active-class="'active'" class="nav-link" :to="{ name: 'MonitoringObjectEdit' }">
 					Оснвные
 				</router-link>
 			</li>
 			<li class="nav-item">
-				<router-link :active-class="active" class="nav-link" :to="{ name: 'objectEditDevices' }">
+				<router-link :active-class="'active'" class="nav-link" :to="{ name: 'objectEditDevices' }">
 					Оборудование
+				</router-link>
+			</li>
+			<li class="nav-item">
+				<router-link :active-class="'active'" class="nav-link" :to="{ name: 'objectEditMedia' }">
+					Файлы
 				</router-link>
 			</li>
 		</ul>

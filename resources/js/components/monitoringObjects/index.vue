@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="row">
+		<div class="row mb-3">
 			<div class="col">
 				<a class="btn btn-icon btn-3 btn-success" type="button" href="./objects/add">
 		            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>
@@ -62,7 +62,7 @@
 	                        >
 	                        	<i class="fas fa-search text-primary"></i>
 	                       	</a>
-	                       	<router-link :to="{ name: 'objectEdit', params: { id: object.id } }">
+	                       	<router-link :to="`objects/${object.id}/main`">
 	                       		<i class="fas fa-edit text-warning"></i>
 	                       	</router-link>
 	                        <a

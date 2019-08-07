@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    @include('layouts.headers.cards')
-    
+    <div id="app">
+        <app></app>
+    </div>
 @endsection
 
 @push('js')
+<script src="{{ asset('js/app.js') }}"></script>
 @endpush

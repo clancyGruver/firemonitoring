@@ -12,9 +12,9 @@ class device_limitations extends Model
 
     protected $fillable = [
         'device_id',
-        'table',
         'text',
         'created_user_id',
+        'model_name'
     ];
 
     public function limitable()
