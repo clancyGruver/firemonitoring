@@ -14,7 +14,7 @@ class device_limitations extends Model
         'device_id',
         'text',
         'created_user_id',
-        'model_name'
+        'tbl_name'
     ];
 
     public function limitable()

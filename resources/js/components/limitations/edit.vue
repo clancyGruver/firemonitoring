@@ -4,7 +4,7 @@
 		<limit-edit
 			v-for="limit in device.limitations"
 			:key="limit.id"
-			:model_name="tbl_name"
+			:tbl_name="tbl_name"
 			:device_id="device.id"
 			:id="limit.id"
 			:text="limit.text"
@@ -40,7 +40,7 @@
 				let minL = Math.min(...this.device.limitations.map( limit => limit.id) );
 				minL = minL > 0 ? -1 : minL - 1;
 				this.device.limitations.push({
-					model_name: this.tbl_name,
+					tbl_name: this.tbl_name,
 					device_id:this.device.id,
 					id: minL,
 					text:''

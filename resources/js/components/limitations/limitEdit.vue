@@ -13,7 +13,7 @@
 <script>
 	export default{
 		props:{
-			model_name: String,
+			tbl_name: String,
 			id: Number,
 			device_id: Number,
 			text: String,
@@ -30,7 +30,7 @@
 					return false;
 				}
 				const limit = {
-					model_name: this.model_name,
+					tbl_name: this.tbl_name,
 					id: this.id,
 					device_id: this.device_id,
 					text: this.innerText,
