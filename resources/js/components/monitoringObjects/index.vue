@@ -1,12 +1,34 @@
 <template>
 	<div>
+		<add-calendar :show="showCalendarWork" :object="calendarWorkObject" v-on:endEdit="showCalendarWork = !showCalendarWork" />
 		<div class="row mb-3">
 			<div class="col">
-				<a class="btn btn-icon btn-3 btn-success" type="button" href="./objects/add">
+               	<router-link
+               		class="btn btn-icon btn-3 btn-success"
+               		type="button"
+               		:to="`objects/new`"
+               	>
 		            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span>
 		            <span class="btn-inner--text">Добавить объект</span>
-		        </a>
+               	</router-link>
 			</div>
+    		<div class="col">
+				<select
+					class="form-control"
+					id="modeVariants"
+					name="modeVariants"
+					v-model="mode"
+				>
+				  	<option disabled value="-1">Неисправности</option>
+			  		<option
+			  			:value="modeVariant.mode"
+			  			v-for="modeVariant in modeVariants"
+			  			:key="modeVariant.mode"
+			  		>
+			  			{{ modeVariant.name }}
+			  		</option>
+				</select>
+    		</div>
 	        <div class="col text-right">
 	        	<div class="row">
 	        		<div class="col">
@@ -21,13 +43,16 @@
 					</div>
 	        		<div class="col">
 						<select class="form-control" id="coupling" name="coupling" v-model="raionFilter">
-						  	<option disabled value="-1">Все районы</option>
+						  	<option value="-1">Все районы</option>
 					  		<option :value="raion.id" v-for="raion in raions" :key="raion.id">{{ raion.name }}</option>
 						</select>
 	        		</div>
 	        	</div>
 	        </div>
 		</div>
+	    <div class="row">
+			<Map :objects="objects" :center="center" />
+	    </div>
 	    <div class="row">
 	        <div class="table-responsive">
 	            <table class="table align-items-center">
@@ -54,6 +79,16 @@
 	                    <td>{{object.contact_name}}, {{object.contact_phone}}</td>
 	                    <td>
 	                        <a
+	                        	href="#"
+	                        	class="btn"
+	                        	data-placement="top"
+	                        	title="Добавить в работу"
+	                        	data-toggle="tooltip"
+	                        	@click.prevent="showCalendarWorkHandler(object)"
+	                        >
+	                        	<i class="fas fa-cog text-primary"></i>
+	                       	</a>
+	                        <!--a
 	                        	:href="`./admin/objects/detail/${object.id}`"
 	                        	class="btn"
 	                        	data-toggle="tooltip"
@@ -61,8 +96,14 @@
 	                        	title="Карточка объекта"
 	                        >
 	                        	<i class="fas fa-search text-primary"></i>
-	                       	</a>
-	                       	<router-link :to="`objects/${object.id}/main`">
+	                       	</a-->
+	                       	<router-link
+	                       		class="btn"
+	                        	data-toggle="tooltip"
+	                        	data-placement="top"
+	                        	title="Редактирование объекта"
+	                       		:to="`objects/${object.id}/main`"
+	                       	>
 	                       		<i class="fas fa-edit text-warning"></i>
 	                       	</router-link>
 	                        <a
@@ -71,7 +112,7 @@
 	                        	data-toggle="tooltip"
 	                        	data-placement="top"
 	                        	title="Удалить"
-	                        	@click="delObj(object)"
+	                        	@click.prevent="delObj(object)"
 	                        >
 	                        	<i class="fas fa-trash-alt text-danger"></i>
 	                        </a>
@@ -87,38 +128,65 @@
 
 <script>
 //import deviceComponent from './device-component.vue';
+import Map from '../leaflet/allMap';
+import AddCalendar from './calendarWork/index';
 
 export default {
-	props:[],
+	props:['mode'],
+	components:{Map, AddCalendar},
 	data() {
 		return {
+			modeVariants: [
+				{
+					mode: 'devices',
+					name: 'Оборудование',
+				},
+				{
+					mode: 'sensors',
+					name: 'Извещатели',
+				},
+				{
+					mode: 'sp5',
+					name: 'Соответствие СП5',
+				},
+				{
+					mode: 'unreglamented',
+					name: 'Регламентные работы',
+				},
+				{
+					mode: 'all',
+					name: 'Все',
+				},
+			],
 			raionFilter: -1,
 			adressFilter: '',
+			center: {lat: 55.198016, lng: 61.359764},
+			showCalendarWork: false,
+			calendarWorkObject: {},
 		}
 	},
-	components:{
-	},
-	mounted: function(){
-	},
-
 	methods:{
-		delObj: function(object){
+		delObj(object){
 		    if(confirm('Вы уверены, что хотите удалить объект?')){
-				this.$store.commit('DELETE_OBJECT',{object});
+				this.$store.commit('DELETE_OBJECT',object.id);
 		    }
 		},
-		createTree: function (devices) {
+		showCalendarWorkHandler(object){
+			this.showCalendarWork = !this.showCalendarWork;
+			this.calendarWorkObject = object;
+
 		}
 	},
-
-	mounted: function(){
-	},
-
 	computed:{
 		objects() {
-			let objects = this.$store.getters.OBJECTS;
+			let objects = this.$store.getters.LIMITED_OBJECTS_BY_TYPE(this.mode);
 			if(this.raionFilter > -1){
 				objects = objects.filter( object => object.raion_id == this.raionFilter);
+				const raion = this.$store.getters.RAION_BY_ID(this.raionFilter);
+				this.center = {
+					lat:raion.lat,
+					lng:raion.lng
+				}
 			}
 			if(this.adressFilter.trim() !== ''){
 				const adressFilterTrimmed = this.adressFilter.trim().toLowerCase();

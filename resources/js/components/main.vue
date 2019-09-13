@@ -1,10 +1,18 @@
 <template>
-  <div class="">
+  <div class="wrapper">
+    <nav class="main-nav bg-gradient-primary border-bottom border-dark">
+      <div class="logo">
+        <router-link class="navbar-brand pt-0" :to="{ name: 'index' }">
+          <i class="fas fa-fire text-danger mr-2"></i>FIREMONITORING
+        </router-link>
+      </div>
+      <Burger></Burger>
+    </nav>
     <left-side-bar />
     <div class="main-content">
       <div class="container-fluid mt-3">
         <h3>{{ $route.meta.title }}</h3>
-        <transition name="slide">
+        <transition name="fade">
           <router-view></router-view>
         </transition>
       </div>
@@ -13,11 +21,10 @@
 </template>
 <script>
   import LeftSideBar from './leftSideBar';
+  import Burger from './Menu/Burger';
 
   export default {
-    components: {
-      LeftSideBar
-    },
+    components: {LeftSideBar, Burger},
     data () {
       return {
       }
@@ -30,17 +37,50 @@
     },
 
     mounted: async function(){
+      await this.$store.dispatch('LOAD_RAIONS')
+        .catch( error => this.$awn.alert('Доступные районы не загружены'));
+      this.$store.dispatch('LOAD_USERS')
+        .catch( error => this.$awn.alert('Пользователи не загружены'));
       this.$store.dispatch('LOAD_OBJECTS')
         .catch( error => this.$awn.alert('Объекты мониторинга не загружены'));
-      this.$store.dispatch('LOAD_RAIONS')
-        .catch( error => this.$awn.alert('Доступные районы не загружены'));
       this.$store.dispatch('LOAD_SENSORS')
         .catch( error => this.$awn.alert('Доступные извещатели не загружены'));
       this.$store.dispatch('LOAD_AVAILABLE_DEVICES')
         .catch( error => this.$awn.alert('Доступные устройства не загружены'));
+      this.$store.dispatch('LOAD_LIMITED_OBJECTS')
+        .catch( error => this.$awn.alert('Объекты с недостатками не загружены'));
+      this.$store.dispatch('LOAD_UNREGLAMENTED_DEVICES')
+        .catch( error => this.$awn.alert('Оборудование с непроведенными регламентными работами не загружено'));
     },
   }
 </script>
 
 <style>
+.pointer{
+  cursor:pointer;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+.wrapper {
+  display: block;
+}
+ .logo {
+   align-self: center;
+   color: #fff;
+   font-weight: bold;
+   font-family: 'Lato'
+ }
+ .main-nav {
+   display: flex;
+   justify-content: space-between;
+   padding: 0.5rem 0.8rem;
+ }
+ .navbar-brand,.navbar-brand:hover{
+   color:#32325d;
+ }
+
 </style>

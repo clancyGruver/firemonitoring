@@ -34,13 +34,19 @@ class ObjectdevicesController extends Controller
         $data = $request->all();
         $params = [];
 
-        $params['created_user_id'] = $data['user_id'];
+        $params['created_user_id'] = $request->header('x-user');
         $params['object_id'] = $data['object_id'];
         $params['device_id'] = $data['device_id'];
         $params['tbl_name'] = $data['tbl_name'];
 
         $obj = new OD($params);
         $obj->save();
+        $id = $obj->id;
+        $obj = OD::where('id', $id)
+                ->with('wires')
+                ->with('alerts')
+                ->with('devicable')
+                ->first();
 
         return response()->json($obj);
     }

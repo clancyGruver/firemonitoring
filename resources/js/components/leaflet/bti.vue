@@ -3,18 +3,22 @@
 		<nav aria-label="bti map navigation">
 			<ul class="pagination justify-content-center">
 				<li class="page-item">
-      				<span class="page-link" @click.prevent="prevImg()">Назад</span>
+      				<span class="page-link" @click.prevent="prevImg()">
+						<i class="fas fa-angle-double-left"></i>
+      				</span>
 				</li>
 				<li class="page-item" v-for="(img, index) in imgs" :key="img.id">
-      				<span class="page-link" @click.prevent="setImg(index)">{{++index}}</span>
+      				<span class="page-link" @click.prevent="setImg(index)">{{index + 1}}</span>
 				</li>
 				<li class="page-item">
-      				<span class="page-link" @click.prevent="nextImg()">Вперед</span>
+      				<span class="page-link" @click.prevent="nextImg()">
+						<i class="fas fa-angle-double-right"></i>
+					</span>
 				</li>
 			</ul>
 		</nav>
 		<h3 class="text-center">{{ name }}</h3>
-		<div id="btiMap" ref="btiMap"></div>
+		<div class="btiMap" :id="containerName"></div>
 	</div>
 </template>
 
@@ -30,7 +34,12 @@
 			height: 0,
 	      }
 	    },
-
+	    props:{
+	    	containerName:{
+	    		type: String,
+	    		default: 'btiMap'
+	    	}
+	    },
 	    methods: {
 	    	nextImg: function(){
 				if(this.curImg >= this.imgs.length-1)
@@ -86,7 +95,7 @@
 	    		});
 	    	},
 	    	mapInit(){
-				this.map = L.map('btiMap', {
+				this.map = L.map(this.containerName, {
 					crs: L.CRS.Simple,
 					minZoom: 1,
 					maxZoom: 3,
@@ -112,7 +121,7 @@
 					}
 				});
 				this.nextImg();
-				console.log(this.$refs.btiMap.clientHeight);
+				this.setMarkers();
 	    	},
 	    },
 
@@ -126,10 +135,7 @@
 			},
 			imgs() {return this.object.btifiles;},
 			markerSetable() {return this.$store.getters.MARKER_SETTABLE;},
-			markers() {
-				const markers = this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];
-				return markers;
-			},
+			markers() {return this.$store.getters.DEVICE_MARKERS[this.imgs[this.curImg].id];},
 		},
 
 		watch:{
@@ -154,7 +160,7 @@
 </script>
 
 <style scoped>
-	#btiMap{
+	.btiMap{
 		height: 100%;
 		min-height: 600px;
 	}

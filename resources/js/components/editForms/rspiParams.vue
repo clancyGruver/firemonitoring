@@ -110,8 +110,8 @@
 			save(){
 				if(!this.check())
 					return false;
-				this.$store.commit('UPDATE_RSPI', this.deviceData);
-				this.$emit('end-adding');
+				this.$store.dispatch('UPDATE_OBJECT_DEVICE_PARAMS', {type:'rspi', data: this.deviceData});
+				this.cancel();
 			},
 			cancel () {
 				this.$emit('end-adding');

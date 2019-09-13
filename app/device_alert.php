@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class device_alert extends Device
 {
+    use SoftDeletes;
+    
     protected $table = 'device_alerts';
     protected $fillable = [
         'type',
@@ -16,7 +18,11 @@ class device_alert extends Device
         'created_user_id',
     ];
 
-    protected $appends = ['icon'];
+    protected $appends = ['icon','instrutionPath'];
+
+    public function getInstrutionPathAttribute(){
+        return Storage::url('instructions/alerts/'.$this->id.'/'.$this->instruction);
+    }
 
     public function type_name(){
     	$arr = [

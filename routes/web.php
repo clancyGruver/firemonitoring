@@ -23,8 +23,9 @@ Route::get('/sessionStatus', function() {
 });
 
 Route::middleware(['auth'])->group(function(){
-    Route::prefix('admin')->group(function(){
-        Route::get('/', 'admin\HomeController')->name('admin');
+    Route::get('admin/{any?}', 'admin\HomeController')->where('any', '.*');
+    /*Route::prefix('admin')->group(function(){
+        Route::get('/{any}', 'admin\HomeController')->name('admin')->where('any', '.*');
         Route::get('/raions', 'RaionController@index')->name('raions');
         Route::prefix('objects')->group(function(){
             Route::get('/{id?}', 'ObjectsController@index')->name('objects');
@@ -41,15 +42,15 @@ Route::middleware(['auth'])->group(function(){
             Route::post('/update/{id}', 'DevicesController@update')->name('devices.update');
             Route::get('/add', 'DevicesController@add')->name('devices.add');
             Route::post('/store', 'DevicesController@store')->name('devices.store');
-        });
-        Route::prefix('devicesClasses')->group(function(){
+        });*/
+        /*Route::prefix('devicesClasses')->group(function(){
             Route::get('/', 'DevicesClassesController@index')->name('devicesClasses');
             Route::get('/detail/{id}', 'DevicesClassesController@detail')->name('devicesClasses.detail');
             Route::get('/edit/{id}', 'DevicesClassesController@edit')->name('devicesClasses.edit');
             Route::get('/add', 'DevicesClassesController@add')->name('devicesClasses.add');
             Route::post('/store', 'DevicesClassesController@store')->name('devicesClasses.store');
-        });
-        Route::prefix('object-devices')->group(function(){
+        });*/
+        /*Route::prefix('object-devices')->group(function(){
             Route::get('/', 'ObjectdevicesController@index')->name('od');
             Route::get('/edit/{id}', 'ObjectdevicesController@edit')->name('od.edit');
             Route::post('/update/{id}', 'ObjectdevicesController@update')->name('od.update');
@@ -65,7 +66,7 @@ Route::middleware(['auth'])->group(function(){
             Route::post('/update/{id}', 'UserController@update')->name('users.update');
             Route::get('/add', 'UserController@add')->name('users.add');
             Route::post('/store', 'UserController@store')->name('users.store');
-        });*/
+        });
         Route::prefix('antennas')->group(function(){
             Route::get('/', 'DeviceAntennaController@index')->name('antennas');
             Route::get('/detail/{id}', 'DeviceAntennaController@detail')->name('antennas.detail');
@@ -103,7 +104,7 @@ Route::middleware(['auth'])->group(function(){
         Route::prefix('limitations')->group(function(){
             Route::get('/', 'DeviceLimitationsController@index')->name('limitations');
         });
-    });
+    });*/
 
     Route::prefix('technician')->group(function(){
         Route::get('/', 'technician\HomeController');

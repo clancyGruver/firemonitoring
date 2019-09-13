@@ -37,8 +37,11 @@
 		},
 		methods:{
 			addLimit(){
+				if(!this.device.limitations)
+					this.$set(this.device, 'limitations', []);
 				let minL = Math.min(...this.device.limitations.map( limit => limit.id) );
 				minL = minL > 0 ? -1 : minL - 1;
+				minL = minL ? minL : -1;
 				this.device.limitations.push({
 					tbl_name: this.tbl_name,
 					device_id:this.device.id,

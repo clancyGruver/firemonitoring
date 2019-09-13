@@ -10,6 +10,7 @@ class Device extends Model
 {
     use SoftDeletes;
 	use Limitations;
+	use Reglaments;
     protected $primaryKey = 'id';
     protected $fillable = [
         'name',

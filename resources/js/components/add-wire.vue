@@ -1,9 +1,9 @@
-<template>	
+<template>
 	<transition name="modal">
 		<div class="modal-mask mb-4 " v-show="creating" @click.self="cancel">
-			<div class="modal-container card card-stats">
+			<div class="modal-container card-stats">
 				<div class="modal-content card-body">
-					<h5 class="card-title">Добавить шлейф</h5> 
+					<h5 class="card-title">Добавить шлейф</h5>
 					<div class="row"  v-if="errors.length">
 					  <p>
 					    <b>Пожалуйста исправьте указанные ошибки:</b>
@@ -18,20 +18,20 @@
 							<div class="">
 			                    <div class="form-group col">
 			                    <label for="description">Наименование шлейфа</label>
-			                        <input id="description" name="description" type="text" class="form-control" placeholder="Наименование шлейфа" v-model="newWire.description">
+			                        <input id="description" name="description" type="text" class="form-control" placeholder="Наименование шлейфа" v-model="wire.description">
 			                    </div>
 			                </div>
 			                <div class="">
 			                    <div class="form-group col custom-control custom-checkbox">
-			                        <input class="custom-control-input" id="is_good" name="is_good" type="checkbox" v-model="newWire.is_good">
+			                        <input class="custom-control-input" id="is_good" name="is_good" type="checkbox" v-model="wire.is_good">
 			                        <label class="custom-control-label" for="is_good">Исправен</label>
 			                    </div>
 			                </div>
 
-				            <div class="">      
+				            <div class="">
 				                <div class="form-group col">
 				                    <label for="type">Тип шлейфа</label>
-				                    <select id="type" name="type" class="form-control" v-model="newWire.type">
+				                    <select id="type" name="type" class="form-control" v-model="wire.type">
 				                        <option value="unsafe" selected>Пожароопасный</option>
 				                        <option value="safe">Пожаробезопасный</option>
 				                        <option value="radio">Радиоканал</option>
@@ -42,7 +42,7 @@
 							<div class="">
 			                    <div class="form-group col">
 			                    <label for="sertificate">Сертификат</label>
-			                        <input id="sertificate" name="sertificate" type="text" class="form-control" placeholder="Сертификат" v-model="newWire.sertificate">
+			                        <input id="sertificate" name="sertificate" type="text" class="form-control" placeholder="Сертификат" v-model="wire.sertificate">
 			                    </div>
 			                </div>
 
@@ -50,8 +50,8 @@
 			                    <div class="form-group col btn-group">
 									<button type="button" @click="cancel" class="cancel">Отмена</button>
 									<button type="button" @click="save" class="save">Сохранить</button>
-								</div>                
-							</div>                
+								</div>
+							</div>
 						</form>
                     </div>
 				</div>
@@ -92,42 +92,35 @@
 						is_good: true,
 						type: 'unsafe',
 					}
-				}	
-				
+				}
 			},
-		},		
+		},
 		data: function () {
 			return {
 				errors: [],
 			}
 		},
-		methods: {		
+		methods: {
 			cancel () {
 				this.$emit('end-adding')
-				this.newWire = {
-					is_good: true,
-				};
 			},
 			save () {
 				this.errors = [];
-				if (!this.newWire.description) {
+				if (!this.wire.description) {
 					this.errors.push('Требуется указать наименование шлейфа.');
 					return false;
-				}				
-				console.log(this.newWire);
+				}
 				if(this.mode == 'new'){
-					console.log(this.typeIdx);
-					this.$store.commit('ADD_WIRE', {typeIdx:this.type, odid:this.odid, wire:this.newWire});	
+					this.$store.dispatch('ADD_WIRE', {odid:this.odid, wire:this.wire});
 				}
 				else{
-					this.$store.commit('EDIT_WIRE', {typeIdx:this.type, wire:this.newWire});		
+					this.$store.dispatch('EDIT_WIRE', {wire:this.wire});
 				}
-				
 				this.cancel();
 			},
 		},
 		computed:{
-			availDevs: function () {return this.$store.getters.AVAILABLE_DEVICES},
+			wire() {return this.newWire},
 		},
 	}
 </script>
@@ -148,9 +141,7 @@
   transition: opacity 0.3s ease;
 }
 .modal-mask .modal-container {
-  background-color: white;
   border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   cursor: default;
   font-family: Helvetica, Arial, sans-serif;
   margin: 40px auto 0;

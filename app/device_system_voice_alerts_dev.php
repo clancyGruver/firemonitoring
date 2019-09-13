@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class device_system_voice_alerts_dev extends Device
 {
+    use SoftDeletes;
     protected $table = 'device_system_voice_alerts_devs';
 
     protected $fillable = [

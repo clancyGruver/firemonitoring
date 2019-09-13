@@ -1,10 +1,7 @@
 <template>
 	<div class="container-fluid mt-3">
-		<div class="row">
-			<Map />
-		</div>
 		<h1>{{ object.name }}</h1>
-		<ul class="nav nav-pills">
+		<ul class="nav nav-pills mb-4">
 			<li class="nav-item">
 				<router-link :active-class="'active'" class="nav-link" :to="{ name: 'MonitoringObjectEdit' }">
 					Оснвные
@@ -20,8 +17,27 @@
 					Файлы
 				</router-link>
 			</li>
+			<li class="nav-item">
+				<router-link :active-class="'active'" class="nav-link" :to="{ name: 'objectEditMap' }">
+					Карта
+				</router-link>
+			</li>
+			<!--li class="nav-item">
+				<router-link
+					class="nav-link"
+					:active-class="'active'"
+					:to="{
+						name: 'objectEditBti',
+						params:{
+							containerName: 'bigBtiMap',
+					}}">
+					Планы БТИ
+				</router-link>
+			</li-->
 		</ul>
-		<router-view></router-view>
+        <transition>
+			<router-view></router-view>
+		</transition>
 	</div>
 </template>
 
@@ -45,8 +61,6 @@ export default {
 	},
 
 	methods:{
-		createTree: function (devices) {
-		}
 	},
 
 	computed: {

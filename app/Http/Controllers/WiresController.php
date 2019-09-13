@@ -12,7 +12,7 @@ class WiresController extends Controller
         $data = $request;
         $params = [];
 
-        $params['created_user_id'] = $data['user_id'];
+        $params['created_user_id'] = $request->header('x-user');
         $params['object_device_id'] = $data['object_device_id'];
         foreach ($data['wire_data'] as $key => $value) {
             if($key == 'type') continue;
@@ -33,7 +33,7 @@ class WiresController extends Controller
         $data = $request->all();
         $params = [];
 
-        $params['created_user_id'] = $data['user_id'];
+        $params['created_user_id'] = $request->header('x-user');
         $params['is_good'] = $data['is_good'];
         $params['description'] = $data['description'];
         $params['type'] = $data['type'];

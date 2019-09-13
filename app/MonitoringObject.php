@@ -4,9 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Raion;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MonitoringObject extends Model
 {
+    use SoftDeletes;
     protected $table = 'objects';
     protected $primaryKey = 'id';
     protected $attributes = [

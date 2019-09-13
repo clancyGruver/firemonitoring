@@ -1,6 +1,6 @@
 <template>
 	<form class="form-inline">
-		<input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" v-model="innerText">
+		<input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" v-model.trim="innerText">
 		<button type="button" class="btn btn-primary mb-2">
 			<i class="ni ni-check-bold text-success" @click="saveLimit"></i>
 		</button>
@@ -25,6 +25,7 @@
 		},
 		methods:{
 			saveLimit(){
+				console.log('save');
 				if(this.innerText.trim() == ''){
 					this.$awn.alert('Нельзя сохранить пустой недостаток')
 					return false;

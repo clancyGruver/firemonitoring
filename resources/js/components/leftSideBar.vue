@@ -1,110 +1,159 @@
 <template>
-	<nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main">
-	    <div class="container-fluid">
-	        <!-- Toggler -->
-	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidenav-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle navigation">
-	            <span class="navbar-toggler-icon"></span>
-	        </button>
-
-			<a class="navbar-brand pt-0" href="./index.html">
-				<i class="fas fa-fire text-danger"></i>FIREMONITORING
-			</a>
-	        <!-- User -->
-	        <ul class="nav align-items-center d-md-none">
-	            <li class="nav-item dropdown">
-	                <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
-	                    <div class="dropdown-divider"></div>
-	                    <a href="user/logout" class="dropdown-item">
-	                        <i class="ni ni-user-run"></i>
-	                        <span>Выйти</span>
-	                    </a>
-	                </div>
-	            </li>
-	        </ul>
-	        <!-- Collapse -->
-	        <div class="collapse navbar-collapse" id="sidenav-collapse-main">
-	            <!-- Collapse header -->
-	            <div class="navbar-collapse-header d-md-none">
-	                <div class="row">
-	                    <div class="col-6 collapse-brand">
-	                        <a href="/">
-	                            Firemonitoring
-	                        </a>
-	                    </div>
-	                    <div class="col-6 collapse-close">
-	                        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#sidenav-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle sidenav">
-	                            <span></span>
-	                            <span></span>
-	                        </button>
-	                    </div>
-	                </div>
-	            </div>
-	            <!-- Navigation -->
-	            <ul class="navbar-nav">
-	                <li class="nav-item">
-	                    <a class="nav-link" href="/raions">
-	                        <i class="ni ni-world text-primary"></i> Районы
-	                    </a>
-	                </li>
-	                <li class="nav-item">
-						<router-link :active-class="active" class="nav-link" :to="{ name: 'objects' }">
+	<nav class="sidebar">
+        <div class="sidebar-backdrop" @click="closeSidebarPanel" v-if="isPanelOpen"></div>
+        <transition name="slide">
+            <div v-if="isPanelOpen" class="sidebar-panel">
+		        <!-- Navigation -->
+		        <ul class="sidebar-panel-nav">
+		            <li class="nav-item">
+						<router-link
+							class="nav-link"
+							:active-class="active"
+							:to="{
+		                    	name: 'raionIndex'
+		                  	}"
+		              	>
+							<i class="ni ni-world text-primary"></i> Районы
+						</router-link>
+		            </li>
+		            <li class="nav-item">
+						<router-link :active-class="active" class="nav-link" :to="{
+		                name: 'objects',
+		                params:{
+		                  mode:'all'
+		                }
+		              }">
 							<i class="ni ni-building text-primary"></i> Объекты мониторинга
 						</router-link>
-	                </li>
-	                <li class="nav-item">
-	                    <a class="nav-link" href="route('user.index')">
-	                        <i class="fas fa-users text-primary"></i>Пользователи
-	                    </a>
-	                </li>
-	                <li class="nav-item">
-	                    <a class="nav-link" href="#navbar-examples" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-examples">
-	                        <i class="fas fa-cogs" style="color: #f4645f;"></i>
-	                        <span class="nav-link-text" style="color: #f4645f;">Оборудование</span>
-	                    </a>
+		            </li>
+		            <li class="nav-item">
+						<router-link
+							class="nav-link"
+							:active-class="active"
+							:to="{
+		                        name: 'usersIndex'
+		              		}"
+		              	>
+							<i class="fas fa-users text-primary"></i> Пользователи
+						</router-link>
+		            </li>
+		            <li class="nav-item">
+		                <a class="nav-link pointer" role="button" @click.prevent="deviceCollapsed = !deviceCollapsed">
+		                    <i class="fas fa-cogs" style="color: #f4645f;"></i>
+		                    <span class="nav-link-text" style="color: #f4645f;">Оборудование</span>
+		                </a>
 
-	                    <div class="collapse show" id="navbar-examples">
-	                        <ul class="nav nav-sm flex-column">
+		                <div
+		                	class="collapse"
+							:class="[
+								deviceCollapsed ? 'show' : '',
+							]"
+		                	id="devices"
+		                >
+		                    <ul class="nav nav-sm flex-column">
+				                <li class="nav-item">
+									<router-link :active-class="active" class="nav-link" :to="{ name: 'reglamentsIndex' }">
+										  <i class="fas fa-cog text-primary"></i>
+										  Регламентные работы оборудования
+									</router-link>
+				                </li>
+
 				                <li class="nav-item">
 									<router-link :active-class="active" class="nav-link" :to="{ name: 'limitationsIndex' }">
 										<i class="fas fa-exclamation-triangle text-primary"></i> Недостатки оборудования
 									</router-link>
 				                </li>
-	                            <li class="nav-item">
-	                                <a class="nav-link" href="route('devices')">
-	                                    <i class="fas fa-fire text-primary"></i> Охранно-пожарная сигнализация
-	                                </a>
-	                            </li>
-	                            <li class="nav-item">
-	                                <a class="nav-link" href="route('sensors')">
-	                                    <i class="fas fa-bell text-primary"></i>Извещатели
-	                                </a>
-	                            </li>
-	                            <li class="nav-item">
-	                                <a class="nav-link" href="route('antennas')">
-	                                    <i class="fas fa-broadcast-tower text-primary"></i>Антенны
-	                                </a>
-	                            </li>
-	                            <li class="nav-item">
-	                                <a class="nav-link" href="route('rspi')">
-	                                    <i class="fas fa-podcast text-primary"></i>Системы передачи извещений
-	                                </a>
-	                            </li>
-	                            <li class="nav-item">
-	                                <a class="nav-link" href="route('sys_alert')">
-	                                    <i class="fas fa-microphone-alt text-primary"></i>Системы речевого оповещения
-	                                </a>
-	                            </li>
-	                            <li class="nav-item">
-	                                <a class="nav-link" href="route('alert')">
-	                                    <i class="fas fa-bullhorn text-primary"></i> Оповещатели
-	                                </a>
-	                            </li>
-	                        </ul>
-	                    </div>
-	                </li>
-	            </ul>
-	        </div>
-	    </div>
+		                        <li class="nav-item">
+									<router-link
+										class="nav-link"
+										:active-class="active"
+										:to="{
+											path:`/devices/aps`,
+											params: {
+												device_type: 'aps',
+											}
+										}"
+									>
+										<i class="fas fa-exclamation-triangle text-primary"></i> Охранно-пожарная сигнализация
+									</router-link>
+		                        </li>
+		                        <li class="nav-item">
+									<router-link
+										class="nav-link"
+										:active-class="active"
+										:to="{
+											path:`/devices/sensors`,
+											params: {
+												device_type: 'sensors'
+											}
+										}"
+									>
+		                                <i class="fas fa-bell text-primary"></i>Извещатели
+									</router-link>
+		                        </li>
+		                        <li class="nav-item">
+									<router-link
+										class="nav-link"
+										:active-class="active"
+										:to="{
+											path:`/devices/antennas`,
+											params: {
+												device_type: 'antennas'
+											}
+										}"
+									>
+										<i class="fas fa-broadcast-tower text-primary"></i>Антенны
+									</router-link>
+		                        </li>
+		                        <li class="nav-item">
+									<router-link
+										class="nav-link"
+										:active-class="active"
+										:to="{
+											path:`/devices/rspi`,
+											params: {
+												device_type: 'rspi'
+											}
+										}"
+									>
+										<i class="fas fa-podcast text-primary"></i>Системы передачи извещений
+									</router-link>
+		                        </li>
+		                        <li class="nav-item">
+									<router-link
+										class="nav-link"
+										:active-class="active"
+										:to="{
+											path:`/devices/voice_alerts`,
+											params: {
+												device_type: 'voice_alerts',
+											}
+										}"
+									>
+										<i class="fas fa-microphone-alt text-primary"></i>Системы речевого оповещения
+									</router-link>
+		                        </li>
+		                        <li class="nav-item">
+									<router-link
+										class="nav-link"
+										:active-class="active"
+										:to="{
+											path:`/devices/alerts`,
+											params: {
+												device_type: 'alerts',
+											}
+										}"
+									>
+										<i class="fas fa-bullhorn text-primary"></i> Оповещатели
+									</router-link>
+		                        </li>
+		                    </ul>
+		                </div>
+		            </li>
+		        </ul>
+            </div>
+        </transition>
+
 	</nav>
 </template>
 
@@ -115,16 +164,61 @@ export default {
     data () {
       return {
       	active: 'active',
+      	deviceCollapsed: false,
+      	collapseShow: false
       }
     },
 
     computed: {
+        isPanelOpen(){return this.$store.state.sideBarACtive;}
     },
 
     methods: {
     	logout(){
 			document.getElementById('logout-form').submit();
     	},
+        closeSidebarPanel() {this.$store.commit('TOGGLE_SIDEBAR');}
     },
   }
 </script>
+
+<style>
+    .slide-enter-active,.slide-leave-active{transition: transform 0.2s ease;}
+    .slide-enter,.slide-leave-to {
+        transform: translateX(-100%);
+        transition: all 150ms ease-in 0s
+    }
+    .sidebar-backdrop {
+        background-color: rgba(0,0,0,.5);
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+        z-index: 1000;
+    }
+    .sidebar-panel {
+        overflow-y: auto;
+        background-color: #130f40;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 999;
+        padding: 1rem 0;
+        width: 300px;
+        z-index: 1001;
+    }
+ ul.sidebar-panel-nav {
+   list-style-type: none;
+ }
+
+ ul.sidebar-panel-nav > li > a {
+   color: #fff;
+   text-decoration: none;
+   font-size: 1rem;
+   display: block;
+   padding-bottom: 0.5em;
+ }
+</style>

@@ -1,28 +1,54 @@
 <template>
 	<div>
+		<button
+			type="button"
+			class="btn btn-outline-success mt-4"
+			@click="addDeviceShow = !addDeviceShow"
+		>
+			Добавить оборудование
+		</button>
+		<add-device :creating="addDeviceShow" v-on:end-adding="addDeviceShow = !addDeviceShow" />
+		<hr class="mt-2">
 		<antenna-device v-show="atennaEdit" :deviceData="deviceData" v-on:end-adding="atennaEdit=false"/>
 		<alarm-devices v-show="addAlarmShow" :deviceData="deviceData" v-on:end-adding="addAlarmShow = false"/>
-		<add-device :creating="addDeviceShow" v-on:end-adding="addDeviceShow = !addDeviceShow" />
 		<rspi-params
 			v-show="rspiParamsShow"
 			v-on:end-adding="rspiParamsShow = false"
 			:deviceData="deviceData"
 		/>
-		<ul class="list-unstyled" v-for="(type, typeIdx) in treeData" :key="typeIdx">
+		<ul class="list-unstyled" v-for="(type, typeIdx) in tree" :key="typeIdx">
 			<h3 class="underline">{{type.name}}</h3>
 			<li v-for="(device, index) in type.items" :key="device.id">
 				<h4>
-					<i
-						class="ml-2 fas pointer"
-						:class="{
-							'fa-times-circle': !device.is_good,
-							'text-danger': !device.is_good,
-							'fa-check-circle': device.is_good,
-							'text-success': device.is_good
-						}"
-						@click="changeIsGood(typeIdx, device)">
-					</i>
-					<span @click="toggle(typeIdx, index)" class="pointer" v-if="['App\\device_aps','App\\device_system_voice_alert'].indexOf(typeIdx) >-1 ">
+					<router-link class="ml-2 fas pointer"
+							:class="{
+								'fa-times-circle text-danger': !device.is_good,
+								'fa-check-circle text-success': device.is_good,
+							}"
+							:to="{
+								name: 'objectDeviceLimitaion',
+								params:{
+									objectDeviceId: device.id,
+									typeIdx,
+								}
+							}"
+							tag="i">
+					</router-link>
+					<router-link class="ml-2 fas pointer"
+							:class="{
+								'fa-times-circle text-danger': !isReglamented(device.id),
+								'fa-check-circle text-success': isReglamented(device.id),
+							}"
+							:to="{
+								name: 'objectDeviceReglaments',
+								params:{
+									objectDeviceId: device.id,
+									typeIdx,
+								}
+							}"
+							tag="i">
+					</router-link>
+					<span @click="toggle(device)" class="pointer" v-if="['App\\device_aps','App\\device_system_voice_alert'].indexOf(typeIdx) >-1 ">
 						<span v-if="device.isShow">-</span>
 						<span v-else>+</span>
 						{{ device.name }}
@@ -34,18 +60,16 @@
 						{{ device.wires.length }} / {{ device.wires_count }}
 					</span>
 					<i class="ml-4 fas fa-edit text-warning pointer" @click="editDevice(typeIdx, device)"></i>
-					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteDevice(typeIdx, device)"></i>
-					<i class="ml-2 fas fa-map-marker text-danger pointer" @click="setMarker(typeIdx, device)"></i>
+					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteDevice(device)"></i>
+					<i v-if="btiIsset" class="ml-2 fas fa-map-marker text-danger pointer" @click="setMarker(typeIdx, device)"></i>
 				</h4>
 				<div v-show="device.isShow && typeIdx == 'App\\device_system_voice_alert'"  >
 					<alert-system-devices :items="device.alarms" />
-					<button type="button" class="btn btn-success mt-4" @click="addAlarmShow = true; deviceData = device">Добавить извещатель</button>
+					<button type="button" class="btn btn-outline-success mt-4" @click="addAlarmShow = true; deviceData = device">Добавить извещатель</button>
 				</div>
 				<wire-tree v-show="device.isShow && typeIdx == 'App\\device_aps'" :wires="device.wires" :wires_count="device.wires_count" :typeIdx="typeIdx" :ObjectDeviceId="device.id" />
 			</li>
 		</ul>
-		<hr class="mt-2">
-		<button type="button" class="btn btn-success mt-4" @click="addDeviceShow = true">Добавить оборудование</button>
 	</div>
 </template>
 
@@ -69,12 +93,9 @@
 			rspiParams,
 			antennaDevice,
 		},
-		props: {
-		},
 		data: function () {
 			return {
 				addAlarmShow:false,
-				tData: {},
 				addDeviceShow: false,
 				atennaEdit: false,
 
@@ -90,10 +111,8 @@
 			}
 		},
 		methods: {
-			toggle(typeIdx, idx){
-				this.$store.commit('TOGGLE_DEVICE_SHOW', {typeIdx, idx});
-				//this.treeData[typeIdx].items[idx].isShow = !this.treeData[typeIdx].items[idx].isShow;
-			},
+			isReglamented(deviceId){ return !this.notReglamented.includes(deviceId) },
+			toggle(device){ this.$store.dispatch('TOGGLE_DEVICE_SHOW', device.id) },
 			editDevice(typeIdx, device){
 				this.deviceFormShow = true;
 				this.deviceFormMethod = 'edit';
@@ -106,21 +125,20 @@
 				else if(typeIdx == 'App\\device_rspi')
 					this.rspiParamsShow = true;
 			},
-			deleteDevice(typeIdx, device){
+			deleteDevice(device){
 				if(confirm(`Вы действительно хотите удалить ${device.name}`)){
-				  this.$store.commit('DELETE_DEVICE', {typeIdx:typeIdx, deviceId:device.id});
+				  this.$store.dispatch('DELETE_OBJECT_DEVICE', device.id);
 				}
 			},
 			setMarker(typeIdx, device){
 				this.$store.commit('TOGGLE_MAP');
 				this.$store.commit('SET_MAP_ACTIVE_DEVICE',{typeIdx:typeIdx, deviceId:device.id});
-			},
-			changeIsGood(typeIdx, device){
-				this.$store.commit('TOGGLE_DEVICE_ISGOOD',{typeIdx:typeIdx, deviceId:device.id});
 			}
 		},
 		computed: {
-			treeData() {return this.$store.getters.DEVICES},
+			btiIsset(){return this.$store.getters.CURRENT_OBJECT.btifiles.length > 0},
+			notReglamented(){return this.$store.getters.UNREGLAMENTED_DEVICES},
+			tree(){return this.$store.getters.DEVICE_TREE},
 		}
 	}
 </script>

@@ -3,6 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\reglament_works as RW;
+use App\device_reglament as DR;
+use App\Wire;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Object_Device extends Model
@@ -64,5 +67,37 @@ class Object_Device extends Model
 
     public function alerts(){
         return $this->hasMany('App\device_system_voice_alerts_dev', 'device_system_voice_alerts_id', 'id')->with('alertDevice');
+    }
+
+    public function object(){
+        return $this->belongsTo('App\MonitoringObject', 'object_id', 'id');
+    }
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($od) {
+            if($od->tbl_name == 'App\device_aps'){
+                Wire::where('object_device_id',$od->id)->delete();
+            }
+            RW::where('device_id',$od->id)->delete();
+        });
+
+        static::created(function($od) {
+            $data = [];
+            $keys = DR::where([
+                ['device_id',$od->device_id],
+                ['tbl_name',$od->tbl_name],
+            ])->get()->modelKeys();
+            $curDate = date("Y-m-d H:i:s");
+            foreach ($keys as $v) {
+                $data[] = [
+                    'reglament_id' => $v,
+                    'device_id'    => $od->id,
+                    'planned_reglament_at' => $curDate,
+                    'created_user_id' => $od->created_user_id,
+                ];
+            }
+            RW::insert($data);
+        });
     }
 }

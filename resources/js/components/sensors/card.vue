@@ -1,106 +1,91 @@
 <template>
-	<transition name="modal">
-		<div class="modal-mask mb-4 " v-show="edit" @click.self="cancel">
-			<div class="modal-container card card-stats">
-				<div class="modal-content card-body">
+	<section>
+		<div class="card card-stats">
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table align-items-center">
+						<tbody>
+							<tr>
+								<th scope="col">Наименование</th>
+								<td>{{ sensor.name }}</td>
+							</tr>
+							<tr>
+								<th scope="col">Инструкция</th>
+								<td><a :href="sensor.instrutionPath" target="_blank">{{ sensor.instruction }}</a></td>
+							</tr>
 
-					<div class="table-responsive">
-						<table class="table align-items-center">
-							<tbody>
-								<tr>
-									<th scope="col">Наименование</th>
-									<td>{{ sensorData.name }}</td>
-								</tr>
+							<tr>
+								<th scope="col" colspan="2" class="text-center">Классификация ПИ</th>
+							</tr>
+							<tr>
+								<th scope="col">По способу приведения в действие</th>
+								<td v-if="sensor.is_automate">Автоматический</td>
+								<td v-else>Ручной</td>
+							</tr>
+							<tr>
+								<th scope="col">По способу электропитания</th>
+								<td v-if="sensor.power_supply == 'wire'">Питаемый по шлейфу</td>
+								<td v-else-if="sensor.power_supply == 'separate wire'">Питаемый по отдельному проводу</td>
+								<td v-else="sensor.power_supply == 'stand-alone'">Автономный</td>
+							</tr>
+							<tr>
+								<th scope="col">По возможности установки адреса</th>
+								<td v-if="sensor.is_address">Адресный</td>
+								<td v-else>Безадресный</td>
+							</tr>
 
-								<tr>
-									<th scope="col" colspan="2" class="text-center">Классификация ПИ</th>
-								</tr>
-								<tr>
-									<th scope="col">По способу приведения в действие</th>
-									<td v-if="sensorData.is_automate">Автоматический</td>
-									<td v-else>Ручной</td>
-								</tr>
-								<tr>
-									<th scope="col">По способу электропитания</th>
-									<td v-if="sensorData.power_supply == 'wire'">Питаемый по шлейфу</td>
-									<td v-else-if="sensorData.power_supply == 'separate wire'">Питаемый по отдельному проводу</td>
-									<td v-else="sensorData.power_supply == 'stand-alone'">Автономный</td>
-								</tr>
-								<tr>
-									<th scope="col">По возможности установки адреса</th>
-									<td v-if="sensorData.is_address">Адресный</td>
-									<td v-else>Безадресный</td>
-								</tr>
+							<tr v-show="sensor.power_supply == 'stand-alone'">
+								<th scope="col" colspan="2" class="text-center">Общая классификация автономных ПИ</th>
+							</tr>
+							<tr  v-show="sensor.power_supply == 'stand-alone'">
+								<th scope="col">По способу электропитания</th>
+								<td v-if="sensor.standalon_function == 'smoke'">Автономный дымовой пожарный извещатель</td>
+								<td v-else>Автономный комбинированный пожарный извещатель</td>
+							</tr>
+							<tr  v-show="sensor.power_supply == 'stand-alone' && sensor.standalon_function == 'smoke'">
+								<th scope="col">По принципу обнаружения пожара</th>
+								<td v-if="sensor.standalon_smoke_is_radioisotop">Автономный пожарный извещатель радиоизотопный</td>
+								<td v-else>Автономный пожарный извещатель оптико-электронный</td>
+							</tr>
 
-								<tr v-show="sensorData.power_supply == 'stand-alone'">
-									<th scope="col" colspan="2" class="text-center">Общая классификация автономных ПИ</th>
-								</tr>
-								<tr  v-show="sensorData.power_supply == 'stand-alone'">
-									<th scope="col">По способу электропитания</th>
-									<td v-if="sensorData.standalon_function == 'smoke'">Автономный дымовой пожарный извещатель</td>
-									<td v-else>Автономный комбинированный пожарный извещатель</td>
-								</tr>
-								<tr  v-show="sensorData.power_supply == 'stand-alone' && sensorData.standalon_function == 'smoke'">
-									<th scope="col">По принципу обнаружения пожара</th>
-									<td v-if="sensorData.standalon_smoke_is_radioisotop">Автономный пожарный извещатель радиоизотопный</td>
-									<td v-else>Автономный пожарный извещатель оптико-электронный</td>
-								</tr>
-
-								<tr v-show="sensorData.is_automate">
-									<th scope="col" colspan="2" class="text-center">Общая классификация автоматических ПИ</th>
-								</tr>
-								<tr  v-show="sensorData.is_automate">
-									<th scope="col">По виду контролируемого признака пожара</th>
-									<td v-if="sensorData.automate_attribute == 'heat'">Тепловой</td>
-									<td v-else-if="sensorData.automate_attribute == 'smoke'">Дымовой</td>
-									<td v-else-if="sensorData.automate_attribute == 'fire'">Пламени</td>
-									<td v-else-if="sensorData.automate_attribute == 'gas'">Газовый</td>
-									<td v-else>Комбинированный</td>
-								</tr>
-								<tr  v-show="sensorData.is_automate">
-									<th scope="col">По характеру реакции на контролируемый признак</th>
-									<td v-if="sensorData.automate_attribute == 'maximal'">Максимальный</td>
-									<td v-else-if="sensorData.automate_attribute == 'differincial'">Дифференциальный</td>
-									<td v-else>Максимально-дифференциальный</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-
+							<tr v-show="sensor.is_automate">
+								<th scope="col" colspan="2" class="text-center">Общая классификация автоматических ПИ</th>
+							</tr>
+							<tr  v-show="sensor.is_automate">
+								<th scope="col">По виду контролируемого признака пожара</th>
+								<td v-if="sensor.automate_attribute == 'heat'">Тепловой</td>
+								<td v-else-if="sensor.automate_attribute == 'smoke'">Дымовой</td>
+								<td v-else-if="sensor.automate_attribute == 'fire'">Пламени</td>
+								<td v-else-if="sensor.automate_attribute == 'gas'">Газовый</td>
+								<td v-else>Комбинированный</td>
+							</tr>
+							<tr  v-show="sensor.is_automate">
+								<th scope="col">По характеру реакции на контролируемый признак</th>
+								<td v-if="sensor.automate_attribute == 'maximal'">Максимальный</td>
+								<td v-else-if="sensor.automate_attribute == 'differincial'">Дифференциальный</td>
+								<td v-else>Максимально-дифференциальный</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
+
 			</div>
 		</div>
-	</transition>
+	</section>
 </template>
 
 <script>
 	export default{
-
-		props: {
-			edit: {
-				type: Boolean,
-				default: false
-			},
-			sensorData: {
-				type: Object,
-				default: () => {}
-			}
-		},
-		mounted:function() {
-		},
-		data: function () {
+		props: ['deviceId'],
+		mounted() {},
+		data() {
 			return {
 			}
 		},
 		methods: {
-			cancel () {
-				this.$emit('end-adding')
-			},
 		},
 		computed:{
-			sensor: function() {
-				return this.sensorData.sensor_id ? this.$store.getters.SENSOR(this.sensorData.sensor_id) : ''
-			},
+			sensor() {return this.deviceId ? this.$store.getters.SENSOR(this.deviceId) : {};},
 		}
 	}
 </script>

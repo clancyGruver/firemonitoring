@@ -1,6 +1,6 @@
 <template>
 	<ul class="list-unstyled">
-		<addSensor
+		<!--addSensor
 			:creating="sensorFormShow"
 			:method="sensorFormMethod"
 			v-on:end-adding="sensorEndAdding"
@@ -8,13 +8,37 @@
 			:typeIdx="typeIdx"
 			:ObjectDeviceId="ObjectDeviceId"
 			:wireId="wireId"
-		/>
-		<sensorCard
-			:edit ="sensorCardShow"
-			v-on:end-adding="sensorCardShow = !sensorCardShow"
-			:sensorData="sensorInfoData"
-		/>
+		/-->
 		<li>
+			<router-link
+				type="button"
+				class="ml-4 btn btn-outline-success"
+				:to="{
+					name: 'addSensor',
+					params:{
+						deviceId: ObjectDeviceId,
+						wireId: wireId,
+					}
+				 }"
+			>
+				Добавить извещатель
+			</router-link>
+			<router-link
+				type="button"
+				class="ml-4 btn btn-outline-warning"
+				:to="{
+					name: 'sensorReglaments',
+					params:{
+						objectDeviceId: ObjectDeviceId,
+						wireId: wireId,
+					}
+				 }"
+			>
+				Регламент сенсоров
+				<span class="badge badge-warning">{{$store.getters.UNREGLAMENTED_SENSORS_ON_WIRE(ObjectDeviceId, wireId).length}}</span>
+			</router-link>
+		</li>
+		<li class="mt-2">
 			<div class="table-responsive">
 				<table class="table align-items-center table-dark">
 					<thead class="thead-dark">
@@ -30,32 +54,66 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="sensor in sensors" :key="sensor.id" :sensorInfoData="$store.getters.SENSOR(sensor.sensor_id)">
+						<tr v-for="sensor in sensors" :key="sensor.id">
 							<td>
-								{{ sensorInfoData.name }}
-								<span
+								{{ getSensorName(sensor.sensor_id) }}
+								<router-link
 									class="badge badge-info"
-									@click="sensorCardShow = !sensorCardShow;"
+									tag="span"
+									:to="{
+			                        	name: 'sensorCard',
+										params:{deviceId:sensor.sensor_id}
+			                      	}"
+		                      	>
+		                      		<i class="fas fa-question"></i>
+		                      	</router-link>
+								<!--span
+									class=""
+									@click="showSensorInfo(sensor.sensor_id)"
 								>
 									<i class="fas fa-question"></i>
-								</span>
+								</span-->
 							</td>
 							<td>{{ sensor.name }}</td>
 							<td>{{ sensor.floor }}</td>
 							<td>{{ sensor.cabinet_name }}</td>
 							<td>
-								<i class="fas fa-check text-success" v-if="sensor.SP5_valid"></i>
-								<i class="fas fa-times text-danger" v-else></i>
+								<i
+									class="fas"
+									:class="
+										sensor.SP5_valid
+										? 'text-success fa-check'
+										: 'text-danger fa-times'
+									"
+								></i>
 							</td>
 							<td>
-								<i class="fas fa-check text-success" v-if="sensor.is_good"></i>
-								<i class="fas fa-times text-danger" v-else></i>
+								<i
+									class="fas"
+									:class="
+										sensor.is_good
+										? 'text-success fa-check'
+										: 'text-danger fa-times'
+									"
+								></i>
 							</td>
 							<td>
 								{{ sensor.comment }}
 							</td>
 							<td>
-								<i class="fas fa-edit text-warning pointer" @click="editSensor(sensor)"></i>
+								<router-link
+									tag="i"
+									class="fas fa-edit text-warning pointer"
+									:to="{
+										name: 'addSensor',
+										params:{
+											deviceId: ObjectDeviceId,
+											wireId: wireId,
+											sensorId: sensor.id,
+										}
+									 }"
+								>
+								</router-link>
 								<i class="ml-2 fas fa-times text-danger pointer" @click="deleteSensor(sensor)"></i>
 								<i class="ml-2 fas fa-map-marker text-danger pointer" @click="setMarker(sensor)"></i>
 							</td>
@@ -64,22 +122,13 @@
 				</table>
 			</div>
 		</li>
-		<li>
-			<button type="button" class="ml-4 btn btn-success" @click="addSensor(wireId, sensors.length )">Добавить извещатель</button>
-		</li>
 	</ul>
 </template>
 
 <script>
-	import addSensor from '../add-sensor';
-	import sensorCard from '../sensors/card';
-
 	export default
 	{
-		components: {
-			addSensor,
-			sensorCard,
-		},
+		components: {},
 		props: ['typeIdx', 'ObjectDeviceId', 'wireId', 'sensors'],
 		data: function () {
 			return {
@@ -94,47 +143,17 @@
 					sensor_id: null,
 					comment: null,
 				},
-
 				sensorInfoData:{},
+				sensorID:null,
 			}
 		},
 		methods: {
-			getSensorInfoData(id){this.sensorInfoData = this.$store.getters.SENSOR(id)},
-			addSensor(wid, sensorsCount){
-				if(this.sensorFormMethod == this.FormMethodAllowed[1])
-					this.sensorData = {
-						deviceId: this.ObjectDeviceId,
-						wire_id: wid,
-						name: ++sensorsCount,
-						cabinet_name: '',
-						comment:'',
-					}
-				else{
-					Vue.set(this.sensorData, 'deviceId', this.ObjectDeviceId);
-					Vue.set(this.sensorData, 'wire_id', wid);
-					Vue.set(this.sensorData, 'name', ++sensorsCount);
-					Vue.set(this.sensorData, 'cabinet_name', '');
-					Vue.set(this.sensorData, 'comment', '');
-				}
-				this.sensorFormShow = true;
-				this.sensorFormMethod = this.FormMethodAllowed[0];
+			getSensorName(id) {
+				return this.$store.getters.SENSOR_NAME(id);
 			},
-			showSensorInfo(sensor){
-				console.log('showSensorInfo', sensor);
-			},
-			editSensor(sensor){
-				this.sensorFormShow = true;
-				this.sensorFormMethod = this.FormMethodAllowed[1];
-				this.sensorData = sensor;
-				Vue.set(this.sensorData, 'deviceId', this.ObjectDeviceId);
-			},
-			sensorEndAdding: function (params) {
-				Vue.set(this.sensorData, 'cabinet_name', params.cabinet_name);
-				Vue.set(this.sensorData, 'floor', params.floor);
-				Vue.set(this.sensorData, 'is_good', params.is_good);
-				Vue.set(this.sensorData, 'SP5_valid', params.SP5_valid);
-				Vue.set(this.sensorData, 'sensor_id', params.sensor_id);
-				this.sensorFormShow = !this.sensorFormShow;
+			showSensorInfo(id){
+				this.sensorID = id;
+				this.sensorCardShow = !this.sensorCardShow;
 			},
 			setMarker(sensor){
 				const typeIdx = this.typeIdx,
@@ -145,8 +164,7 @@
 			},
 			deleteSensor(sensor){
 				if(confirm(`Вы действительно хотите удалить ${sensor.name}`)){
-				  this.$store.commit('DELETE_SENSOR_ON_WIRE', {
-				  	typeIdx: this.typeIdx,
+				  this.$store.dispatch('DELETE_SENSOR_ON_WIRE', {
 				  	wireId: this.wireId,
 				  	ObjectDeviceId: this.ObjectDeviceId,
 				  	sensorId:sensor.id

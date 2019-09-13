@@ -24,9 +24,11 @@ Route::middleware('auth:api')->group(function(){
 Route::post('/raions', 'RaionController@indexJson');
 Route::post('/raions/{id}', 'RaionController@update');
 
-Route::post('/devices/delete/{id}', 'DevicesController@delete')->name('devices.delete');
+Route::post('/devices/delete/{type}/{id}', 'DevicesController@delete')->name('devices.delete');
 Route::post('/devices/get', 'DevicesController@getJson')->name('devices.getJson');
 Route::post('/devices/getbyclass', 'DevicesController@getByClassJson')->name('devices.getbyclassJson');
+Route::post('/devices/add/{type}', 'DevicesController@add');
+Route::post('/devices/update/{type}/{id}', 'DevicesController@update');
 
 Route::post('/antennas/delete/{id}', 'DeviceAntennaController@delete')->name('antennas.delete');
 Route::post('/antennas/storeParams', 'DeviceAntennaController@storeParams')->name('antennas.storeParams');
@@ -48,6 +50,9 @@ Route::post('/objects/btiUpload', 'ObjectsController@btiUpload')->name('objects.
 Route::post('/objects/btiDelete/{id}', 'ObjectsController@btiDelete')->name('objects.btiDelete');
 Route::post('/objects/btiFiles/{id}', 'ObjectsController@btiFiles')->name('objects.btiFiles');
 Route::post('/objects/storeCoords/{id}', 'ObjectsController@storeCoords')->name('objects.storeCoords');
+Route::post('/objects/limited', 'ObjectsController@limited');
+Route::post('/objects/addObject', 'ObjectsController@addObject');
+
 
 Route::post('/objectdevice/add', 'ObjectdevicesController@add')->name('od.add');
 Route::post('/objectdevice/get/{id}', 'ObjectdevicesController@getJson')->name('od.getJson');
@@ -73,3 +78,24 @@ Route::post('/wire/delete/{id}', 'WiresController@deleteJson')->name('wires.dele
 Route::post('/limitations/update/{id}', 'DeviceLimitationsController@update');
 Route::post('/limitations/insert', 'DeviceLimitationsController@insert');
 Route::post('/limitations/delete/{id}', 'DeviceLimitationsController@delete');
+Route::post('/limitations/get', 'DeviceLimitationsController@get');
+Route::post('/limitations/get/{id}', 'DeviceLimitationsController@getById');
+Route::post('/limitations/set/{id}', 'DeviceLimitationsController@setById');
+
+Route::post('/reglamentElement/delete/{id}', 'ReglamentsController@deleteElement');
+Route::post('/reglamentElement/update/{id}', 'ReglamentsController@updateElement');
+Route::post('/reglamentElement/add', 'ReglamentsController@addElement');
+
+Route::post('/reglament/update/{id}', 'ReglamentsController@updateReglament');
+Route::post('/reglament/delete/{id}', 'ReglamentsController@deleteReglament');
+Route::post('/reglament/add', 'ReglamentsController@addReglament');
+Route::post('/reglament/getByODID/{id}', 'ReglamentsController@getReglaments');
+Route::post('/reglament/unworked', 'ReglamentsController@unworked');
+Route::post('/reglament/updateWork/{id}', 'ReglamentsController@updateWork');
+
+Route::post('/users/getAll', 'UserController@getAll');
+Route::post('/users/delete/{id}', 'UserController@delete');
+Route::post('/users/update/{id}', 'UserController@updateJSON');
+Route::post('/users/add', 'UserController@add');
+
+Route::post('/calendar/addObject', 'calendarController@addObject');

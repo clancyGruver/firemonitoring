@@ -14,13 +14,16 @@ class RaionController extends Controller
     }
 
     public function indexJson(Request $request){
-        $raions = Raion::where('is_active',1)->get();
+        $raions = Raion::withTrashed()->get();
         return response()->json($raions);
     }
 
     public function update($id, Request $request){
-      $raion = Raion::find($id);
-      $raion->update($request->all());
-      return response()->json('successfully updated');
+      $raion = Raion::withTrashed()->find($id);
+      if(is_null($raion->deleted_at))
+        $raion->delete();
+      else
+        $raion->restore();
+      return response(200);
     }
 }

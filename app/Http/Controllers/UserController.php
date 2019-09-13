@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Http\Requests\UserRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Raion;
 
@@ -77,7 +78,6 @@ class UserController extends Controller
 
         return redirect()->route('user.index')->withStatus(__('Пользователь успешно обновлен.'));
     }
-
     /**
      * Remove the specified user from storage
      *
@@ -87,14 +87,41 @@ class UserController extends Controller
     public function destroy(User  $user)
     {
         $user->delete();
-
         return redirect()->route('user.index')->withStatus(__('User successfully deleted.'));
     }
-
 
     public function logout()
     {
         Auth::logout();
         return redirect()->route('/');
+    }
+
+    public function getAll()
+    {
+        $items = User::all();
+        return response()->json($items);
+    }
+
+    public function delete($id)
+    {
+        User::destroy($id);
+        return response(200);
+    }
+
+    public function updateJSON($id, Request $request)
+    {
+        $obj = User::find($id);
+        $data = $request
+                ->merge(['password' => Hash::make($request->get('password'))])
+                ->except([$request->get('password') ? '' : 'password']);
+        $obj->update($data);
+
+        return response()->json($obj);
+    }
+
+    public function add(Request $request){
+        $data = $request->merge(['password' => Hash::make($request->get('password'))])->all();
+        $obj = User::create($data);
+        return response()->json($obj);
     }
 }

@@ -1,9 +1,7 @@
 <template>
-	<transition name="modal">
-		<div class="modal-mask mb-4 " v-show="creating" @click.self="cancel">
-			<div class="modal-container card card-stats">
-				<div class="modal-content card-body">
-					<h5 class="card-title">Добавить сенсор</h5>
+	<section>
+			<div class="card card-stats">
+				<div class="card-body">
 
           <div class="alert alert-danger" v-show="errors.length > 0">
               <ul>
@@ -60,83 +58,58 @@
               </form>
             </div>
           </div>
-          <div class="card-footer bg-transparent border-success">
-            <button type="button" class="btn btn-success mt-4" @click="handleCommit">Сохранить</button>
-            <button type="button" class="btn btn-warning mt-4" @click="cancel">Отмена</button>
+          <div class="card-footer bg-transparent border-success mt-4">
+            <font-loader :text="'Идет сохранение'"  v-if="saving" />
+            <div class="btn-group" role="group" v-else>
+              <button type="button" class="btn btn-success mt-4" @click="handleCommit">Сохранить</button>
+              <button type="button" class="btn btn-warning mt-4" @click="cancel">Отмена</button>
+            </div>
           </div>
 				</div>
 			</div>
-		</div>
-	</transition>
+	</section>
 </template>
 
 <script>
+  import fontLoader from './fontLoader';
+
 	export default{
-		props: {
-      typeIdx:{
-        type: String,
-        default: '',
-      },
-      ObjectDeviceId:{
-        type: Number,
-        default: -1,
-      },
-      wireId:{
-        type: Number,
-        default: -1,
-      },
-      sensorData:{
-        type: Object,
-        default: function() { return {
-            name: '',
-            id: null,
-            deviceId: -1,
-            wire_id: -1,
-            floor: '',
-            cabinet_name: '',
-            SP5_valid: '',
-            is_good: '',
-            comment: '',
-            sensor_id: -1,
-          }
-        }
-      },
-			creating: {
-				type: Boolean,
-				default: false
-			},
-      method:{
-        type: String,
-        default: 'new',
-        validator: function (value) {
-          return ['new','edit'].indexOf(value) > -1
-        },
-      }
-		},
+    components:{fontLoader},
+		props: {},
 		data: function () {
 			return {
         searchString: '',
         errors: [],
         sensor: {},
+        saving: false,
+        sensorData:{},
 			}
 		},
 		methods: {
       cancel () {
-        this.$emit('end-adding',this.sensorData)
+        this.$router.go(-1);
       },
       handleCommit(){
         if(!this.validate()) return false;
+        const actionMethod = this.$route.params.sensorId ? 'UPDATE_SENSOR_TO_WIRE' : 'ADD_SENSOR_TO_WIRE';
+        const resultString = this.$route.params.sensorId ? 'Извещатель добавлен' : 'Извещатель изменен';
         const data = {
           sensor: this.getSensorById(this.sensorData.sensor_id),
-          typeIdx: this.typeIdx,
-          ObjectDeviceId: this.ObjectDeviceId,
-          wireId: this.wireId,
+          deviceId: this.$route.params.deviceId,
+          ObjectId: this.$route.params.id,
+          wireId: this.$route.params.wireId,
           sensorData: this.sensorData,
         };
-        if(this.method == 'new')
-          this.$store.commit('ADD_SENSOR_TO_WIRE', data);
-        else
-          this.$store.commit('UPDATE_SENSOR_TO_WIRE', data);
+        const self = this;
+        return this.$store.dispatch(actionMethod, data)
+                          .then(response => {
+                            this.$awn.success(resultString);
+                            self.cancel();
+                          })
+                          .catch(error => {
+                            console.log(error);
+                            this.$awn.alert('При сохранении произошли ошибки')
+                          });
         this.cancel();
       },
       getSensorById(id){
@@ -145,9 +118,7 @@
         const currentSensorIdx = filtered.findIndex(s => s.id == sid )
         return filtered[currentSensorIdx];
       },
-			addSensor(sensor){
-        this.sensorData.sensor_id = sensor.id;
-			},
+			addSensor(sensor){this.sensorData.sensor_id = sensor.id;},
       validate(){
         this.errors = [];
         let checked = true;
@@ -181,7 +152,28 @@
           checked = false;
         }
 
+        if(!this.sensorData.sensor_id){
+          this.errors.push('Не выбран извещатель');
+          checked = false;
+        }
+
         return checked;
+      },
+      getSensorData(){
+        const sensorId = this.$route.params.sensorId ? this.$route.params.sensorId : false;
+        const deviceId = this.$route.params.deviceId;
+        const wireId = this.$route.params.wireId;
+        const wire = this.$store.getters.OBJECT_DEVICE_WIRE_BY_ID(deviceId,wireId);
+        const currentSensor = wire.sensors.find( sensor => sensor && (sensor.id == sensorId) );
+        const emptySensor = {
+          deviceId: deviceId,
+          wire_id: wireId,
+          name: wire.sensors.length + 1,
+          cabinet_name: '',
+          comment:'',
+          sensor_id: sensorId,
+        }
+        this.sensorData = sensorId ? currentSensor : emptySensor;
       }
 		},
 		computed:{
@@ -197,8 +189,11 @@
         const sid = this.sensorData.sensor_id;
         const currentSensorIdx = filtered.findIndex(s => s.id == sid )
         return filtered[currentSensorIdx];
-      }
+      },
 		},
+    mounted(){
+      this.getSensorData();
+    },
 	}
 </script>
 
@@ -206,43 +201,4 @@
 	span{
 		cursor: pointer;
 	}
-.modal-mask {
-  background-color: rgba(0, 0, 0, 0.7);
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  transition: opacity 0.3s ease;
-}
-.modal-mask .modal-container {
-  background-color: white;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-  cursor: default;
-  font-family: Helvetica, Arial, sans-serif;
-  margin: 40px auto 0;
-  padding: 20px 30px;
-  transition: all 0.3s ease;
-}
-.modal-mask .modal-container .modal-content {
-  border-radius: 10px;
-  color: black;
-  margin: 1em;
-  padding: 1em;
-  width: 800px;
-  box-shadow:0 0;
-}
-.modal-enter, .modal-leave-active {
-  opacity: 0;
-}
-
-.modal-enter .modal-container, .modal-leave-active .modal-container {
-  transform: scale(1.1);
-}
 </style>

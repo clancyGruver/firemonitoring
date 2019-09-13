@@ -1,7 +1,7 @@
 <template>
 	<div class="row">
 		<div class="col">
-			<div class="row" v-for="(device, index) in devices" :key="index">
+			<div class="row" v-for="(device, index) in devices" :key="index" v-if="index != 'sensors'">
 				<ul>
 					<h3>{{device.name}}</h3>
 					<li v-for="dev in device.devices" :key="dev.id" class="list-unstyled">

@@ -8,6 +8,9 @@
 				:newWire="wireData"
 				:mode="wireMode"
 			/>
+			<li v-if="wires.length < wires_count" class="mt-2 mb-2">
+				<button type="button" class="btn btn-outline-success" @click="addWire()">Добавить шлейф</button>
+			</li>
 			<li v-for="(wire, wireIndex) in wires" :key="wireIndex">
 				<h3 class="pl-4 pointer">
 					<span @click="toggleWire(wireIndex)">
@@ -23,9 +26,6 @@
 					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteWire(wire)"></i>
 				</h3>
 				<wire-sensor v-show="wire.isShow" :typeIdx="typeIdx" :ObjectDeviceId="ObjectDeviceId" :wireId="wire.id" :sensors="wire.sensors" />
-			</li>
-			<li v-if="wires.length < wires_count" class="mt-2 mb-2">
-				<button type="button" class="btn btn-success" @click="addWire()">Добавить шлейф</button>
 			</li>
 		</ul>
 </template>
@@ -45,11 +45,7 @@
 			return {
 				addWireShow: false,
 				FormMethodAllowed: ['new','edit'],
-				wireData:{
-					description: this.wires.length + 1,
-					is_good: true,
-					type: 'unsafe',
-				},
+				wireData:{},
 				wireMode: 'new',
 			}
 		},
@@ -57,7 +53,11 @@
 			addWire(){
 				this.addWireShow = !this.addWireShow;
 				this.wireMode = 'new';
-				//this.wireData = wire;
+				this.wireData = {
+					description: this.wires.length + 1,
+					is_good: true,
+					type: 'unsafe',
+				};
 			},
 			editWire(wire){
 				this.addWireShow = true;
@@ -66,17 +66,13 @@
 			},
 			deleteWire(wire){
 				if(confirm(`Вы действительно хотите удалить ${wire.description}`)){
-				  this.$store.commit('DELETE_WIRE', {typeIdx:this.typeIdx, object_device_id:this.ObjectDeviceId, id:wire.id});
+				  this.$store.dispatch('DELETE_WIRE', {object_device_id:this.ObjectDeviceId, id:wire.id});
 				}
 			},
 			toggleWire(wireIdx){
-				const tid = this.typeIdx,
-					  odid = this.ObjectDeviceId;
-				this.$store.commit('TOGGLE_WIRE_SHOW', {tid, odid, wireIdx});
+				this.$store.commit('TOGGLE_WIRE_SHOW', {odid:this.ObjectDeviceId, wireIdx});
 			},
 		},
-		computed: {
-		}
 	}
 </script>
 

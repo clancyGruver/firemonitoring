@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\MonitoringObject as MO;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class ObjectsController extends Controller
     }
 
     public function indexJson(){
-        $items = MO::where('is_active',1)->with('raion')->with('btifiles')->with('mediafiles')->get();
+        $items = MO::with('raion')->with('btifiles')->with('mediafiles')->get();
         return response()->json($items);
     }
 
@@ -37,9 +38,8 @@ class ObjectsController extends Controller
     }
 
     public function delete($id, Request $request){
-        $item = MO::find($id);
-        $item->is_active = 0;
-        $item->save();
+        $item = MO::find($id)->delete();
+        return response(200);
     }
 
     public function add(Request $request){
@@ -86,10 +86,8 @@ class ObjectsController extends Controller
         $obj->update($params);
     }
 
-    public function store( Request $request){
+    public function addObject( Request $request){
         $validatedData = $request->validate([
-            'lat' => 'required',
-            'lng' => 'required',
             'name' => 'required',
             'raion_id' => 'required',
             'address' => 'required|max:255',
@@ -97,14 +95,14 @@ class ObjectsController extends Controller
             'director_phone' => 'required|max:255',
             'contact_name' => 'required|max:255',
             'contact_phone' => 'required|max:255',
-            'project_year'=>'digits:4',
         ]);
         $params = $request->except('_token');
         $params['project_isset'] = isset($params['project_isset']) ? 1 : 0;
         $obj = new MO($params);
-        $obj->created_user_id = Auth::user()->id;
+        $obj->created_user_id = $request->header('x-user');
         $obj->save();
-        return redirect('admin/objects');
+        $resp = MO::where('id',$obj->id)->with('raion')->with('btifiles')->with('mediafiles')->first();
+        return response()->json($resp);
     }
 
     public function fileUpload( Request $request){
@@ -158,5 +156,46 @@ class ObjectsController extends Controller
         $item = MO::find($id);
         $item->update($request->all());
         return response('ok', 200);
+    }
+
+    public function limited(Request $request){
+        $sensors = DB::select('
+            SELECT DISTINCT(`object_id`)
+            FROM `object_devices`
+            WHERE id in (
+                SELECT DISTINCT(`object_device_id`)
+                FROM `wires`
+                WHERE `id` in (
+                    SELECT DISTINCT(`wire_id`)
+                    FROM `wire_sensor`
+                    WHERE `is_good` = 0
+                )
+            )
+        ');
+        $sp5 = DB::select('
+            SELECT DISTINCT(`object_id`)
+            FROM `object_devices`
+            WHERE id in (
+                SELECT DISTINCT(`object_device_id`)
+                FROM `wires`
+                WHERE `id` in (
+                    SELECT DISTINCT(`wire_id`)
+                    FROM `wire_sensor`
+                    WHERE `SP5_valid` = 0
+                )
+            )
+        ');
+        $devices = DB::select('
+            SELECT DISTINCT(`object_id`)
+            FROM `object_devices`
+            WHERE `is_good` = 0
+        ');
+        $func = function($obj){return $obj->object_id;};
+        $items = [
+            'sensors' => array_map($func, $sensors),
+            'devices' => array_map($func, $devices),
+            'sp5'     => array_map($func, $sp5),
+        ];
+        return response()->json($items);
     }
 }

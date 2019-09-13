@@ -35,14 +35,10 @@
             <div class="form-row">
                 <div class="form-group col">
                     <label for="address">Адрес объекта мониторинга</label>
-                    <input
-                        id="address"
-                        name="address"
-                        type="text"
-                        class="form-control"
-                        placeholder="Адрес объекта мониторинга"
-                        v-model="object.address"
-                    >
+                    <suggestions
+                        :defaultValue="object.address"
+                        @update="updateAdressHandler"
+                    />
                 </div>
             </div>
 
@@ -162,22 +158,20 @@
 </template>
 
 <script>
+import suggestions from '../../leaflet/suggetion';
 
 export default {
-	props:{
-    },
-
 	data() {
 		return {
 		}
 	},
-
-	components:{},
-
-	mounted: function(){
-	},
-
+	components:{suggestions},
 	methods:{
+        updateAdressHandler(obj){
+            this.object.address = obj.address;
+            this.object.lat = obj.lat;
+            this.object.lng = obj.lng;
+        },
         updateObject() {
             this.$store.dispatch('OBJECT_UPDATE')
                 .then( success => this.$awn.success('Данные объекта сохранены'))

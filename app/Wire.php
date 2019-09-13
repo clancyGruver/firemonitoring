@@ -24,4 +24,16 @@ class Wire extends Model
     public function sensors(){
         return $this->hasMany('App\WireSensor', 'wire_id', 'id');
     }
+
+    public function device(){
+        return $this->belongsTo('App\Object_Device', 'object_device_id', 'id')->with('object');
+    }
+
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($od) {
+            $od->sensors->delete();
+        });
+    }
 }

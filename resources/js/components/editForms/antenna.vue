@@ -95,8 +95,8 @@
 				if(!this.check())
 					return false;
 				console.log(this.deviceData);
-				this.$store.commit('UPDATE_ANTENNA', this.deviceData);
-				this.$emit('end-adding')
+				this.$store.dispatch('UPDATE_OBJECT_DEVICE_PARAMS', {type:'antenna', data: this.deviceData});
+				this.cancel();
 			},
 			cancel () {
 				this.$emit('end-adding')

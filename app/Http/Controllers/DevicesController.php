@@ -9,6 +9,7 @@ use App\device_antenna;
 use App\device_rspi;
 use App\device_alert;
 use App\device_system_voice_alert;
+use App\Sensor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -24,19 +25,17 @@ class DevicesController extends Controller
     }
 
     public function getJson(){
-        $items = Device_aps::all();
-        for($i =0; $i < count($items); $i++){
-            $items[$i]->url = Storage::url('instructions/'.$items[$i]->id.'/'.$items[$i]->instruction);
-        }
+        $items = Device_aps::with('get_instruction_path')->all();
         return response()->json($items);
     }
 
     public function getByClassJson(){
-        $antennas = device_antenna::with('limitations')->get();
-        $rspi = device_rspi::with('limitations')->get();
-        $alerts = device_alert::with('limitations')->get();
-        $voice_alerts = device_system_voice_alert::with('limitations')->get();
-        $aps = Device_aps::with('limitations')->get();
+        $antennas = device_antenna::with(['limitations','reglaments'])->get();
+        $rspi = device_rspi::with(['limitations','reglaments'])->get();
+        $alerts = device_alert::with(['limitations','reglaments'])->get();
+        $voice_alerts = device_system_voice_alert::with(['limitations','reglaments'])->get();
+        $aps = device_aps::with(['limitations','reglaments'])->get();
+        $sensors = Sensor::with(['reglaments'])->get();
         $res = [
             'antennas'=> [
                 'name' => 'Антенна',
@@ -62,7 +61,12 @@ class DevicesController extends Controller
                 'name' =>'Система речевого оповещения',
                 'tbl_name' => 'App\device_system_voice_alert',
                 'devices' => $voice_alerts
-            ]
+            ],
+            'sensors' => [
+                'name' =>'Извещатели',
+                'tbl_name' => 'App\Sensor',
+                'devices' => $sensors
+            ],
         ];
 
         return response()->json($res);
@@ -79,29 +83,105 @@ class DevicesController extends Controller
         return view('admin.devices.edit',['item' => $item]);
     }
 
-    public function delete($id, Request $request){
-        $item = Device_aps::destroy($id);
-    }
-
-    public function add(Request $request){
-        return view('admin.devices.add');
-    }
-
-    public function update($id, Request $request){
-        $request->validate([
-            'fileToUpload' => 'file',
-            'name' => 'required',
-            'wires_count' => 'required',
-        ]);
-        $obj = Device_aps::find($id);
-        $params = $request->except(['id','_token']);
-        if($request->instruction){
-            $params['instruction'] = $request->instruction->getClientOriginalName();
-            $request->instruction->storeAs('instructions/ops/'.$obj->id, $request->instruction->getClientOriginalName());
+    public function delete($type, $id){
+        switch($type){
+            case 'antennas':
+                device_antenna::destroy($id);
+                break;
+            case 'rspi':
+                device_rspi::destroy($id);
+                break;
+            case 'aps':
+                device_aps::destroy($id);
+                break;
+            case 'alerts':
+                device_alert::destroy($id);
+                break;
+            case 'voice_alerts':
+                device_system_voice_alert::destroy($id);
+                break;
+            case 'sensors':
+                Sensor::destroy($id);
+                break;
+            default: break;
         }
-        $params['created_user_id'] = Auth::user()->id;
-        $obj->update($params);
-        return redirect('admin/devices');
+        return response(200);
+    }
+
+    public function add($type, Request $request){
+        $request->validate([
+            'name' => 'required',
+        ]);
+        $data = $request->all();
+        $data['created_user_id'] = $request->header('x-user');
+        $obj = null;
+        switch($type){
+            case 'antennas':
+                $obj = new device_antenna($data);
+                break;
+            case 'rspi':
+                $obj = new device_rspi($data);
+                break;
+            case 'aps':
+                $obj = new device_aps($data);
+                break;
+            case 'alerts':
+                $obj = new device_alert($data);
+                break;
+            case 'voice_alerts':
+                $obj = new device_system_voice_alert($data);
+                break;
+            case 'sensors':
+                $obj = new Sensor($data);
+                break;
+            default: break;
+        }
+        $obj->save();
+        if($request->newFile){
+            $file = $request->newFile;
+            $fileName = $file->getClientOriginalName();
+            $data['instruction'] = $fileName;
+            $request->newFile->storeAs('instructions/'.$type.'/'.$obj->id, $fileName);
+            $obj->instruction = $data['instruction'];
+            $obj->save();
+        }
+        return response()->json($obj);
+    }
+
+    public function update($type, $id, Request $request){
+        $data = $request->all();
+        $data['created_user_id'] = $request->header('x-user');
+        $obj = null;
+        switch($type){
+            case 'antennas':
+                $obj = device_antenna::find($id);
+                break;
+            case 'rspi':
+                $obj = device_rspi::find($id);
+                break;
+            case 'aps':
+                $obj = device_aps::find($id);
+                break;
+            case 'alerts':
+                $obj = device_alert::find($id);
+                break;
+            case 'voice_alerts':
+                $obj = device_system_voice_alert::find($id);
+                break;
+            case 'sensors':
+                $obj = Sensor::find($id);
+                break;
+            default: break;
+        }
+        if($request->newFile){
+            $file = $request->newFile;
+            $fileName = $file->getClientOriginalName();
+            $data['instruction'] = $fileName;
+            $request->newFile->storeAs('instructions/'.$type.'/'.$obj->id, $fileName);
+        }
+        $obj->update($data);
+        $obj->save();
+        return response()->json($obj);
     }
 
     public function store( Request $request){
