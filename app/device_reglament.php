@@ -22,6 +22,7 @@ class device_reglament extends Model
         'created_user_id',
         'device_id',
         'tbl_name',
+        'duration',
     ];
 
     public function reglamentable(){

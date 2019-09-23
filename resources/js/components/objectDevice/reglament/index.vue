@@ -30,10 +30,32 @@
 													</span>
 												</a>
 											</th>
-											<td>
-												{{ reglament.reglament_work.done_at ? reglament.reglament_work.done_at : "Не проводились" }}
+											<td v-if="reglament.reglament_work">
+												<date-picker
+													v-if="$store.getters.CURRENT_USER.is_admin"
+													v-model="reglament.reglament_work.done_at"
+													:lang="'ru'"
+													:type="'date'"
+													:placeholder="reglament.reglament_work.done_at ? reglament.reglament_work.done_at : 'Не проводились'"
+													:input-class="`form-control`"
+													:clearable="false"
+													:format="`DD-MM-YYYY`"
+													:popupStyle="{
+														top:0,
+														position:'unset',
+													}"
+													:default-value="new Date()"
+													@change="updateDate"
+												/>
+												<span v-else>
+												{{
+													reglament.reglament_work.done_at
+														? reglament.reglament_work.done_at
+														: 'Не проводились'
+												}}
+												</span>
 											</td>
-											<td :class="dateCompare(reglament.reglament_work.planned_reglament_at)">
+											<td :class="dateCompare(reglament.reglament_work.planned_reglament_at)"  v-if="reglament.reglament_work">
 												{{ reglament.reglament_work.planned_reglament_at }}
 											</td>
 										</tr>
@@ -71,10 +93,11 @@
 </template>
 
 <script>
+import DatePicker from 'vue2-datepicker'
 
 export default {
+	components:{DatePicker},
 	props:{},
-
 	data() {
 		return {
 			curReglament: null,
@@ -83,9 +106,6 @@ export default {
 			device: {},
 		}
 	},
-
-	components:{},
-
 	beforeCreate: function(){
 		const self = this;
 		axios.post(`/api/reglament/getByODID/${this.$route.params.objectDeviceId}`)
@@ -96,6 +116,10 @@ export default {
 	},
 
 	methods:{
+		updateDate(val){
+			console.log(val.getDate(),val.getMonth()+1,val.getFullYear());
+			//this.$stroe.dispatch('UPDATE_REGLAMENT_DATE');
+		},
 		dateCompare(checkDate){
 			let [day,month,year] = checkDate.split('-');
 			month -= 1;
@@ -148,7 +172,9 @@ export default {
 	},
 
 	watch:{
-		curReglament(){ this.checkedElements = []},
+		curReglament(val){
+			this.checkedElements = val.elements;
+		},
 	},
 
 	computed: {
@@ -156,10 +182,17 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .reglament_badge{
 	font-size: 100%;
 	font-weight: bold;
 	color: #333;
+}
+.mx-calendar{
+	background-color: white;
+	border: 1px solid #73879c;
+}
+.mx-calendar-content{
+	width:100%;
 }
 </style>

@@ -33,10 +33,27 @@
 		},
 		methods:{
 			saveReglament(){
+				const isSetFrequency = this.currentReglament.day
+										|| this.currentReglament.week
+										|| this.currentReglament.month
+										|| this.currentReglament.year;
 				if (this.$route.params.reglamentId == 'new' && this.currentReglament.name == ''){
 					this.$awn.alert('Название регламента не может быть пустым');
 					return false;
 				}
+				if(!this.currentReglament.name){
+					this.$awn.alert('Не указана продолжительность регламента');
+					return false;
+				}
+				if(!isSetFrequency){
+					this.$awn.alert('Не указана частота проведения регламента');
+					return false;
+				}
+				if(!this.currentReglament.duration){
+					this.$awn.alert('Не указана продолжительнорсть проведения регламента');
+					return false;
+				}
+
 				this.currentReglament.elements = this.currentReglament.elements.filter( elem => !(elem.id * 1 < 0 && elem.text == '') );
 
 				this.$store.dispatch('SAVE_REGLAMENT', {

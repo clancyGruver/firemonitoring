@@ -13,6 +13,7 @@ class device_limitations extends Model
     protected $fillable = [
         'device_id',
         'text',
+        'isCritical',
         'created_user_id',
         'tbl_name'
     ];

@@ -18,6 +18,7 @@ class Object_Device extends Model
         'tbl_name',
         'object_id',
         'device_id',
+        'parent_id',
         'bti_files_id',
         'is_good',
         'lng',
@@ -66,7 +67,7 @@ class Object_Device extends Model
     }
 
     public function alerts(){
-        return $this->hasMany('App\device_system_voice_alerts_dev', 'device_system_voice_alerts_id', 'id')->with('alertDevice');
+        return $this->hasMany('App\Object_Device', 'parent_id', 'id')->with('devicable');
     }
 
     public function object(){

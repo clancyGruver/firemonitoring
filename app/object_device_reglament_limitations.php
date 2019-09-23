@@ -59,7 +59,7 @@ class object_device_reglament_limitations extends Model
         });
         static::deleting(function($od) {
             $prevVal = $od->original;
-            if($prevVal['additional_limitation']){
+            if(isset($prevVal['additional_limitation']) && $prevVal['additional_limitation']){
                 $repairQueue = repairQueue::where('device_id', $od->object_device_id)
                                             ->whereNull('done_at')
                                             ->whereNotNull('additional_limitation')

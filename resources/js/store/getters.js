@@ -14,7 +14,7 @@ export default{
     AVAILABLE_DEVICE: state => (type, id) => state.availabledevices[type].devices.find(obj => obj.id == id),
     AVAILABLE_DEVICE_IDX: state => (type, id) => state.availabledevices[type].devices.findIndex(obj => obj.id == id),
     AVAILABLE_DEVICE_MODEL: state => type => state.availabledevices[type].tbl_name,
-    FIND_DEVICE_INDEX: state => (tbl_name, id) => state.devices[tbl_name].items.findIndex(obj => obj.id == id ),
+    FIND_DEVICE_INDEX: state => (tbl_name, id) => state.current_object.devices.findIndex(obj => obj.id == id ),
     AVAILABLE_ALARMS: state => 'alerts' in state.availabledevices ? state.availabledevices.alerts.devices.filter( device => ['sound','voice'].indexOf(device.type) > -1 ) : [],
     ALL_SENSORS: state => state.availabledevices.sensors ? state.availabledevices.sensors.devices : [],
     SENSOR: state => id => state.sensors.find( el => el.id == id ),
@@ -54,6 +54,7 @@ export default{
               icon: device.icon,
               deviceId: device.id,
               deviceType: deviceType,
+              isGood: device.is_good,
               name: device.name,
             })
             if( device.wires && device.wires.length > 0 )
@@ -70,6 +71,7 @@ export default{
                           icon: sensor.icon,
                           sensorId: sensor.id,
                           deviceType: 'sensor',
+                          isGood: sensor.is_good,
                           name: `Извещатель ${device.name}/${wire.description}/${sensor.name}`,
                         })
                       }
@@ -87,6 +89,7 @@ export default{
                     lat: alarm.lat,
                     icon: alarm.icon,
                     alarmId: alarm.id,
+                    isGood: alarm.is_good,
                     deviceType: 'alarm',
                     name: alarm.name,
                   })
@@ -175,10 +178,10 @@ export default{
             const curEl = el;
             curEl.dsvad = el.id;
             curEl.parent_device_id = val.id;
-            curEl.icon = el.alert_device.icon;
-            curEl.name = el.alert_device.name;
-            curEl.type = el.alert_device.type;
-            curEl.power = el.alert_device.power;
+            curEl.icon = el.devicable.icon;
+            curEl.name = el.devicable.name;
+            curEl.type = el.devicable.type;
+            curEl.power = el.devicable.power;
             alarmEl.push( curEl );
           });
         }

@@ -50,7 +50,10 @@ class DeviceLimitationsController extends Controller
     public function getById($id, Request $request){
         $OD = OD::find($id);
         $device = $OD->tbl_name::find($OD->device_id);
-        $allLimits = limits::where('device_id',$OD->device_id)->get();
+        $allLimits = limits::
+    				where('device_id',$OD->device_id)
+    				->where('tbl_name',$OD->tbl_name)
+    				->get();
         $currentLimits = ODRL::where('object_device_id',$id)->get();
         return response()->json([
 			'allLimits' => $allLimits,

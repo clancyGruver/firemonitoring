@@ -8,8 +8,9 @@
 			:device_id="device.id"
 			:id="limit.id"
 			:text="limit.text"
+			:is_critical="limit.isCritical"
 		></limit-edit>
-		<button type="button" class="btn btn-success mb-2" @click="addLimit">
+		<button type="button" class="btn btn-success mb-2" @click.prevent="addLimit">
 			<i class="fas fa-plus"></i> Добавить
 		</button>
 	</div>
@@ -37,6 +38,7 @@
 		},
 		methods:{
 			addLimit(){
+				console.log('clicked');
 				if(!this.device.limitations)
 					this.$set(this.device, 'limitations', []);
 				let minL = Math.min(...this.device.limitations.map( limit => limit.id) );

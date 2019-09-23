@@ -17,7 +17,10 @@ class device_antenna extends Device
     }
 
     public function getIconAttribute(){
-        return Storage::url('icons/antennas/antenna.png');
+        return [
+            'good' => Storage::url('icons/antennas/antenna.png'),
+            'bad' => Storage::url('icons/antennas/antenna_red.png'),
+        ];
     }
     //
 }

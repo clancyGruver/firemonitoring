@@ -35,10 +35,12 @@
 			addDevice(device, tbl_name){
         //device.tbl_name = tbl_name
         const result = {
-          'device_system_voice_alerts_id': this.deviceData.id,
-          'device_alerts_id':device.id,
+          object_id: this.$route.params.id,
+          parent_id: this.deviceData.id,
+          device_id:device.id,
+          tbl_name : 'App\\device_alert'
         }
-				this.$store.commit('ADD_ALARM', result);
+				this.$store.dispatch('ADD_OBJECT_DEVICE', result);
 				this.$emit('end-adding')
 			},
 			cancel () {

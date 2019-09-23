@@ -37,13 +37,22 @@ class Sensor extends Model
     }
 
     public function getIconAttribute(){
-        return Storage::url(  'icons/sensors/auto_fire.png' );
         $url = 'icons/sensors/';
+        return [
+            'good' => Storage::url(  $url . 'auto_fire.png' ),
+            'bad' => Storage::url(  $url . 'auto_fire_red.png' )
+        ];
         if(!$this->is_automate)
-            return Storage::url($url . 'manual.png');
+            return [
+                'good' => Storage::url($url . 'manual.png'),
+                'bad' => Storage::url($url . 'manual_red.png')
+            ];
         else{
             $url .= 'auto_';
-            return Storage::url( url . $this->automate_attribute . '.png');
+            return [
+                'good' => Storage::url( $url . $this->automate_attribute . '.png'),
+                'bad' => Storage::url( $url . $this->automate_attribute . '_red.png'),
+            ];
         }
     }
 

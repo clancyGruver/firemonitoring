@@ -37,6 +37,9 @@ class ObjectdevicesController extends Controller
         $params['created_user_id'] = $request->header('x-user');
         $params['object_id'] = $data['object_id'];
         $params['device_id'] = $data['device_id'];
+        if(isset($data['parent_id']) && $data['parent_id']){
+            $params['parent_id'] = $data['parent_id'];
+        }
         $params['tbl_name'] = $data['tbl_name'];
 
         $obj = new OD($params);
@@ -53,6 +56,7 @@ class ObjectdevicesController extends Controller
 
     public function getJson($id, Request $request){
         $installed_dev_categories = OD::where('object_id',$id)
+                                    ->whereNull('parent_id')
                                     ->with('wires')
                                     ->with('alerts')
                                     ->with('devicable')

@@ -83,8 +83,13 @@
 	    			const markerParams = {}
 	    			if(marker.icon != 'default'){
 	    				markerParams.icon = L.icon({
-	    					iconUrl: marker.icon,
+	    					iconUrl: marker.isGood ? marker.icon.good : marker.icon.bad,
 	    					iconSize: [38, 38],
+	    				});
+	    			} else{
+	    				markerParams.icon = L.icon({
+	    					iconUrl: marker.isGood ? '/uploads/icons/device.png' : '/uploads/icons/device_red.png',
+	    					iconSize: [34, 17],
 	    				});
 	    			}
 	    			const theMarker = L.marker({lat: marker.lat, lng: marker.lng}, markerParams);
@@ -109,15 +114,24 @@
 						if(markerType == 'device')
 							this.$store.dispatch('SET_DEVICE_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id})
 								.then( success => this.$awn.success('Координаты сохранены') )
-								.catch( error => this.$awn.alert('Координаты не сохранены'));
+								.catch( error => {
+										console.log(error);
+										this.$awn.alert('Координаты не сохранены')
+									});
 						else if(markerType == 'sensor')
 							this.$store.dispatch('SET_SENSOR_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id})
 								.then( success => this.$awn.success('Координаты сохранены') )
-								.catch( error => this.$awn.alert('Координаты не сохранены'));
+								.catch( error => {
+										console.log(error);
+										this.$awn.alert('Координаты не сохранены')
+									});
 						else if(markerType == 'alarm')
 							this.$store.dispatch('SET_ALERT_COORDS',{coords: e.latlng, bti_plan_id: self.imgs[this.curImg].id})
 								.then( success => this.$awn.success('Координаты сохранены') )
-								.catch( error => this.$awn.alert('Координаты не сохранены'));
+								.catch( error => {
+										console.log(error);
+										this.$awn.alert('Координаты не сохранены')
+									});
 					}
 				});
 				this.nextImg();

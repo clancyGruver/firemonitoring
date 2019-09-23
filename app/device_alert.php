@@ -38,6 +38,9 @@ class device_alert extends Device
     }
 
     public function getIconAttribute(){
-        return Storage::url('icons/alerts/'.$this->type.'.png');
+        return [
+            'good' => Storage::url('icons/alerts/'.$this->type.'.png'),
+            'bad' => Storage::url('icons/alerts/'.$this->type.'_red.png'),
+        ];
     }
 }

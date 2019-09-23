@@ -132,8 +132,8 @@ export default{
     },
     TOGGLE_DEVICE_ISGOOD: (state,payload) => {
       const p = {... payload };
-      const device_idx = state.devices[p.typeIdx].items.findIndex(obj => obj.id == p.odid)
-      Vue.set(state.devices[p.typeIdx].items[device_idx], 'is_good', p.is_good);
+      const device_idx = state.current_object.devices.findIndex(obj => obj.id == p.odid)
+      Vue.set(state.current_object.devices[device_idx], 'is_good', p.is_good);
     },
     ADD_WIRE: (state, payload) => {
       const idx = state.current_object.devices.findIndex(obj => obj.id == payload.odid);
@@ -259,7 +259,7 @@ export default{
     UPDATE_DEVICE_COORDS:(state, {getters, payload}) => {
       const p = {...payload};
       const idx = getters.FIND_DEVICE_INDEX(p.tbl_name, p.id);
-      const obj = state.devices[p.tbl_name].items[idx];
+      const obj = state.current_object.devices[idx];
       state.markerObj.lng = obj.lng = p.coords.lng;
       state.markerObj.lat = obj.lat = p.coords.lat;
       state.markerObj.bti_files_id = obj.bti_files_id = p.bti_plan_id;
@@ -267,7 +267,7 @@ export default{
     UPDATE_SENSOR_COORDS:(state, payload) => {
       const p = {...payload};
       const mo = state.markerObj;
-      const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx]
+      const obj = state.current_object.devices[mo.itemsIdx].wires[mo.wireIdx].sensors[mo.sensorIdx]
       state.markerObj.lng = obj.lng = p.coords.lng;
       state.markerObj.lat = obj.lat = p.coords.lat;
       state.markerObj.bti_files_id = obj.bti_files_id = p.bti_plan_id;
@@ -275,7 +275,7 @@ export default{
     UPDATE_ALERT_COORDS:(state, payload) => {
       const p = {...payload};
       const mo = state.markerObj;
-      const obj = state.devices[mo.typeIdx].items[mo.itemsIdx].alarms[mo.alarmIdx]
+      const obj = state.current_object.devices[mo.itemsIdx].alarms[mo.alarmIdx]
       state.markerObj.lng = obj.lng = p.coords.lng;
       state.markerObj.lat = obj.lat = p.coords.lat;
       state.markerObj.bti_files_id = obj.bti_files_id = p.bti_plan_id;

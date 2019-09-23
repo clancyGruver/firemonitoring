@@ -16,7 +16,7 @@ cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root
 cat firemonitoring.sql | docker exec -i app_db_1 /usr/bin/mysql -u root --password=secret app
 
 # delete symlinks
-find -type l -delete
+sudo find -type l -delete
 
 # git update
 git pull origin master
