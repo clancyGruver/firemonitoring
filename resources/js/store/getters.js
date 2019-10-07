@@ -101,14 +101,12 @@ export default{
       return markers;
     },
     LIMITATION_BY_ID: state => (type, id) => {
-      state.availabledevices[type].devices.map(
-        device => device.limitations.find( obj => obj.id == id )
-      )
+      const device = state.availabledevices[type].devices.find( device => device.id == id);
+      return device.limitations.find( obj => obj.id == id );
     },
     LIMITATION_ID: state => (type, id) => {
-      state.availabledevices[type].devices.map(
-        device => device.limitations.findIndex( obj => obj.id == id )
-      )
+      const device = state.availabledevices[type].devices.find( device => device.id == id);
+        return device.limitations.findIndex( obj => obj.id == id )
     },
     REGLAMENT: (state, getters) => (type, device_id, reglamentId) => {
       const avail_device = getters.AVAILABLE_DEVICE(type, device_id);

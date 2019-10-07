@@ -1,11 +1,10 @@
 <template>
 	<form class="form-inline">
 		<input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" v-model.trim="innerText">
-		<label class="custom-toggle">
-		  <input type="checkbox" v-model="isCritical">
-		  <span class="custom-toggle-slider rounded-circle"></span>
-		  Критично
-		</label>
+		<div class="custom-control custom-control-alternative custom-checkbox mb-3">
+		  <input class="custom-control-input" id="customCheck6" type="checkbox" v-model="isCritical">
+		  <label class="custom-control-label" for="customCheck6">Критично</label>
+		</div>
 		<button type="button" class="btn btn-outline-primary mb-2" @click.prevent="saveLimit">
 			<i class="ni ni-check-bold text-success"></i>
 		</button>
@@ -32,7 +31,6 @@
 		},
 		methods:{
 			saveLimit(){
-				console.log('save');
 				if(this.innerText.trim() == ''){
 					this.$awn.alert('Нельзя сохранить пустой недостаток')
 					return false;

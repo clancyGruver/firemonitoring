@@ -10,8 +10,12 @@
 			</li>
 			<h4>Дополнительные недостатки</h4>
 			<li>
-				  <textarea class="form-control" rows="3" v-model="additionalLimit">
-				  </textarea>
+				<textarea class="form-control" rows="3" v-model="additionalLimit">
+				</textarea>
+				<div class="custom-control custom-control-alternative custom-checkbox mb-3">
+				<input class="custom-control-input" id="customCheck6" type="checkbox" v-model="isCritical">
+				<label class="custom-control-label" for="customCheck6">Критично</label>
+				</div>
 			</li>
 		</ul>
 		<button type="button" class="btn btn-success mt-4" @click.prevent="saveLimit">Сохранить</button>
@@ -30,6 +34,7 @@ export default {
 			currentLimits: {},
 			device: {},
 			additionalLimit: '',
+			isCritical: false,
 		}
 	},
 
@@ -43,6 +48,7 @@ export default {
 			self.currentLimits = response.data.currentLimits;
 			const AL = self.currentLimits.find( obj => obj.additional_limitation && obj.additional_limitation.trim() != '' );
 			self.additionalLimit = AL ? AL.additional_limitation : '';
+			self.isCritical = AL ? AL.additional_limitation_critical : false;
 			const cl = self.currentLimits.map( obj => obj.DL_id)
 			self.allLimits.forEach(
 				(val, index) => {
@@ -63,6 +69,7 @@ export default {
 				deviceId: this.device.id,
 				allLimits: this.allLimits,
 				additionalLimit: this.additionalLimit,
+				isCritical: this.isCritical,
 				odid: this.$route.params.objectDeviceId,
 			})
             .then( success => {

@@ -132,6 +132,9 @@ export default{
     },
     TOGGLE_DEVICE_ISGOOD: (state,payload) => {
       const p = {... payload };
+      /*
+      TODO: check device.alerts
+      */
       const device_idx = state.current_object.devices.findIndex(obj => obj.id == p.odid)
       Vue.set(state.current_object.devices[device_idx], 'is_good', p.is_good);
     },

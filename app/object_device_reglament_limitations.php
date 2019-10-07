@@ -20,6 +20,7 @@ class object_device_reglament_limitations extends Model
         'DL_id',
         'created_user_id',
         'additional_limitation',
+        'additional_limitation_critical',
     ];
 
 

@@ -67,7 +67,8 @@ export default{
     async UPDATE_LIMITATION({commit, getters}, payload){
       const p = {...payload};
       axios.post(`/api/limitations/update/${p.id}`,{
-        text: p.text
+        text: p.text,
+        isCritical: p.isCritical,
       })
        .then(response => commit('CHANGE_LIMITATION', {payload: p, getters}))
     },
@@ -78,7 +79,8 @@ export default{
           ...response.data,
           fake_id: p.id,
           type: p.type,
-          device_id: p.device_id
+          device_id: p.device_id,
+          isCritical: p.isCritical,
         }, getters}))
     },
     async DELETE_LIMITATION({commit, getters}, payload){
@@ -105,6 +107,7 @@ export default{
       //store object_device_reglament_limitations
       axios.post(`/api/limitations/set/${p.odid}`,{
         additionalLimit: p.additionalLimit,
+        isCritical: p.isCritical,
         allLimits: p.allLimits,
       }).then( response => {
         //store object_device good or bad

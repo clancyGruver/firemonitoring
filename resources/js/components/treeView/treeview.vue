@@ -56,6 +56,13 @@
 					<span v-else>
 						{{ device.name }}
 					</span>
+					<span>
+						<date-picker
+							v-model="value"
+							:lang="'ru'"
+							:type="'year'"
+						/>
+					</span>
 					<span class="badge badge-pill badge-info" v-if="typeIdx == 'App\\device_aps'">
 						{{ device.wires.length }} / {{ device.wires_count }}
 					</span>
@@ -74,13 +81,14 @@
 </template>
 
 <script>
-	import addDevice from '../add-device';
-	import wireTree from './wireTree';
-	import alarmDevices from '../alarmDevices';
-	import alertSystemDevices from './alertSystemDevices';
+import DatePicker from 'vue2-datepicker'
+import addDevice from '../add-device';
+import wireTree from './wireTree';
+import alarmDevices from '../alarmDevices';
+import alertSystemDevices from './alertSystemDevices';
 //edit params forms
-	import antennaDevice from '../editForms/antenna';
-	import rspiParams from '../editForms/rspiParams';
+import antennaDevice from '../editForms/antenna';
+import rspiParams from '../editForms/rspiParams';
 
 	export default
 	{
@@ -89,7 +97,7 @@
 			wireTree,
 			alarmDevices,
 			alertSystemDevices,
-
+			DatePicker,
 			rspiParams,
 			antennaDevice,
 		},

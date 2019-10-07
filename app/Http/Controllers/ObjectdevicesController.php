@@ -37,6 +37,7 @@ class ObjectdevicesController extends Controller
         $params['created_user_id'] = $request->header('x-user');
         $params['object_id'] = $data['object_id'];
         $params['device_id'] = $data['device_id'];
+        $params['setup_year'] = $data['setup_year'];
         if(isset($data['parent_id']) && $data['parent_id']){
             $params['parent_id'] = $data['parent_id'];
         }

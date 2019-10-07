@@ -37,7 +37,7 @@
 							name="adressFilter"
 							type="text"
 							class="form-control"
-							v-model="adressFilter"
+							v-model.trim="adressFilter"
 							placeholder="Сортировка по адресу"
 						>
 					</div>

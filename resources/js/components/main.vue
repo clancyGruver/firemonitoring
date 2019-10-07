@@ -1,12 +1,12 @@
 <template>
   <div class="wrapper">
     <nav class="main-nav bg-gradient-primary border-bottom border-dark">
+      <Burger></Burger>
       <div class="logo">
         <router-link class="navbar-brand pt-0" :to="{ name: 'index' }">
           <i class="fas fa-fire text-danger mr-2"></i>FIREMONITORING
         </router-link>
       </div>
-      <Burger></Burger>
     </nav>
     <left-side-bar />
     <div class="main-content">

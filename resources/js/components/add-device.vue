@@ -1,19 +1,55 @@
 <template>
 	<transition name="dropdown" tag="section" class="dropdown">
 		<div class="mb-4 mt-4" v-show="creating" @click.self="cancel">
-			<div class="card">
+			<div class="nav-wrapper">
+				<ul class="nav nav-pills nav-justified flex-column flex-md-row">
+					<li class="nav-item" v-for="(devClass,index) in availDevs" v-if="index != 'sensors'" :key="index">
+						<a class="nav-link mb-sm-3 mb-md-0" :class="index == selectedCategory ? 'active' : ''" @click.prevent="selectedCategory = index">{{devClass.name}}</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="card shadow">
 				<div class="card-body">
-					<h5 class="card-title">Добавить оборудование</h5>
-                    <div class="row">
-                        <div class="col" v-for="devClass in availDevs" v-if="devClass.name != 'sensors'">
-                            <h5 class="card-title text-uppercase text-muted mb-0">{{ devClass.name }}</h5>
+					<div class="tab-content">
+						<div class="tab-pane fade show active">
+						<p class="description">
+							<div class="form-inline form-group">
+								<div class="input-group mb-4 col">
+									<div class="input-group-prepend">
+										<span class="input-group-text" ><i class="ni ni-zoom-split-in"></i></span>
+									</div>
+									<input
+										type="text"
+										class="form-control"
+										v-model.trim="filterString"
+										placeholder="поиск оборудования"
+									>
+								</div>
+								<div class="input-group mb-4 col">
+									<div class="input-group-prepend">
+										<span class="input-group-text" data-toggle="tooltip" data-placement="top" title="Год монтажа">
+											<i class="ni ni-calendar-grid-58"></i>
+										</span>
+									</div>
+									<input
+										type="number"
+										class="form-control"
+										v-model.number="setupYear"
+										placeholder="год монтажа"
+									>
+								</div>
+							</div>
+						</p>
+						<p class="description">
                             <ul class="list-unstyled">
-                                <li v-for="device in devClass.devices">
-                                    <span class="h2 font-weight-bold mb-0" @click="addDevice(device,devClass.tbl_name)">{{device.name}}</span>
+                                <li v-for="device in deviceCategory.devices">
+                                    <span class="h2 font-weight-bold mb-0" @click="addDevice(device,deviceCategory.tbl_name)">{{device.name}}</span>
                                 </li>
                             </ul>
-                        </div>
-                    </div>
+						</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -30,18 +66,64 @@
 		},
 		data: function () {
 			return {
+				selectedCategory: null,
+				filterString:'',
+				deviceCategory:{},
+				setupYear: '',
 			}
 		},
 		methods: {
+			check(){
+				let res = true;
+				const alerts = [];
+				const setupYear = parseInt(this.setupYear);
+				const date = new Date();
+				const curYear = date.getFullYear();
+				if(!setupYear){
+					alerts.push('Не введен год установки оборудования');
+				}
+				if(setupYear < 1980){
+					alerts.push('Год установки оборудования слишком мал');
+				}
+				if(setupYear > curYear){
+					alerts.push('Год установки оборудования не может быть из будущего');
+				}
+				if(alerts.length > 0){
+					res = false;
+					alerts.map( error => this.$awn.alert(error));
+				}
+				return res;
+			},
 			addDevice(device, tbl_name){
+				if(this.check() == false){
+					return;
+				}
 				device.object_id = this.$route.params.id;
 				device.device_id = device.id;
 				device.tbl_name = tbl_name;
+				device.setup_year = this.setupYear;
 				this.$store.dispatch('ADD_OBJECT_DEVICE', device).then(success => this.$awn.success('Устройство добавлено'));
         		this.cancel();
 			},
 			cancel() {
 				this.$emit('end-adding')
+			}
+		},
+		watch:{
+			selectedCategory(newVal){
+				if(!newVal)
+					this.deviceCategory = {};
+				this.deviceCategory = this.availDevs[newVal];
+				const devices = this.deviceCategory.devices;
+				if(this.filterString){
+					this.deviceCategory.devices = devices.filter( device => device.name.includes(this.filterString))
+				}
+			},
+			filterString(newVal){
+				if(newVal && this.deviceCategory){
+					const devices = this.deviceCategory.devices;
+					this.deviceCategory.devices = devices.filter( device => device.name.includes(newVal))
+				}
 			}
 		},
 		computed:{

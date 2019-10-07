@@ -20,6 +20,7 @@ class Object_Device extends Model
         'device_id',
         'parent_id',
         'bti_files_id',
+        'setup_year',
         'is_good',
         'lng',
         'lat',
@@ -50,6 +51,7 @@ class Object_Device extends Model
             'App\device_aps'                => 'Охранно-пожарная сигнализация',
             'App\device_alert'              => 'Оповещатели',
             'App\device_system_voice_alert' => 'Система речевого оповещения',
+            'App\Sensor'                    => 'Извещатель',
         ];
         return $types[$this->tbl_name];
     }

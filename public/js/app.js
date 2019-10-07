@@ -2527,6 +2527,42 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     creating: {
@@ -2535,22 +2571,85 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   data: function data() {
-    return {};
+    return {
+      selectedCategory: null,
+      filterString: '',
+      deviceCategory: {},
+      setupYear: ''
+    };
   },
   methods: {
-    addDevice: function addDevice(device, tbl_name) {
+    check: function check() {
       var _this = this;
+
+      var res = true;
+      var alerts = [];
+      var setupYear = parseInt(this.setupYear);
+      var date = new Date();
+      var curYear = date.getFullYear();
+
+      if (!setupYear) {
+        alerts.push('Не введен год установки оборудования');
+      }
+
+      if (setupYear < 1980) {
+        alerts.push('Год установки оборудования слишком мал');
+      }
+
+      if (setupYear > curYear) {
+        alerts.push('Год установки оборудования не может быть из будущего');
+      }
+
+      if (alerts.length > 0) {
+        res = false;
+        alerts.map(function (error) {
+          return _this.$awn.alert(error);
+        });
+      }
+
+      return res;
+    },
+    addDevice: function addDevice(device, tbl_name) {
+      var _this2 = this;
+
+      if (this.check() == false) {
+        return;
+      }
 
       device.object_id = this.$route.params.id;
       device.device_id = device.id;
       device.tbl_name = tbl_name;
+      device.setup_year = this.setupYear;
       this.$store.dispatch('ADD_OBJECT_DEVICE', device).then(function (success) {
-        return _this.$awn.success('Устройство добавлено');
+        return _this2.$awn.success('Устройство добавлено');
       });
       this.cancel();
     },
     cancel: function cancel() {
       this.$emit('end-adding');
+    }
+  },
+  watch: {
+    selectedCategory: function selectedCategory(newVal) {
+      var _this3 = this;
+
+      if (!newVal) this.deviceCategory = {};
+      this.deviceCategory = this.availDevs[newVal];
+      var devices = this.deviceCategory.devices;
+
+      if (this.filterString) {
+        this.deviceCategory.devices = devices.filter(function (device) {
+          return device.name.includes(_this3.filterString);
+        });
+      }
+    },
+    filterString: function filterString(newVal) {
+      if (newVal && this.deviceCategory) {
+        var devices = this.deviceCategory.devices;
+        this.deviceCategory.devices = devices.filter(function (device) {
+          return device.name.includes(newVal);
+        });
+      }
     }
   },
   computed: {
@@ -5271,7 +5370,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     tbl_name: String,
@@ -5289,8 +5387,6 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     saveLimit: function saveLimit() {
       var _this = this;
-
-      console.log('save');
 
       if (this.innerText.trim() == '') {
         this.$awn.alert('Нельзя сохранить пустой недостаток');
@@ -6794,6 +6890,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {},
   data: function data() {
@@ -6801,7 +6901,8 @@ __webpack_require__.r(__webpack_exports__);
       allLimits: {},
       currentLimits: {},
       device: {},
-      additionalLimit: ''
+      additionalLimit: '',
+      isCritical: false
     };
   },
   components: {},
@@ -6814,6 +6915,7 @@ __webpack_require__.r(__webpack_exports__);
         return obj.additional_limitation && obj.additional_limitation.trim() != '';
       });
       self.additionalLimit = AL ? AL.additional_limitation : '';
+      self.isCritical = AL ? AL.additional_limitation_critical : false;
       var cl = self.currentLimits.map(function (obj) {
         return obj.DL_id;
       });
@@ -6832,6 +6934,7 @@ __webpack_require__.r(__webpack_exports__);
         deviceId: this.device.id,
         allLimits: this.allLimits,
         additionalLimit: this.additionalLimit,
+        isCritical: this.isCritical,
         odid: this.$route.params.objectDeviceId
       }).then(function (success) {
         _this.$awn.success('Недостатки сохранены');
@@ -8297,12 +8400,14 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _add_device__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../add-device */ "./resources/js/components/add-device.vue");
-/* harmony import */ var _wireTree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wireTree */ "./resources/js/components/treeView/wireTree.vue");
-/* harmony import */ var _alarmDevices__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../alarmDevices */ "./resources/js/components/alarmDevices.vue");
-/* harmony import */ var _alertSystemDevices__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./alertSystemDevices */ "./resources/js/components/treeView/alertSystemDevices.vue");
-/* harmony import */ var _editForms_antenna__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../editForms/antenna */ "./resources/js/components/editForms/antenna.vue");
-/* harmony import */ var _editForms_rspiParams__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../editForms/rspiParams */ "./resources/js/components/editForms/rspiParams.vue");
+/* harmony import */ var vue2_datepicker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue2-datepicker */ "./node_modules/vue2-datepicker/lib/index.js");
+/* harmony import */ var vue2_datepicker__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue2_datepicker__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _add_device__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../add-device */ "./resources/js/components/add-device.vue");
+/* harmony import */ var _wireTree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./wireTree */ "./resources/js/components/treeView/wireTree.vue");
+/* harmony import */ var _alarmDevices__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../alarmDevices */ "./resources/js/components/alarmDevices.vue");
+/* harmony import */ var _alertSystemDevices__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./alertSystemDevices */ "./resources/js/components/treeView/alertSystemDevices.vue");
+/* harmony import */ var _editForms_antenna__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../editForms/antenna */ "./resources/js/components/editForms/antenna.vue");
+/* harmony import */ var _editForms_rspiParams__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../editForms/rspiParams */ "./resources/js/components/editForms/rspiParams.vue");
 //
 //
 //
@@ -8378,6 +8483,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -8387,12 +8500,13 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    addDevice: _add_device__WEBPACK_IMPORTED_MODULE_0__["default"],
-    wireTree: _wireTree__WEBPACK_IMPORTED_MODULE_1__["default"],
-    alarmDevices: _alarmDevices__WEBPACK_IMPORTED_MODULE_2__["default"],
-    alertSystemDevices: _alertSystemDevices__WEBPACK_IMPORTED_MODULE_3__["default"],
-    rspiParams: _editForms_rspiParams__WEBPACK_IMPORTED_MODULE_5__["default"],
-    antennaDevice: _editForms_antenna__WEBPACK_IMPORTED_MODULE_4__["default"]
+    addDevice: _add_device__WEBPACK_IMPORTED_MODULE_1__["default"],
+    wireTree: _wireTree__WEBPACK_IMPORTED_MODULE_2__["default"],
+    alarmDevices: _alarmDevices__WEBPACK_IMPORTED_MODULE_3__["default"],
+    alertSystemDevices: _alertSystemDevices__WEBPACK_IMPORTED_MODULE_4__["default"],
+    DatePicker: vue2_datepicker__WEBPACK_IMPORTED_MODULE_0___default.a,
+    rspiParams: _editForms_rspiParams__WEBPACK_IMPORTED_MODULE_6__["default"],
+    antennaDevice: _editForms_antenna__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   data: function data() {
     return {
@@ -61072,56 +61186,154 @@ var render = function() {
           }
         },
         [
-          _c("div", { staticClass: "card" }, [
+          _c("div", { staticClass: "nav-wrapper" }, [
+            _c(
+              "ul",
+              {
+                staticClass:
+                  "nav nav-pills nav-justified flex-column flex-md-row"
+              },
+              _vm._l(_vm.availDevs, function(devClass, index) {
+                return index != "sensors"
+                  ? _c("li", { key: index, staticClass: "nav-item" }, [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "nav-link mb-sm-3 mb-md-0",
+                          class: index == _vm.selectedCategory ? "active" : "",
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              _vm.selectedCategory = index
+                            }
+                          }
+                        },
+                        [_vm._v(_vm._s(devClass.name))]
+                      )
+                    ])
+                  : _vm._e()
+              }),
+              0
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card shadow" }, [
             _c("div", { staticClass: "card-body" }, [
-              _c("h5", { staticClass: "card-title" }, [
-                _vm._v("Добавить оборудование")
-              ]),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "row" },
-                _vm._l(_vm.availDevs, function(devClass) {
-                  return devClass.name != "sensors"
-                    ? _c("div", { staticClass: "col" }, [
-                        _c(
-                          "h5",
+              _c("div", { staticClass: "tab-content" }, [
+                _c("div", { staticClass: "tab-pane fade show active" }, [
+                  _c("p", { staticClass: "description" }),
+                  _c("div", { staticClass: "form-inline form-group" }, [
+                    _c("div", { staticClass: "input-group mb-4 col" }, [
+                      _c("div", { staticClass: "input-group-prepend" }, [
+                        _c("span", { staticClass: "input-group-text" }, [
+                          _c("i", { staticClass: "ni ni-zoom-split-in" })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
                           {
-                            staticClass:
-                              "card-title text-uppercase text-muted mb-0"
+                            name: "model",
+                            rawName: "v-model.trim",
+                            value: _vm.filterString,
+                            expression: "filterString",
+                            modifiers: { trim: true }
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "text",
+                          placeholder: "поиск оборудования"
+                        },
+                        domProps: { value: _vm.filterString },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.filterString = $event.target.value.trim()
                           },
-                          [_vm._v(_vm._s(devClass.name))]
-                        ),
-                        _vm._v(" "),
+                          blur: function($event) {
+                            return _vm.$forceUpdate()
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "input-group mb-4 col" }, [
+                      _c("div", { staticClass: "input-group-prepend" }, [
                         _c(
-                          "ul",
-                          { staticClass: "list-unstyled" },
-                          _vm._l(devClass.devices, function(device) {
-                            return _c("li", [
-                              _c(
-                                "span",
-                                {
-                                  staticClass: "h2 font-weight-bold mb-0",
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.addDevice(
-                                        device,
-                                        devClass.tbl_name
-                                      )
-                                    }
-                                  }
-                                },
-                                [_vm._v(_vm._s(device.name))]
-                              )
-                            ])
-                          }),
-                          0
+                          "span",
+                          {
+                            staticClass: "input-group-text",
+                            attrs: {
+                              "data-toggle": "tooltip",
+                              "data-placement": "top",
+                              title: "Год монтажа"
+                            }
+                          },
+                          [_c("i", { staticClass: "ni ni-calendar-grid-58" })]
                         )
-                      ])
-                    : _vm._e()
-                }),
-                0
-              )
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model.number",
+                            value: _vm.setupYear,
+                            expression: "setupYear",
+                            modifiers: { number: true }
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "number", placeholder: "год монтажа" },
+                        domProps: { value: _vm.setupYear },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.setupYear = _vm._n($event.target.value)
+                          },
+                          blur: function($event) {
+                            return _vm.$forceUpdate()
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("p"),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "description" }, [
+                    _c(
+                      "ul",
+                      { staticClass: "list-unstyled" },
+                      _vm._l(_vm.deviceCategory.devices, function(device) {
+                        return _c("li", [
+                          _c(
+                            "span",
+                            {
+                              staticClass: "h2 font-weight-bold mb-0",
+                              on: {
+                                click: function($event) {
+                                  return _vm.addDevice(
+                                    device,
+                                    _vm.deviceCategory.tbl_name
+                                  )
+                                }
+                              }
+                            },
+                            [_vm._v(_vm._s(device.name))]
+                          )
+                        ])
+                      }),
+                      0
+                    )
+                  ])
+                ])
+              ])
             ])
           ])
         ]
@@ -64726,48 +64938,62 @@ var render = function() {
       }
     }),
     _vm._v(" "),
-    _c("label", { staticClass: "custom-toggle" }, [
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.isCritical,
-            expression: "isCritical"
-          }
-        ],
-        attrs: { type: "checkbox" },
-        domProps: {
-          checked: Array.isArray(_vm.isCritical)
-            ? _vm._i(_vm.isCritical, null) > -1
-            : _vm.isCritical
-        },
-        on: {
-          change: function($event) {
-            var $$a = _vm.isCritical,
-              $$el = $event.target,
-              $$c = $$el.checked ? true : false
-            if (Array.isArray($$a)) {
-              var $$v = null,
-                $$i = _vm._i($$a, $$v)
-              if ($$el.checked) {
-                $$i < 0 && (_vm.isCritical = $$a.concat([$$v]))
+    _c(
+      "div",
+      {
+        staticClass:
+          "custom-control custom-control-alternative custom-checkbox mb-3"
+      },
+      [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.isCritical,
+              expression: "isCritical"
+            }
+          ],
+          staticClass: "custom-control-input",
+          attrs: { id: "customCheck6", type: "checkbox" },
+          domProps: {
+            checked: Array.isArray(_vm.isCritical)
+              ? _vm._i(_vm.isCritical, null) > -1
+              : _vm.isCritical
+          },
+          on: {
+            change: function($event) {
+              var $$a = _vm.isCritical,
+                $$el = $event.target,
+                $$c = $$el.checked ? true : false
+              if (Array.isArray($$a)) {
+                var $$v = null,
+                  $$i = _vm._i($$a, $$v)
+                if ($$el.checked) {
+                  $$i < 0 && (_vm.isCritical = $$a.concat([$$v]))
+                } else {
+                  $$i > -1 &&
+                    (_vm.isCritical = $$a
+                      .slice(0, $$i)
+                      .concat($$a.slice($$i + 1)))
+                }
               } else {
-                $$i > -1 &&
-                  (_vm.isCritical = $$a
-                    .slice(0, $$i)
-                    .concat($$a.slice($$i + 1)))
+                _vm.isCritical = $$c
               }
-            } else {
-              _vm.isCritical = $$c
             }
           }
-        }
-      }),
-      _vm._v(" "),
-      _c("span", { staticClass: "custom-toggle-slider rounded-circle" }),
-      _vm._v("\n\t  Критично\n\t")
-    ]),
+        }),
+        _vm._v(" "),
+        _c(
+          "label",
+          {
+            staticClass: "custom-control-label",
+            attrs: { for: "customCheck6" }
+          },
+          [_vm._v("Критично")]
+        )
+      ]
+    ),
     _vm._v(" "),
     _c(
       "button",
@@ -64832,6 +65058,8 @@ var render = function() {
           staticClass: "main-nav bg-gradient-primary border-bottom border-dark"
         },
         [
+          _c("Burger"),
+          _vm._v(" "),
           _c(
             "div",
             { staticClass: "logo" },
@@ -64849,9 +65077,7 @@ var render = function() {
               )
             ],
             1
-          ),
-          _vm._v(" "),
-          _c("Burger")
+          )
         ],
         1
       ),
@@ -65937,9 +66163,10 @@ var render = function() {
                 directives: [
                   {
                     name: "model",
-                    rawName: "v-model",
+                    rawName: "v-model.trim",
                     value: _vm.adressFilter,
-                    expression: "adressFilter"
+                    expression: "adressFilter",
+                    modifiers: { trim: true }
                   }
                 ],
                 staticClass: "form-control",
@@ -65955,7 +66182,10 @@ var render = function() {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.adressFilter = $event.target.value
+                    _vm.adressFilter = $event.target.value.trim()
+                  },
+                  blur: function($event) {
+                    return _vm.$forceUpdate()
                   }
                 }
               })
@@ -67176,7 +67406,64 @@ var render = function() {
                 _vm.additionalLimit = $event.target.value
               }
             }
-          })
+          }),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass:
+                "custom-control custom-control-alternative custom-checkbox mb-3"
+            },
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.isCritical,
+                    expression: "isCritical"
+                  }
+                ],
+                staticClass: "custom-control-input",
+                attrs: { id: "customCheck6", type: "checkbox" },
+                domProps: {
+                  checked: Array.isArray(_vm.isCritical)
+                    ? _vm._i(_vm.isCritical, null) > -1
+                    : _vm.isCritical
+                },
+                on: {
+                  change: function($event) {
+                    var $$a = _vm.isCritical,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = null,
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 && (_vm.isCritical = $$a.concat([$$v]))
+                      } else {
+                        $$i > -1 &&
+                          (_vm.isCritical = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)))
+                      }
+                    } else {
+                      _vm.isCritical = $$c
+                    }
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "label",
+                {
+                  staticClass: "custom-control-label",
+                  attrs: { for: "customCheck6" }
+                },
+                [_vm._v("Критично")]
+              )
+            ]
+          )
         ])
       ],
       2
@@ -70286,6 +70573,23 @@ var render = function() {
                                 "\n\t\t\t\t"
                             )
                           ]),
+                      _vm._v(" "),
+                      _c(
+                        "span",
+                        [
+                          _c("date-picker", {
+                            attrs: { lang: "ru", type: "year" },
+                            model: {
+                              value: _vm.value,
+                              callback: function($$v) {
+                                _vm.value = $$v
+                              },
+                              expression: "value"
+                            }
+                          })
+                        ],
+                        1
+                      ),
                       _vm._v(" "),
                       typeIdx == "App\\device_aps"
                         ? _c(
@@ -92307,7 +92611,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               commit = _ref11.commit, getters = _ref11.getters;
               p = _objectSpread({}, payload);
               axios.post("/api/limitations/update/".concat(p.id), {
-                text: p.text
+                text: p.text,
+                isCritical: p.isCritical
               }).then(function (response) {
                 return commit('CHANGE_LIMITATION', {
                   payload: p,
@@ -92345,7 +92650,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   payload: _objectSpread({}, response.data, {
                     fake_id: p.id,
                     type: p.type,
-                    device_id: p.device_id
+                    device_id: p.device_id,
+                    isCritical: p.isCritical
                   }),
                   getters: getters
                 });
@@ -92450,6 +92756,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               axios.post("/api/limitations/set/".concat(p.odid), {
                 additionalLimit: p.additionalLimit,
+                isCritical: p.isCritical,
                 allLimits: p.allLimits
               }).then(function (response) {
                 //store object_device good or bad
@@ -93512,19 +93819,21 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
   },
   LIMITATION_BY_ID: function LIMITATION_BY_ID(state) {
     return function (type, id) {
-      state.availabledevices[type].devices.map(function (device) {
-        return device.limitations.find(function (obj) {
-          return obj.id == id;
-        });
+      var device = state.availabledevices[type].devices.find(function (device) {
+        return device.id == id;
+      });
+      return device.limitations.find(function (obj) {
+        return obj.id == id;
       });
     };
   },
   LIMITATION_ID: function LIMITATION_ID(state) {
     return function (type, id) {
-      state.availabledevices[type].devices.map(function (device) {
-        return device.limitations.findIndex(function (obj) {
-          return obj.id == id;
-        });
+      var device = state.availabledevices[type].devices.find(function (device) {
+        return device.id == id;
+      });
+      return device.limitations.findIndex(function (obj) {
+        return obj.id == id;
       });
     };
   },
@@ -93851,6 +94160,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   TOGGLE_DEVICE_ISGOOD: function TOGGLE_DEVICE_ISGOOD(state, payload) {
     var p = _objectSpread({}, payload);
+    /*
+    TODO: check device.alerts
+    */
+
 
     var device_idx = state.current_object.devices.findIndex(function (obj) {
       return obj.id == p.odid;

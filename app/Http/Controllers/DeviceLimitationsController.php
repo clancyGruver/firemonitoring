@@ -22,7 +22,7 @@ class DeviceLimitationsController extends Controller
 
     public function update($id, Request $request){
         $obj = limits::find($id);
-        $data = $request->only('text');
+        $data = $request->only(['text','isCritical']);
         $data['created_user_id'] = $request->header('x-user');
         $obj->update($data);
         return response()->json($obj);
@@ -112,6 +112,7 @@ class DeviceLimitationsController extends Controller
 				'created_user_id' => $created_user_id,
 				'object_device_id' => $id,
 				'additional_limitation' => $additionalLimit,
+				'additional_limitation_critical' => $request->input('isCritical'),
 			];
 			if(count($obj) > 0){
 				$obj->update($data);
