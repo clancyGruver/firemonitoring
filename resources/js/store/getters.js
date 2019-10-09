@@ -195,7 +195,7 @@ export default{
           isShow: val.isShow,
           is_good: val.is_good,
           id: val.id,
-          setup_year: val.setup_year,
+          setup_year: val.setup_year ? new Date(val.setup_year,0,1) : null,
           alarms:alarmEl,
                 wires: wireEl,
                 wires_count: val.devicable.wires_count,

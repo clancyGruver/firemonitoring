@@ -58,7 +58,7 @@
 					</span>
 					<span>
 						<date-picker
-							:value="yearToDate(device.setup_year)"
+							v-model="device.setup_year"
 							lang="ru"
 							type="year"
 							format="YYYY"
@@ -121,11 +121,6 @@ import rspiParams from '../editForms/rspiParams';
 			}
 		},
 		methods: {
-			yearToDate(year){ 
-				if(year){
-					return new Date(year,0,1);
-				}
-			},
 			dateChanged(device){
 				this.$store.dispatch('SET_DEVICE_SETUP_YEAR', {
 					setup_year: device.setup_year.getFullYear(),

@@ -8525,11 +8525,6 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    yearToDate: function yearToDate(year) {
-      if (year) {
-        return new Date(year, 0, 1);
-      }
-    },
     dateChanged: function dateChanged(device) {
       this.$store.dispatch('SET_DEVICE_SETUP_YEAR', {
         setup_year: device.setup_year.getFullYear(),
@@ -70591,16 +70586,18 @@ var render = function() {
                         "span",
                         [
                           _c("date-picker", {
-                            attrs: {
-                              value: _vm.yearToDate(device.setup_year),
-                              lang: "ru",
-                              type: "year",
-                              format: "YYYY"
-                            },
+                            attrs: { lang: "ru", type: "year", format: "YYYY" },
                             on: {
                               input: function($event) {
                                 return _vm.dateChanged(device)
                               }
+                            },
+                            model: {
+                              value: device.setup_year,
+                              callback: function($$v) {
+                                _vm.$set(device, "setup_year", $$v)
+                              },
+                              expression: "device.setup_year"
                             }
                           })
                         ],
@@ -94003,7 +94000,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         isShow: val.isShow,
         is_good: val.is_good,
         id: val.id,
-        setup_year: val.setup_year,
+        setup_year: val.setup_year ? new Date(val.setup_year, 0, 1) : null,
         alarms: alarmEl,
         wires: wireEl,
         wires_count: val.devicable.wires_count,
