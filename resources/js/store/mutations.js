@@ -8,6 +8,11 @@ export default{
     else
       state.showPreloader = !state.showPreloader;
   },
+  SET_DEVICE_SETUP_YEAR(state,payload){
+    const obj = state.current_object;
+    const dev = obj.devices.find( dev => dev.id == payload.object_device_id);
+    dev.setup_year = payload.setup_year;
+  },
   ADD_LIMITED_OBJECTS(state,payload){
     state.limitedObjects = payload;
     state.indexLoadres.limitedObjectsLoading = false;

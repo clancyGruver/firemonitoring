@@ -195,6 +195,7 @@ export default{
           isShow: val.isShow,
           is_good: val.is_good,
           id: val.id,
+          setup_year: val.setup_year,
           alarms:alarmEl,
                 wires: wireEl,
                 wires_count: val.devicable.wires_count,

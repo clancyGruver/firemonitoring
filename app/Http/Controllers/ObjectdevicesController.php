@@ -76,4 +76,13 @@ class ObjectdevicesController extends Controller
         $data['created_user_id'] = $request->header('x-user');
         $obj->update($data);
     }
+
+    public function storeSetupYear($id, Request $request){
+        $obj = OD::find($id);
+
+        $data = $request->only('setup_year');
+        $data['created_user_id'] = $request->header('x-user');
+        $obj->update($data);
+    }
+
 }

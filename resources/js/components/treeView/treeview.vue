@@ -18,7 +18,7 @@
 		/>
 		<ul class="list-unstyled" v-for="(type, typeIdx) in tree" :key="typeIdx">
 			<h3 class="underline">{{type.name}}</h3>
-			<li v-for="(device, index) in type.items" :key="device.id">
+			<li v-for="device in type.items" :key="device.id">
 				<h4>
 					<router-link class="ml-2 fas pointer"
 							:class="{
@@ -58,9 +58,11 @@
 					</span>
 					<span>
 						<date-picker
-							v-model="value"
-							:lang="'ru'"
-							:type="'year'"
+							:value="yearToDate(device.setup_year)"
+							lang="ru"
+							type="year"
+							format="YYYY"
+							@input="dateChanged(device)"
 						/>
 					</span>
 					<span class="badge badge-pill badge-info" v-if="typeIdx == 'App\\device_aps'">
@@ -119,6 +121,17 @@ import rspiParams from '../editForms/rspiParams';
 			}
 		},
 		methods: {
+			yearToDate(year){ 
+				if(year){
+					return new Date(year,0,1);
+				}
+			},
+			dateChanged(device){
+				this.$store.dispatch('SET_DEVICE_SETUP_YEAR', {
+					setup_year: device.setup_year.getFullYear(),
+					object_device_id: device.id,
+				});
+			},
 			isReglamented(deviceId){ return !this.notReglamented.includes(deviceId) },
 			toggle(device){ this.$store.dispatch('TOGGLE_DEVICE_SHOW', device.id) },
 			editDevice(typeIdx, device){

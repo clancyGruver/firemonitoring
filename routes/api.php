@@ -60,6 +60,7 @@ Route::post('/objectdevice/store', 'ObjectdevicesController@storeJson')->name('o
 Route::post('/objectdevice/delete/{id}', 'ObjectdevicesController@deleteJson')->name('od.deleteJson');
 Route::post('/objectdevice/storeCoords/{id}', 'ObjectdevicesController@storeCoordsJson')->name('od.storeCoords');
 Route::post('/objectdevice/isgood/{id}', 'ObjectdevicesController@isgood')->name('objectdevice.isgood');
+Route::post('/objectdevice/storeSetupYear/{id}', 'ObjectdevicesController@storeSetupYear');
 
 Route::post('/sensors/getall', 'SensorController@getAllJson')->name('sensors.getAllJson');
 Route::post('/sensors/store', 'SensorController@storeJson')->name('sensors.storeJson');

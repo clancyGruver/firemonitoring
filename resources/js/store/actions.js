@@ -334,4 +334,8 @@ export default{
       const id = resp.data.id;
       router.push(`/objects/${id}/main`);
     },
+    async SET_DEVICE_SETUP_YEAR({commit}, payload){
+      axios.post(`/api/objectdevice/storeSetupYear/${payload.object_device_id}`, payload)
+          .then(response => commit('SET_DEVICE_SETUP_YEAR',payload));
+    }
 }
