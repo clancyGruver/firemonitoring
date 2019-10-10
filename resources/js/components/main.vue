@@ -43,6 +43,8 @@
         .catch( error => this.$awn.alert('Пользователи не загружены'));
       this.$store.dispatch('LOAD_OBJECTS')
         .catch( error => this.$awn.alert('Объекты мониторинга не загружены'));
+      this.$store.dispatch('LOAD_DISTRICTS')
+        .catch( error => this.$awn.alert('Участки не загружены'));
       this.$store.dispatch('LOAD_SENSORS')
         .catch( error => this.$awn.alert('Доступные извещатели не загружены'));
       this.$store.dispatch('LOAD_AVAILABLE_DEVICES')

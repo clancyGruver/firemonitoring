@@ -17,6 +17,17 @@
 						</router-link>
 		            </li>
 		            <li class="nav-item">
+						<router-link
+							class="nav-link"
+							:active-class="active"
+							:to="{
+		                    	name: 'districts'
+		                  	}"
+		              	>
+							<i class="ni ni-world text-primary"></i> Рабочие участки
+						</router-link>
+		            </li>
+		            <li class="nav-item">
 						<router-link :active-class="active" class="nav-link" :to="{
 		                name: 'objects',
 		                params:{

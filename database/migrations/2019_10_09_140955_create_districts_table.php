@@ -15,7 +15,17 @@ class CreateDistrictsTable extends Migration
     {
         Schema::create('districts', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('name');
             $table->timestamps();
+        });
+        Schema::create('districtsObjects', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('object_id');
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('object_id')->references('id')->on('objects');
         });
     }
 
@@ -27,5 +37,6 @@ class CreateDistrictsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('districts');
+        Schema::dropIfExists('districtsObjects');
     }
 }

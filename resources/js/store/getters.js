@@ -22,6 +22,8 @@ export default{
       const sensor = state.sensors.find( el => el.id == id );
       return sensor ? sensor.name : '';
     },
+    DISTRICTS: state => state.districts,
+    DISTRICT: state => id => state.districts.find( district => district.id == id),
     MARKER_SETTABLE: state => state.setMarker,
     MARKER_OBJECT: state => state.markerObj,
     LIMITED_OBJECTS_BY_TYPE: (state,getters) => type => {

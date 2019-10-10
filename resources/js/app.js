@@ -28,6 +28,10 @@ const AWNparams = {
 require("vue-awesome-notifications/dist/styles/style.css");
 Vue.use(VueAWN, AWNparams);
 
+//Modal
+import VModal from 'vue-js-modal'
+Vue.use(VModal)
+
 //components
 import App from './components/main.vue';
 

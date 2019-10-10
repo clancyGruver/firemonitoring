@@ -28,6 +28,11 @@ export default{
         .post(`/api/devices/getbyclass`)
         .then( response => commit('SET_AVAILABLE_DEVICES', response.data));
     },
+    async LOAD_DISTRICTS({commit}){
+      await axios
+        .post(`/api/district/getAll`)
+        .then( response => commit('SET_DISTRICTS', response.data));
+    },
     async CHANGE_OBJECT_LL({state, commit, getters}, payload){
       const p = {...payload}
       await axios.post(`/api/objects/storeCoords/${state.object_id}`,p)

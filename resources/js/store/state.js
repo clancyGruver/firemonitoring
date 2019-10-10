@@ -4,6 +4,7 @@ export default{
 	limitedObjects: 0,
 	raions: [],
 	objects: [],
+	districts: [],
 	current_object: {},
 	user: null,
 	object_id: null,

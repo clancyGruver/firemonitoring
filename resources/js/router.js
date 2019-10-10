@@ -30,6 +30,8 @@ import Map from './components/leaflet/map';
 import addSenor from './components/add-sensor';
 import sensorReglaments from './components/monitoringObjects/reglament/index';
 import sensorReglament from './components/monitoringObjects/reglament/distinct';
+import districts from './components/districts/index';
+import districtEdit from './components/districts/edit';
 
 export const router = new VueRouter({
 	mode: 'history',
@@ -51,6 +53,33 @@ export const router = new VueRouter({
 			meta: {
 				title: 'Объекты мониторинга'
 			},
+		},
+		{
+			path: '/districts',
+			name: 'districts',
+			component: districts,
+			props: true,
+			meta: {
+				title: 'Рабочие участки'
+			},
+			children:[
+				{
+					path: '/districts/edit/:districtId',
+					name: 'districtEdit',
+					component: districtEdit,
+					meta: {
+						title: 'Рабочий участок'
+					},
+				},
+				/*{
+					path: '/reglaments/:type/:deviceId/:reglamentId',
+					name: 'reglamentsDistinct',
+					component: reglamentsDistinct,
+					meta: {
+						title: 'Регламентные работы'
+					},
+				},*/
+			]
 		},
 		{
 			path: '/objects/new/',

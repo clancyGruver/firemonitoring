@@ -100,3 +100,16 @@ Route::post('/users/update/{id}', 'UserController@updateJSON');
 Route::post('/users/add', 'UserController@add');
 
 Route::post('/calendar/addObject', 'calendarController@addObject');
+
+Route::post('/district/getAll', 'DistrictController@index');
+Route::post('/district/store', 'UserController@store');
+Route::post('/district/update/{id}', 'UserController@update');
+Route::post('/district/delete/{id}', 'UserController@delete');
+
+Route::post('/districtUser/store', 'UserController@setUser');
+Route::post('/districtUser/update/{id}', 'UserController@updateUser');
+Route::post('/districtUser/delete/{id}', 'UserController@deleteUser');
+
+Route::post('/districtObject/store', 'UserController@setObject');
+Route::post('/districtObject/update/{id}', 'UserController@updateObject');
+Route::post('/districtObject/delete/{id}', 'UserController@deleteObject');

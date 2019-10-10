@@ -384,6 +384,9 @@ export default{
     },
     ADD_NEW_OBJECT(state, payload){
       state.objects.push(payload);
-    }
+    },
+    SET_DISTRICTS(state, payload){
+      state.districts = payload;
+    },
 
 }
