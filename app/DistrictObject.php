@@ -12,6 +12,10 @@ class DistrictObject extends Model
     
     protected $table = 'districtsobjects';
     protected $primaryKey = 'id';
+    protected $fillable = [
+		'district_id',
+    	'object_id',
+    ];
 
     public function object(){
         return $this->hasOne('App\MonitoringObject','id','object_id');

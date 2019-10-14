@@ -116,6 +116,20 @@
 	                        >
 	                        	<i class="fas fa-trash-alt text-danger"></i>
 	                        </a>
+							<select
+								class="form-control"
+								@change="changeDistrict($event, object)"
+							>
+							  	<option disabled value="-1" :selected="!object.district">Участок не выбран</option>
+						  		<option
+						  			v-for="district in districts"
+						  			:value="district.id"
+						  			:key="district.id"
+						  		>
+						  			{{object.district ? object.district.district.id : -1}}/{{district.id}}
+						  			{{ district.name }}
+						  		</option>
+							</select>
 	                    </td>
 	                </tr>
 	            </tbody>
@@ -166,6 +180,13 @@ export default {
 		}
 	},
 	methods:{
+		changeDistrict(event, object){
+			const val = event.target.value;
+			this.$store.dispatch('SET_OBJECT_DISTRICT', {
+				districtId: val,
+				objectId: object.id,
+			});
+		},
 		delObj(object){
 		    if(confirm('Вы уверены, что хотите удалить объект?')){
 				this.$store.commit('DELETE_OBJECT',object.id);
@@ -195,6 +216,7 @@ export default {
 			return objects;
 		},
 		raions() {return this.$store.getters.RAIONS},
+		districts() {return this.$store.getters.DISTRICTS},
 	}
 }
 </script>

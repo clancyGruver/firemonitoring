@@ -29,8 +29,8 @@ require("vue-awesome-notifications/dist/styles/style.css");
 Vue.use(VueAWN, AWNparams);
 
 //Modal
-import VModal from 'vue-js-modal'
-Vue.use(VModal)
+import VModal from 'vue-js-modal';
+Vue.use(VModal, {dialog: true});
 
 //components
 import App from './components/main.vue';

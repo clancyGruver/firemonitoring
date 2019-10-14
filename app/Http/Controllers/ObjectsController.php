@@ -18,7 +18,7 @@ class ObjectsController extends Controller
     }
 
     public function indexJson(){
-        $items = MO::with('raion')->with('btifiles')->with('mediafiles')->get();
+        $items = MO::with(['raion', 'btifiles', 'mediafiles', 'district'])->get();
         return response()->json($items);
     }
 

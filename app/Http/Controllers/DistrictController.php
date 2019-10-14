@@ -18,32 +18,33 @@ class DistrictController extends Controller
         $data = $request->only('name');
         $obj = new District($data);
         $obj->save();
+        $obj = District::where('id',$obj->id)->with(['objects','users'])->first();
         return response()->json($obj);
     }
 
     public function update($id, Request $request){
-        $data['name'] = $request->only('name');
+        $data = $request->only('name');
         $obj = District::find($id);
         if(!$obj){
             $obj = new District($data);
             $obj->save();
         } else{
-            $obj->update();
+            $obj->update($data);
         }
         return response()->json($obj);
     }
 
     public function delete($id){
-        $obj = District::delete($id);
+        $obj = District::destroy($id);
         return response(200);
     }
 
     public function setUser($id, Request $request){
-        $data = [];
-        $data['user_id'] = $request->only('user_id');
+        $data = $request->only('user_id');
         $data['district_id'] = $id;
         $obj = new DistrictUser($data);
         $obj->save();
+        $obj = DistrictUser::where('id',$obj->id)->with('user')->first();
         return response()->json($obj);
     }
     public function updateUser($id, Request $request){
@@ -55,21 +56,21 @@ class DistrictController extends Controller
             $obj = new DistrictUser($data);
             $obj->save();
         } else {
-            $obj->update();
+            $obj->update($data);
         }
         return response()->json($obj);
     }
     public function deleteUser($id){
-        $obj = DistrictUser::delete($id);
+        $obj = DistrictUser::destroy($id);
         return response(200);
     }
 
     public function setObject($id, Request $request){
-        $data = [];
-        $data['object_id'] = $request->only('object_id');
+        $data = $request->only('object_id');
         $data['district_id'] = $id;
         $obj = new DistrictObject($data);
         $obj->save();
+        $obj = DistrictObject::where('id',$obj->id)->with('object')->first();
         return response()->json($obj);
     }
     public function updateObject($id, Request $request){
@@ -81,12 +82,12 @@ class DistrictController extends Controller
             $obj = new DistrictObject($data);
             $obj->save();
         } else {
-            $obj->update();
+            $obj->update($data);
         }
         return response()->json($obj);
     }
     public function deleteObject($id, Request $request){
-        $obj = DistrictObject::delete($id);
+        $obj = DistrictObject::destroy($id);
         return response(200);
     }
 }

@@ -342,5 +342,39 @@ export default{
     async SET_DEVICE_SETUP_YEAR({commit}, payload){
       axios.post(`/api/objectdevice/storeSetupYear/${payload.object_device_id}`, payload)
           .then(response => commit('SET_DEVICE_SETUP_YEAR',payload));
-    }
+    },
+    async NEW_DISTRICT({commit}, payload){
+      axios.post('/api/district/store', payload)
+          .then(response => commit('NEW_DISTRICT', response.data));
+    },
+    async CHANGE_DISTRICT_NAME({commit}, payload){
+      axios.post(`/api/district/update/${payload.id}`, {name: payload.name})
+          .then(response => commit('CHANGE_DISTRICT_NAME', payload));
+    },
+    async DELETE_DISTRICT({commit}, payload){
+      axios.post(`/api/district/delete/${payload}`)
+          .then(response => commit('DELETE_DISTRICT', payload));
+    },
+    async NEW_USER_DISTRICT({commit},payload){
+      axios.post(`/api/districtUser/store/${payload.districtId}`, {user_id: payload.user.id})
+          .then(response => commit('NEW_USER_DISTRICT', {
+            districtId: payload.districtId,
+            user: response.data,
+          }));
+    },
+    async DELETE_DISTRICT_USER({commit},payload){
+      axios.post(`/api/districtUser/delete/${payload.userId}`)
+          .then(() => commit('DELETE_DISTRICT_USER', payload));
+    },
+    async DELETE_DISTRICT_OBJECT({commit},payload){
+      axios.post(`/api/districtObject/delete/${payload.objectId}`)
+          .then(() => commit('DELETE_DISTRICT_OBJECT', payload));
+    },
+    async SET_OBJECT_DISTRICT({commit},payload){
+      axios.post(`/api/districtObject/store/${payload.districtId}`, {object_id:payload.objectId})
+          .then(response => commit('SET_OBJECT_DISTRICT', {
+            districtId: payload.districtId,
+            object: response.data,
+          }));
+    },
 }

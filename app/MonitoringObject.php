@@ -32,6 +32,9 @@ class MonitoringObject extends Model
         'soue_type',
     ];
 
+    public function district(){
+        return $this->hasOne('App\DistrictObject', 'object_id', 'id' )->with('district');
+    }
 
     public function raion(){
         return $this->hasOne('App\Raion', 'id', 'raion_id');

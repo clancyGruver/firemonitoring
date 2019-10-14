@@ -9,9 +9,13 @@ use App\MonitoringObject;
 class DistrictUser extends Model
 {
     use SoftDeletes;
-    
+
     protected $table = 'districtsusers';
     protected $primaryKey = 'id';
+    protected $fillable = [
+    	'user_id',
+		'district_id',
+	];
 
     public function district(){
         return $this->hasOne('App\District','id','district_id');

@@ -388,5 +388,33 @@ export default{
     SET_DISTRICTS(state, payload){
       state.districts = payload;
     },
-
+    NEW_DISTRICT(state, payload){
+      state.districts.push(payload);
+    },
+    NEW_USER_DISTRICT(state, payload){
+      const district = state.districts.find( district => district.id == payload.districtId );
+      district.users.push(payload.user);
+    },
+    DELETE_DISTRICT_USER(state, payload){
+      const district = state.districts.find( district => district.id == payload.districtId );
+      const userIdx = district.users.findIndex( user => user.id == payload.userId );
+      district.users.splice(userIdx, 1);
+    },
+    DELETE_DISTRICT_OBJECT(state, payload){
+      const district = state.districts.find( district => district.id == payload.districtId );
+      const objectIdx = district.objects.findIndex( object => object.id == payload.objectId );
+      district.objects.splice(objectIdx, 1);
+    },
+    CHANGE_DISTRICT_NAME(state, payload){
+      const district = state.districts.find( district => district.id == payload.id );
+      district.name = payload.name;
+    },
+    DELETE_DISTRICT(state, payload){
+      const districtIdx = state.districts.findIndex( district => district.id == payload );
+      state.districts.splice(districtIdx, 1);
+    },
+    SET_OBJECT_DISTRICT(state, payload){
+      const district = state.districts.find( district => district.id == payload.districtId );
+      district.objects.push(payload.object);
+    },
 }
