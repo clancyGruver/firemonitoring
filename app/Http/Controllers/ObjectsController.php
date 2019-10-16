@@ -72,12 +72,12 @@ class ObjectsController extends Controller
         $validatedData = $request->validate([
             'name' => 'required',
             'raion_id' => 'required',
-            'address' => 'required|max:255',
-            'director_name' => 'required|max:255',
-            'director_phone' => 'required|max:255',
-            'contact_name' => 'required|max:255',
-            'contact_phone' => 'required|max:255',
-            'project_year'=>'digits:4',
+            'address' => 'required|max:255|nullable',
+            'director_name' => 'required|max:255|nullable',
+            'director_phone' => 'required|max:255|nullable',
+            'contact_name' => 'required|max:255|nullable',
+            'contact_phone' => 'required|max:255|nullable',
+            'project_year'=>'digits:4|nullable',
         ]);
         $obj = MO::find($id);
         $params = $request->all();

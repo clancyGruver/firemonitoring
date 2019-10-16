@@ -30,8 +30,8 @@ Route::post('/devices/getbyclass', 'DevicesController@getByClassJson')->name('de
 Route::post('/devices/add/{type}', 'DevicesController@add');
 Route::post('/devices/update/{type}/{id}', 'DevicesController@update');
 
-Route::post('/antennas/delete/{id}', 'DeviceAntennaController@delete')->name('antennas.delete');
-Route::post('/antennas/storeParams', 'DeviceAntennaController@storeParams')->name('antennas.storeParams');
+Route::post('/antennas/delete/{id}', 'DeviceAntennaController@delete');
+Route::post('/antenna/storeParams', 'DeviceAntennaController@storeParams');
 
 Route::post('/rspi/delete/{id}', 'DeviceRspiController@delete')->name('rspi.delete');
 Route::post('/rspi/storeParams', 'DeviceRspiController@storeParams')->name('rspi.storeParams');

@@ -125,8 +125,8 @@
 						  			v-for="district in districts"
 						  			:value="district.id"
 						  			:key="district.id"
+									:selected="object.district ? object.district.district.id == district.id : false"
 						  		>
-						  			{{object.district ? object.district.district.id : -1}}/{{district.id}}
 						  			{{ district.name }}
 						  		</option>
 							</select>

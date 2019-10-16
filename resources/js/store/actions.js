@@ -302,8 +302,11 @@ export default{
     },
     async UPDATE_OBJECT_DEVICE_PARAMS({commit}, payload){
       const p = {...payload};
-      const id = p.data.id || '';
-      axios.post(`/api/${p.type}/storeParams/${id}`,p.data)
+      let url = `/api/${p.type}/storeParams`;
+      /*const id = p.data.id || '';
+      if(id)
+        url += `/${id}`;*/
+      axios.post(url,p.data)
        .then( response => commit('UPDATE_OBJECT_DEVICE_PARAMS', p.data) );
     },
     async EDIT_WIRE({commit}, payload){

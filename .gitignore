@@ -13,3 +13,4 @@ yarn-error.log
 ff.tar.gz
 firemonitoring.tar.gz
 .~lock.Таблиа общих сведений по АПС.xlsx#
+build/config.gypi
