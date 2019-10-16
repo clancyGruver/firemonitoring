@@ -58,7 +58,6 @@ class ObjectsController extends Controller
             'director_phone' => 'required|max:255',
             'contact_name' => 'required|max:255',
             'contact_phone' => 'required|max:255',
-            'project_year'=>'digits:4',
         ]);
         $obj = MO::find($id);
         $params = $request->all();
@@ -77,7 +76,6 @@ class ObjectsController extends Controller
             'director_phone' => 'required|max:255|nullable',
             'contact_name' => 'required|max:255|nullable',
             'contact_phone' => 'required|max:255|nullable',
-            'project_year'=>'digits:4|nullable',
         ]);
         $obj = MO::find($id);
         $params = $request->all();
