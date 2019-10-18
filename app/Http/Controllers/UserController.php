@@ -6,10 +6,14 @@ use App\User;
 use App\Http\Requests\UserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Raion;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    use RegistersUsers;
     /**
      * Display a listing of the users
      *
@@ -45,6 +49,7 @@ class UserController extends Controller
     {
         $data = $request->merge(['password' => Hash::make($request->get('password'))])->all();
         $data['is_admin'] = isset($data['is_admin']) && $data['is_admin'] == 'on' ? true : false;
+        $data['api_token'] = Str::random(60);
         $model->create($data);
         return redirect()->route('user.index')->withStatus(__('Пользователь усешно добавлен.'));
     }
@@ -93,7 +98,7 @@ class UserController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('/');
+        return redirect()->route('home');
     }
 
     public function getAll()
@@ -121,6 +126,7 @@ class UserController extends Controller
 
     public function add(Request $request){
         $data = $request->merge(['password' => Hash::make($request->get('password'))])->all();
+        $data['api_token'] = Str::random(60);
         $obj = User::create($data);
         return response()->json($obj);
     }

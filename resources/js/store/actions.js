@@ -93,12 +93,13 @@ export default{
       axios.post(`/api/limitations/delete/${p.id}`)
       .then(response => commit('REMOVE_LIMITATION', {payload, getters}));
     },
-    async LOAD_LIMITED_OBJECTS({commit}){
+    async LOAD_LIMITED_OBJECTS({commit, getters}){
       /*
         Send request to load objects with limitations
         Commit ADD_LIMITED_OBJECTS
       */
-      axios.post('/api/objects/limited')
+      const objectsIds = getters.OBJECTS.map( object => object.id);
+      axios.post('/api/objects/limited',{objectsIds: objectsIds})
         .then( response => commit('ADD_LIMITED_OBJECTS',response.data));
     },
     async TOGGLE_DEVICE_ISGOOD({commit, dispatch},payload) {
@@ -322,7 +323,7 @@ export default{
     async ADD_SENSOR_TO_WIRE({commit, dispatch}, payload){
       const p = {...payload};
       axios.post('/api/sensorwire/add',payload)
-            .then( response => commit('ADD_SENSOR_TO_WIRE',{payload:{sensorData:p, responseData:response.data},dispatch}) );
+            .then( response => response.data.map( respData => commit('ADD_SENSOR_TO_WIRE',{payload:{sensorData:p, responseData:respData},dispatch}) ) );
     },
     async DELETE_SENSOR_ON_WIRE({commit}, payload){
       axios.post(`/api/sensorwire/delete/${payload.sensorId}`)

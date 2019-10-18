@@ -11,29 +11,45 @@
 
           <div class="row">
             <div class="col">
-              <div class="form-group">
-                <div class="input-group mb-4">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <div class="row">
+                <form class="form-inline">
+                  <div class="form-group">
+                    <div class="input-group mb-4">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                      </div>
+                      <input class="form-control" placeholder="Поиск" type="text" v-model="searchString">
+                    </div>
                   </div>
-                  <input class="form-control" placeholder="Поиск" type="text" v-model="searchString">
+                  <div class="form-group">
+                    <div class="input-group mb-4">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-cogs"></i></span>
+                      </div>
+                      <input class="form-control" placeholder="Количество извещателей" type="number" v-model.number="sensorData.count">
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="row">
+                <div v-if="sensorData.sensor_id">
+                  <strong>{{getSensorById(sensorData.sensor_id).name}}</strong>
+                  <hr>
                 </div>
               </div>
-              <div v-if="sensorData.sensor_id">
-                <strong>{{getSensorById(sensorData.sensor_id).name}}</strong>
-                <hr>
+              <div class="row">
+                <ul class="list-unstyled">
+                  <li v-for="sensor in availSensors" :key="sensor.id">
+                    <span class="mb-0" @click="addSensor(sensor)">
+                      <span>{{sensor.name}}</span>
+                    </span>
+                  </li>
+                </ul>
               </div>
-              <ul class="list-unstyled">
-                <li v-for="sensor in availSensors" :key="sensor.id">
-                  <span class="mb-0" @click="addSensor(sensor)">
-                    <span>{{sensor.name}}</span>
-                  </span>
-                </li>
-              </ul>
             </div>
             <div class="col">
               <form>
-                <div class="form-group col">
+                <div class="form-group col"  v-show="!sensorData.count || sensorData.count < 2">
                   <label for="name">Наименование</label>
                   <input id="name" name="name" type="text" class="form-control" placeholder="Наименование" v-model.trim="sensorData.name">
                 </div>
@@ -41,7 +57,7 @@
                   <label for="floor">Этаж</label>
                   <input id="floor" name="floor" type="number" class="form-control" placeholder="Этаж" v-model.number="sensorData.floor">
                 </div>
-                <div class="form-group col">
+                <div class="form-group col" v-show="!sensorData.count || sensorData.count < 2">
                   <label for="cabinet_name">Нименование помещения</label>
                   <input id="cabinet_name" name="cabinet_name" type="text" class="form-control" placeholder="Наименование помещения" v-model.trim="sensorData.cabinet_name">
                 </div>
@@ -132,15 +148,17 @@
           checked = false;
         }
 
-        if(this.sensorData.name === ''){
-          this.errors.push('Не введено наименование');
-          checked = false;
-        }
+        if(this.sensorData.count && this.sensorData.count < 2)
+          if(this.sensorData.name === ''){
+            this.errors.push('Не введено наименование');
+            checked = false;
+          }
 
-        if(this.sensorData.cabinet_name === '' || !('cabinet_name' in this.sensorData)){
-          this.errors.push('Не введено наименование помещения');
-          checked = false;
-        }
+        if(this.sensorData.count && this.sensorData.count < 2)
+          if(this.sensorData.cabinet_name === '' || !('cabinet_name' in this.sensorData)){
+            this.errors.push('Не введено наименование помещения');
+            checked = false;
+          }
 
         if(this.sensorData.deviceId < 0){
           this.errors.push('Устройство не определено');

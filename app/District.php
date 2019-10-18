@@ -16,6 +16,9 @@ class District extends Model
     public function objects(){
         return $this->hasMany(DistrictObject::class)->with('object');
     }
+    public function objectsFull(){
+        return $this->hasMany(DistrictObject::class)->with('objectFull');
+    }
     public function users(){
         return $this->hasMany(DistrictUser::class)->with('user');
     }

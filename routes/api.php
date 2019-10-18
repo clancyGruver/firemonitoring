@@ -19,8 +19,7 @@ Route::middleware('auth:api')->group(function(){
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-});
-
+    
 Route::post('/raions', 'RaionController@indexJson');
 Route::post('/raions/{id}', 'RaionController@update');
 
@@ -74,7 +73,7 @@ Route::post('/sensorwire/storeCoords/{id}', 'SensorWireController@storeCoordsJso
 
 Route::post('/wire/store', 'WiresController@storeJson')->name('wires.storeJson');
 Route::post('/wire/update/{id}', 'WiresController@updateJson')->name('wires.updateJson');
-Route::post('/wire/delete/{id}', 'WiresController@deleteJson')->name('wires.deleteJson');
+Route::post('/wire/delete/{id}', 'WiresController@deleteJson');
 
 Route::post('/limitations/update/{id}', 'DeviceLimitationsController@update');
 Route::post('/limitations/insert', 'DeviceLimitationsController@insert');
@@ -113,3 +112,4 @@ Route::post('/districtUser/delete/{id}', 'DistrictController@deleteUser');
 Route::post('/districtObject/store/{id}', 'DistrictController@setObject');
 Route::post('/districtObject/update/{id}', 'DistrictController@updateObject');
 Route::post('/districtObject/delete/{id}', 'DistrictController@deleteObject');
+});

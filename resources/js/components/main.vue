@@ -39,12 +39,8 @@
     mounted: async function(){
       await this.$store.dispatch('LOAD_RAIONS')
         .catch( error => this.$awn.alert('Доступные районы не загружены'));
-      this.$store.dispatch('LOAD_USERS')
-        .catch( error => this.$awn.alert('Пользователи не загружены'));
-      this.$store.dispatch('LOAD_OBJECTS')
+      await this.$store.dispatch('LOAD_OBJECTS')
         .catch( error => this.$awn.alert('Объекты мониторинга не загружены'));
-      this.$store.dispatch('LOAD_DISTRICTS')
-        .catch( error => this.$awn.alert('Участки не загружены'));
       this.$store.dispatch('LOAD_SENSORS')
         .catch( error => this.$awn.alert('Доступные извещатели не загружены'));
       this.$store.dispatch('LOAD_AVAILABLE_DEVICES')
@@ -53,6 +49,11 @@
         .catch( error => this.$awn.alert('Объекты с недостатками не загружены'));
       this.$store.dispatch('LOAD_UNREGLAMENTED_DEVICES')
         .catch( error => this.$awn.alert('Оборудование с непроведенными регламентными работами не загружено'));
+
+      this.$store.dispatch('LOAD_USERS')
+        .catch( error => this.$awn.alert('Пользователи не загружены'));
+      this.$store.dispatch('LOAD_DISTRICTS')
+        .catch( error => this.$awn.alert('Участки не загружены'));
     },
   }
 </script>

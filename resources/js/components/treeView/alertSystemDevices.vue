@@ -50,6 +50,11 @@
 			}
 		},
 		methods: {
+			deleteDevice(device){
+				if(confirm(`Вы действительно хотите удалить ${device.name}`)){
+				  this.$store.dispatch('DELETE_OBJECT_DEVICE', device.id);
+				}
+			},
 			isReglamented(deviceId){ return !this.notReglamented.includes(deviceId) },
 			setMarker(device){
 				const typeIdx = 'App\\device_system_voice_alert';

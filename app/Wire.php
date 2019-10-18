@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Wire extends Model
 {
+    use SoftDeletes;
     protected $table = 'wires';
     protected $primaryKey = 'id';
     protected $attributes = [
@@ -32,8 +34,10 @@ class Wire extends Model
     public static function boot() {
         parent::boot();
 
-        static::deleting(function($od) {
-            $od->sensors->delete();
+        static::deleting(function($wire) {
+            foreach ($wire->sensors as $sensor) {
+                $sensor->delete();
+            }
         });
     }
 }

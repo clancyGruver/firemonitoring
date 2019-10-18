@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="api-token" content="{{ Auth::user()->api_token ?? null }}">
 
         <title>{{ config('app.name', 'Argon Dashboard') }}</title>
         <!-- Favicon -->

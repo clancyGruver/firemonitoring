@@ -12,6 +12,9 @@ class SensorWireController extends Controller
 {
     public function addJson(Request $request){
         $data = $request->all();
+        $count = 1;
+        if(isset($data['sensorData']['count']) && $data['sensorData']['count'])
+            $count = $data['sensorData']['count'];
         $params = [];
         if(isset($data['sensorData']['SP5_valid']))
         	$SP5 = $data['sensorData']['SP5_valid'];
@@ -19,20 +22,29 @@ class SensorWireController extends Controller
         if(isset($data['sensorData']['is_good']))
         	$is_good = $data['sensorData']['is_good'];
        	else $is_good = false;
+        if($count < 2){
+            $params['name'] = $data['sensorData']['name'];
+            $params['cabinet_name'] = $data['sensorData']['cabinet_name'];
+        }
         $params['wire_id'] = $data['sensorData']['wire_id'];
         $params['sensor_id'] = $data['sensor']['id'];
-        $params['name'] = $data['sensorData']['name'];
         $params['floor'] = $data['sensorData']['floor'];
-        $params['cabinet_name'] = $data['sensorData']['cabinet_name'];
         $params['comment'] = $data['sensorData']['comment'];
         $params['SP5_valid'] = $SP5;
         $params['is_good'] = $is_good;
         $params['created_user_id'] = $request->header('x-user');
+        
+        $objs = [];
+        for($i = 0; $i < $count; $i++){
+            if($count > 1){
+                $params['name'] = $i + 1;
+            }
+            $obj = new WireSensor($params);
+            $obj->save();
+            $objs[] = $obj;
+        }
 
-        $obj = new WireSensor($params);
-        $obj->save();
-
-        return response()->json($obj);
+        return response()->json($objs);
     }
 
     public function deleteJson($id, Request $request){
@@ -66,7 +78,9 @@ class SensorWireController extends Controller
         $params['sensor_id'] = $data['sensor']['id'];
         $params['name'] = $data['sensorData']['name'];
         $params['floor'] = $data['sensorData']['floor'];
-        $params['cabinet_name'] = $data['sensorData']['cabinet_name'];
+        if(isset($data['sensorData']['cabinet_name']) && $data['sensorData']['cabinet_name']){
+            $params['cabinet_name'] = $data['sensorData']['cabinet_name'];
+        }
         $params['comment'] = $data['sensorData']['comment'];
         $params['SP5_valid'] = $SP5;
         $params['is_good'] = $is_good;

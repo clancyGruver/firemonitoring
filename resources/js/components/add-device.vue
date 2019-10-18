@@ -95,8 +95,10 @@
 				return res;
 			},
 			addDevice(device, tbl_name){
-				if(this.check() == false){
-					return;
+				if(tbl_name == "App\device_aps"){
+					if(this.check() == false){
+						return;
+					}
 				}
 				device.object_id = this.$route.params.id;
 				device.device_id = device.id;

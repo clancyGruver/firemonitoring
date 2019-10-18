@@ -20,6 +20,9 @@ class DistrictObject extends Model
     public function object(){
         return $this->hasOne('App\MonitoringObject','id','object_id');
     }
+    public function objectFull(){
+        return $this->hasOne('App\MonitoringObject','id','object_id')->with(['raion', 'btifiles', 'mediafiles', 'district']);
+    }
 
     public function district(){
         return $this->hasOne('App\District','id','district_id');

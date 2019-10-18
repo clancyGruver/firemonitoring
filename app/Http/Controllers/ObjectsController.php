@@ -10,6 +10,7 @@ use App\Raion;
 use App\Object_Device as OD;
 use App\ObjectMediafile as OMedia;
 use App\bti_files as BTI;
+use App\DistrictUser;
 
 class ObjectsController extends Controller
 {
@@ -17,8 +18,19 @@ class ObjectsController extends Controller
         return view('admin.objects.index');
     }
 
-    public function indexJson(){
-        $items = MO::with(['raion', 'btifiles', 'mediafiles', 'district'])->get();
+    public function indexJson(Request $request){
+        if($request->user()->is_admin){
+            $items = MO::with(['raion', 'btifiles', 'mediafiles', 'district'])->get();
+        }
+        else{
+            $items = [];
+            $user_districts = DistrictUser::where('user_id',$request->user()->id)->get();
+            foreach ($user_districts as $user_district) {
+                foreach ($user_district->district->objectsFull as $monitoringObject) {
+                    $items[] = $monitoringObject->toArray()['object_full'];
+                }
+            }
+        }
         return response()->json($items);
     }
 
@@ -157,6 +169,8 @@ class ObjectsController extends Controller
     }
 
     public function limited(Request $request){
+        $ids = $request->only('objectsIds');
+        $ids = $ids['objectsIds'];
         $sensors = DB::select('
             SELECT DISTINCT(`object_id`)
             FROM `object_devices`
@@ -188,11 +202,14 @@ class ObjectsController extends Controller
             FROM `object_devices`
             WHERE `is_good` = 0
         ');
-        $func = function($obj){return $obj->object_id;};
+        $filterFunc = function($obj) use ($ids){
+            return in_array($obj->object_id, $ids);
+        };
+        $mapFunc = function($obj){ return $obj->object_id; };
         $items = [
-            'sensors' => array_map($func, $sensors),
-            'devices' => array_map($func, $devices),
-            'sp5'     => array_map($func, $sp5),
+            'sensors' => array_map($mapFunc, array_values(array_filter($sensors, $mapFunc))),
+            'devices' => array_map($mapFunc, array_values(array_filter($devices, $mapFunc))),
+            'sp5'     => array_map($mapFunc, array_values(array_filter($sp5, $mapFunc))),
         ];
         return response()->json($items);
     }

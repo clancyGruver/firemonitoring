@@ -15,7 +15,7 @@ class WiresController extends Controller
         $params['created_user_id'] = $request->header('x-user');
         $params['object_device_id'] = $data['object_device_id'];
         foreach ($data['wire_data'] as $key => $value) {
-            if($key == 'type') continue;
+            //if($key == 'type') continue;
             $params[$key] = $value;
         }
         $obj = new Wire($params);
@@ -45,9 +45,8 @@ class WiresController extends Controller
         return response()->json($obj);
     }
 
-    public function deleteJson($id, Request $request){
-        $obj = Wire::find($id)->delete();
-
-        return response()->json($obj);
+    public function deleteJson($id){
+        Wire::where('id',$id)->delete();
+        return response(200);
     }
 }

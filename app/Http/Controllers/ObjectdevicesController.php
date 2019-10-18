@@ -37,7 +37,8 @@ class ObjectdevicesController extends Controller
         $params['created_user_id'] = $request->header('x-user');
         $params['object_id'] = $data['object_id'];
         $params['device_id'] = $data['device_id'];
-        $params['setup_year'] = $data['setup_year'];
+        if( isset($data['setup_year']) && $data['setup_year'] )
+            $params['setup_year'] = $data['setup_year'];
         if(isset($data['parent_id']) && $data['parent_id']){
             $params['parent_id'] = $data['parent_id'];
         }
@@ -67,7 +68,13 @@ class ObjectdevicesController extends Controller
     }
 
     public function deleteJson($id, Request $request){
-        OD::find($id)->delete();
+        $obj = OD::find($id);
+        if($obj->tbl_name == 'App\device_aps'){
+            foreach ($obj->wires as $wire) {
+                $wire->delete();
+            }
+        }
+        $obj->delete();
     }
 
     public function isgood($id, Request $request){
