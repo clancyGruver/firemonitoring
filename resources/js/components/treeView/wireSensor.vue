@@ -46,10 +46,8 @@
 							<th scope="col">Модель</th>
 							<th scope="col">Наименование</th>
 							<th scope="col">Этаж</th>
-							<th scope="col">Кабинет</th>
-							<th scope="col">Соответствие СП5</th>
-							<th scope="col">Исправность</th>
-							<th scope="col">Комментарий</th>
+							<th scope="col">СП5</th>
+							<th scope="col">Испр</th>
 							<th scope="col"></th>
 						</tr>
 					</thead>
@@ -76,7 +74,6 @@
 							</td>
 							<td>{{ sensor.name }}</td>
 							<td>{{ sensor.floor }}</td>
-							<td>{{ sensor.cabinet_name }}</td>
 							<td>
 								<i
 									class="fas"
@@ -96,9 +93,6 @@
 										: 'text-danger fa-times'
 									"
 								></i>
-							</td>
-							<td>
-								{{ sensor.comment }}
 							</td>
 							<td>
 								<router-link

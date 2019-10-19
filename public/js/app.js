@@ -4803,6 +4803,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.map = L.map(this.containerName, {
+        fullscreenControl: true,
         crs: L.CRS.Simple,
         minZoom: 1,
         maxZoom: 3,
@@ -8939,12 +8940,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -13936,6 +13931,26 @@ exports = module.exports = __webpack_require__(/*! ../../../css-loader/lib/css-b
 
 // module
 exports.push([module.i, ".autocomplete-input{border:1px solid #eee;border-radius:8px;width:100%;padding:12px 12px 12px 48px;box-sizing:border-box;position:relative;font-size:16px;line-height:1.5;flex:1;background-color:#eee;background-image:url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTEiIGN5PSIxMSIgcj0iOCIvPjxwYXRoIGQ9Ik0yMSAyMWwtNC00Ii8+PC9zdmc+\");background-repeat:no-repeat;background-position:12px}.autocomplete-input:focus,.autocomplete-input[aria-expanded=true]{border-color:rgba(0,0,0,.12);background-color:#fff;outline:none;box-shadow:0 2px 2px rgba(0,0,0,.16)}[data-position=below] .autocomplete-input[aria-expanded=true]{border-bottom-color:transparent;border-radius:8px 8px 0 0}[data-position=above] .autocomplete-input[aria-expanded=true]{border-top-color:transparent;border-radius:0 0 8px 8px;z-index:2}.autocomplete[data-loading=true]:after{content:\"\";border:3px solid rgba(0,0,0,.12);border-right-color:rgba(0,0,0,.48);border-radius:100%;width:20px;height:20px;position:absolute;right:12px;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);-webkit-animation:rotate 1s linear infinite;animation:rotate 1s linear infinite}.autocomplete-result-list{margin:0;border:1px solid rgba(0,0,0,.12);padding:0;box-sizing:border-box;max-height:296px;overflow-y:auto;background:#fff;list-style:none;box-shadow:0 2px 2px rgba(0,0,0,.16)}[data-position=below] .autocomplete-result-list{margin-top:-1px;border-top-color:transparent;border-radius:0 0 8px 8px;padding-bottom:8px}[data-position=above] .autocomplete-result-list{margin-bottom:-1px;border-bottom-color:transparent;border-radius:8px 8px 0 0;padding-top:8px}.autocomplete-result{cursor:default;padding:12px 12px 12px 48px;background-image:url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjY2NjIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTEiIGN5PSIxMSIgcj0iOCIvPjxwYXRoIGQ9Ik0yMSAyMWwtNC00Ii8+PC9zdmc+\");background-repeat:no-repeat;background-position:12px}.autocomplete-result:hover,.autocomplete-result[aria-selected=true]{background-color:rgba(0,0,0,.06)}@-webkit-keyframes rotate{0%{-webkit-transform:translateY(-50%) rotate(0deg);transform:translateY(-50%) rotate(0deg)}to{-webkit-transform:translateY(-50%) rotate(359deg);transform:translateY(-50%) rotate(359deg)}}@keyframes rotate{0%{-webkit-transform:translateY(-50%) rotate(0deg);transform:translateY(-50%) rotate(0deg)}to{-webkit-transform:translateY(-50%) rotate(359deg);transform:translateY(-50%) rotate(359deg)}}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/leaflet-fullscreen/dist/leaflet.fullscreen.css":
+/*!*****************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/postcss-loader/src??ref--6-2!./node_modules/leaflet-fullscreen/dist/leaflet.fullscreen.css ***!
+  \*****************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var escape = __webpack_require__(/*! ../../css-loader/lib/url/escape.js */ "./node_modules/css-loader/lib/url/escape.js");
+exports = module.exports = __webpack_require__(/*! ../../css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".leaflet-control-fullscreen a {\n  background:#fff url(" + escape(__webpack_require__(/*! ./fullscreen.png */ "./node_modules/leaflet-fullscreen/dist/fullscreen.png")) + ") no-repeat 0 0;\n  background-size:26px 52px;\n  }\n  .leaflet-touch .leaflet-control-fullscreen a {\n    background-position: 2px 2px;\n    }\n  .leaflet-fullscreen-on .leaflet-control-fullscreen a {\n    background-position:0 -26px;\n    }\n  .leaflet-touch.leaflet-fullscreen-on .leaflet-control-fullscreen a {\n    background-position: 2px -24px;\n    }\n\n/* Do not combine these two rules; IE will break. */\n.leaflet-container:-webkit-full-screen {\n  width:100%!important;\n  height:100%!important;\n  }\n.leaflet-container.leaflet-fullscreen-on {\n  width:100%!important;\n  height:100%!important;\n  }\n\n.leaflet-pseudo-fullscreen {\n  position:fixed!important;\n  width:100%!important;\n  height:100%!important;\n  top:0!important;\n  left:0!important;\n  z-index:99999;\n  }\n\n@media\n  (-webkit-min-device-pixel-ratio:2),\n  (min-resolution:192dpi) {\n    .leaflet-control-fullscreen a {\n      background-image:url(" + escape(__webpack_require__(/*! ./fullscreen@2x.png */ "./node_modules/leaflet-fullscreen/dist/fullscreen@2x.png")) + ");\n    }\n  }\n", ""]);
 
 // exports
 
@@ -25129,6 +25144,221 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
+
+/***/ }),
+
+/***/ "./node_modules/leaflet-fullscreen/dist/Leaflet.fullscreen.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/leaflet-fullscreen/dist/Leaflet.fullscreen.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+L.Control.Fullscreen = L.Control.extend({
+    options: {
+        position: 'topleft',
+        title: {
+            'false': 'View Fullscreen',
+            'true': 'Exit Fullscreen'
+        }
+    },
+
+    onAdd: function (map) {
+        var container = L.DomUtil.create('div', 'leaflet-control-fullscreen leaflet-bar leaflet-control');
+
+        this.link = L.DomUtil.create('a', 'leaflet-control-fullscreen-button leaflet-bar-part', container);
+        this.link.href = '#';
+
+        this._map = map;
+        this._map.on('fullscreenchange', this._toggleTitle, this);
+        this._toggleTitle();
+
+        L.DomEvent.on(this.link, 'click', this._click, this);
+
+        return container;
+    },
+
+    _click: function (e) {
+        L.DomEvent.stopPropagation(e);
+        L.DomEvent.preventDefault(e);
+        this._map.toggleFullscreen(this.options);
+    },
+
+    _toggleTitle: function() {
+        this.link.title = this.options.title[this._map.isFullscreen()];
+    }
+});
+
+L.Map.include({
+    isFullscreen: function () {
+        return this._isFullscreen || false;
+    },
+
+    toggleFullscreen: function (options) {
+        var container = this.getContainer();
+        if (this.isFullscreen()) {
+            if (options && options.pseudoFullscreen) {
+                this._disablePseudoFullscreen(container);
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else {
+                this._disablePseudoFullscreen(container);
+            }
+        } else {
+            if (options && options.pseudoFullscreen) {
+                this._enablePseudoFullscreen(container);
+            } else if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.mozRequestFullScreen) {
+                container.mozRequestFullScreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            } else {
+                this._enablePseudoFullscreen(container);
+            }
+        }
+
+    },
+
+    _enablePseudoFullscreen: function (container) {
+        L.DomUtil.addClass(container, 'leaflet-pseudo-fullscreen');
+        this._setFullscreen(true);
+        this.fire('fullscreenchange');
+    },
+
+    _disablePseudoFullscreen: function (container) {
+        L.DomUtil.removeClass(container, 'leaflet-pseudo-fullscreen');
+        this._setFullscreen(false);
+        this.fire('fullscreenchange');
+    },
+
+    _setFullscreen: function(fullscreen) {
+        this._isFullscreen = fullscreen;
+        var container = this.getContainer();
+        if (fullscreen) {
+            L.DomUtil.addClass(container, 'leaflet-fullscreen-on');
+        } else {
+            L.DomUtil.removeClass(container, 'leaflet-fullscreen-on');
+        }
+        this.invalidateSize();
+    },
+
+    _onFullscreenChange: function (e) {
+        var fullscreenElement =
+            document.fullscreenElement ||
+            document.mozFullScreenElement ||
+            document.webkitFullscreenElement ||
+            document.msFullscreenElement;
+
+        if (fullscreenElement === this.getContainer() && !this._isFullscreen) {
+            this._setFullscreen(true);
+            this.fire('fullscreenchange');
+        } else if (fullscreenElement !== this.getContainer() && this._isFullscreen) {
+            this._setFullscreen(false);
+            this.fire('fullscreenchange');
+        }
+    }
+});
+
+L.Map.mergeOptions({
+    fullscreenControl: false
+});
+
+L.Map.addInitHook(function () {
+    if (this.options.fullscreenControl) {
+        this.fullscreenControl = new L.Control.Fullscreen(this.options.fullscreenControl);
+        this.addControl(this.fullscreenControl);
+    }
+
+    var fullscreenchange;
+
+    if ('onfullscreenchange' in document) {
+        fullscreenchange = 'fullscreenchange';
+    } else if ('onmozfullscreenchange' in document) {
+        fullscreenchange = 'mozfullscreenchange';
+    } else if ('onwebkitfullscreenchange' in document) {
+        fullscreenchange = 'webkitfullscreenchange';
+    } else if ('onmsfullscreenchange' in document) {
+        fullscreenchange = 'MSFullscreenChange';
+    }
+
+    if (fullscreenchange) {
+        var onFullscreenChange = L.bind(this._onFullscreenChange, this);
+
+        this.whenReady(function () {
+            L.DomEvent.on(document, fullscreenchange, onFullscreenChange);
+        });
+
+        this.on('unload', function () {
+            L.DomEvent.off(document, fullscreenchange, onFullscreenChange);
+        });
+    }
+});
+
+L.control.fullscreen = function (options) {
+    return new L.Control.Fullscreen(options);
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/leaflet-fullscreen/dist/fullscreen.png":
+/*!*************************************************************!*\
+  !*** ./node_modules/leaflet-fullscreen/dist/fullscreen.png ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "/images/vendor/leaflet-fullscreen/dist/fullscreen.png?ddb8362e333c8f3225da9d578d00c14c";
+
+/***/ }),
+
+/***/ "./node_modules/leaflet-fullscreen/dist/fullscreen@2x.png":
+/*!****************************************************************!*\
+  !*** ./node_modules/leaflet-fullscreen/dist/fullscreen@2x.png ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "/images/vendor/leaflet-fullscreen/dist/fullscreen@2x.png?473ee081160a469c95199d70e78f55fa";
+
+/***/ }),
+
+/***/ "./node_modules/leaflet-fullscreen/dist/leaflet.fullscreen.css":
+/*!*********************************************************************!*\
+  !*** ./node_modules/leaflet-fullscreen/dist/leaflet.fullscreen.css ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../css-loader??ref--6-1!../../postcss-loader/src??ref--6-2!./leaflet.fullscreen.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/leaflet-fullscreen/dist/leaflet.fullscreen.css");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
 
 /***/ }),
 
@@ -71844,8 +72074,6 @@ var render = function() {
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(sensor.floor))]),
                 _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(sensor.cabinet_name))]),
-                _vm._v(" "),
                 _c("td", [
                   _c("i", {
                     staticClass: "fas",
@@ -71862,14 +72090,6 @@ var render = function() {
                       ? "text-success fa-check"
                       : "text-danger fa-times"
                   })
-                ]),
-                _vm._v(" "),
-                _c("td", [
-                  _vm._v(
-                    "\n\t\t\t\t\t\t\t" +
-                      _vm._s(sensor.comment) +
-                      "\n\t\t\t\t\t\t"
-                  )
                 ]),
                 _vm._v(" "),
                 _c(
@@ -71932,13 +72152,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Этаж")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Кабинет")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("СП5")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Соответствие СП5")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Исправность")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Комментарий")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Испр")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } })
       ])
@@ -88443,11 +88659,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! leaflet/dist/leaflet.css */ "./node_modules/leaflet/dist/leaflet.css");
 /* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var vue_awesome_notifications__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue-awesome-notifications */ "./node_modules/vue-awesome-notifications/dist/index.js");
-/* harmony import */ var vue_awesome_notifications__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vue_awesome_notifications__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var vue_js_modal__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue-js-modal */ "./node_modules/vue-js-modal/dist/index.js");
-/* harmony import */ var vue_js_modal__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vue_js_modal__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _components_main_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/main.vue */ "./resources/js/components/main.vue");
+/* harmony import */ var leaflet_fullscreen_dist_leaflet_fullscreen_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! leaflet-fullscreen/dist/leaflet.fullscreen.css */ "./node_modules/leaflet-fullscreen/dist/leaflet.fullscreen.css");
+/* harmony import */ var leaflet_fullscreen_dist_leaflet_fullscreen_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(leaflet_fullscreen_dist_leaflet_fullscreen_css__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var leaflet_fullscreen_dist_Leaflet_fullscreen__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! leaflet-fullscreen/dist/Leaflet.fullscreen */ "./node_modules/leaflet-fullscreen/dist/Leaflet.fullscreen.js");
+/* harmony import */ var leaflet_fullscreen_dist_Leaflet_fullscreen__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(leaflet_fullscreen_dist_Leaflet_fullscreen__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var vue_awesome_notifications__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue-awesome-notifications */ "./node_modules/vue-awesome-notifications/dist/index.js");
+/* harmony import */ var vue_awesome_notifications__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(vue_awesome_notifications__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var vue_js_modal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue-js-modal */ "./node_modules/vue-js-modal/dist/index.js");
+/* harmony import */ var vue_js_modal__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(vue_js_modal__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _components_main_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/main.vue */ "./resources/js/components/main.vue");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
@@ -88462,7 +88682,9 @@ leaflet__WEBPACK_IMPORTED_MODULE_4___default.a.Icon.Default.mergeOptions({
   iconRetinaUrl: __webpack_require__(/*! leaflet/dist/images/marker-icon-2x.png */ "./node_modules/leaflet/dist/images/marker-icon-2x.png"),
   iconUrl: __webpack_require__(/*! leaflet/dist/images/marker-icon.png */ "./node_modules/leaflet/dist/images/marker-icon.png"),
   shadowUrl: __webpack_require__(/*! leaflet/dist/images/marker-shadow.png */ "./node_modules/leaflet/dist/images/marker-shadow.png")
-}); //Awesome Notifications
+});
+
+ //Awesome Notifications
 
 
 var AWNparams = {
@@ -88474,10 +88696,10 @@ var AWNparams = {
 
 __webpack_require__(/*! vue-awesome-notifications/dist/styles/style.css */ "./node_modules/vue-awesome-notifications/dist/styles/style.css");
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_awesome_notifications__WEBPACK_IMPORTED_MODULE_6___default.a, AWNparams); //Modal
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_awesome_notifications__WEBPACK_IMPORTED_MODULE_8___default.a, AWNparams); //Modal
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_js_modal__WEBPACK_IMPORTED_MODULE_7___default.a, {
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_js_modal__WEBPACK_IMPORTED_MODULE_9___default.a, {
   dialog: true
 }); //components
 
@@ -88485,7 +88707,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_js_modal__WEBPACK_IMPORTED_MO
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
   components: {
-    App: _components_main_vue__WEBPACK_IMPORTED_MODULE_8__["default"]
+    App: _components_main_vue__WEBPACK_IMPORTED_MODULE_10__["default"]
   },
   store: _store__WEBPACK_IMPORTED_MODULE_1__["store"],
   router: _router__WEBPACK_IMPORTED_MODULE_2__["router"],

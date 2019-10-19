@@ -101,6 +101,7 @@
 	    	},
 	    	mapInit(){
 				this.map = L.map(this.containerName, {
+					fullscreenControl: true,
 					crs: L.CRS.Simple,
 					minZoom: 1,
 					maxZoom: 3,
