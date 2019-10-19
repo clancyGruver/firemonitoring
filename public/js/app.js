@@ -3028,6 +3028,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     deviceData: {
@@ -3039,7 +3040,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      searchString: ""
+      searchString: "",
+      count: null
     };
   },
   methods: {
@@ -3049,7 +3051,8 @@ __webpack_require__.r(__webpack_exports__);
         object_id: this.$route.params.id,
         parent_id: this.deviceData.id,
         device_id: device.id,
-        tbl_name: 'App\\device_alert'
+        tbl_name: 'App\\device_alert',
+        count: this.count
       };
       this.$store.dispatch('ADD_OBJECT_DEVICE', result);
       this.$emit('end-adding');
@@ -62627,6 +62630,35 @@ var render = function() {
                 }
               }),
               _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model.number",
+                    value: _vm.count,
+                    expression: "count",
+                    modifiers: { number: true }
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: {
+                  type: "number",
+                  placeholder: "Количество оповещателей"
+                },
+                domProps: { value: _vm.count },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.count = _vm._n($event.target.value)
+                  },
+                  blur: function($event) {
+                    return _vm.$forceUpdate()
+                  }
+                }
+              }),
+              _vm._v(" "),
               _c(
                 "ul",
                 { staticClass: "list-unstyled" },
@@ -94745,7 +94777,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               commit = _ref33.commit;
               p = _objectSpread({}, payload);
               axios.post('/api/objectdevice/store', p).then(function (response) {
-                return commit('ADD_OBJECT_DEVICE', response.data);
+                var resp = response.data;
+
+                if (Array.isArray(resp)) {
+                  resp.map(function (device) {
+                    return commit('ADD_OBJECT_DEVICE', device);
+                  });
+                } else {
+                  commit('ADD_OBJECT_DEVICE', resp);
+                }
               });
 
             case 3:

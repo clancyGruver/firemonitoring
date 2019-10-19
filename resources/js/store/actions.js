@@ -280,7 +280,14 @@ export default{
     async ADD_OBJECT_DEVICE({commit}, payload){
       const p = {...payload}
       axios.post('/api/objectdevice/store',p)
-        .then(response => commit('ADD_OBJECT_DEVICE',response.data) );
+        .then(response => {
+          const resp = response.data;
+          if(Array.isArray(resp)){
+            resp.map( device => commit('ADD_OBJECT_DEVICE',device) );
+          } else {
+            commit('ADD_OBJECT_DEVICE',resp);
+          }
+      });
     },
     async TOGGLE_DEVICE_SHOW({commit,getters}, payload){
       commit('TOGGLE_DEVICE_SHOW', {payload, getters});

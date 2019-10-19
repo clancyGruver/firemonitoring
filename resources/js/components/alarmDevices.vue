@@ -6,6 +6,7 @@
 					<h5 class="card-title">Добавить извещатель</h5>
             <div class="row">
               <input class="form-control" type="text" v-model="searchString" placeholder="Поиск" >
+              <input class="form-control" type="number" v-model.number="count" placeholder="Количество оповещателей" >
               <ul class="list-unstyled">
                 <li v-for="device in availDevs" :key="device.id">
                   <span class="h2 font-weight-bold mb-0" @click="addDevice(device)">{{device.name}}</span>
@@ -29,6 +30,7 @@
 		data: function () {
 			return {
         searchString:"",
+        count:null,
 			}
 		},
 		methods: {
@@ -38,7 +40,8 @@
           object_id: this.$route.params.id,
           parent_id: this.deviceData.id,
           device_id:device.id,
-          tbl_name : 'App\\device_alert'
+          tbl_name : 'App\\device_alert',
+          count: this.count,
         }
 				this.$store.dispatch('ADD_OBJECT_DEVICE', result);
 				this.$emit('end-adding')

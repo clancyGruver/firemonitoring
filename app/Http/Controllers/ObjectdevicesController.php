@@ -43,17 +43,23 @@ class ObjectdevicesController extends Controller
             $params['parent_id'] = $data['parent_id'];
         }
         $params['tbl_name'] = $data['tbl_name'];
+        $countElements = isset($data['count']) && $data['count'] ? $data['count'] : 1;
+        unset($data['count']);
+        $result = [];
+        for($i=0; $i< $countElements; $i++){
+            $obj = new OD($params);
+            $obj->save();
+            $id = $obj->id;
+            $result[] = OD::where('id', $id)
+                    ->with('wires')
+                    ->with('alerts')
+                    ->with('devicable')
+                    ->first();
+        }
+        if($countElements == 1)
+            $result = $result[0];
 
-        $obj = new OD($params);
-        $obj->save();
-        $id = $obj->id;
-        $obj = OD::where('id', $id)
-                ->with('wires')
-                ->with('alerts')
-                ->with('devicable')
-                ->first();
-
-        return response()->json($obj);
+        return response()->json($result);
     }
 
     public function getJson($id, Request $request){
