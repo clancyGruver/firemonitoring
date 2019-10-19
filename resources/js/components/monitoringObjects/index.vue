@@ -40,6 +40,12 @@
 							v-model.trim="adressFilter"
 							placeholder="Сортировка по адресу"
 						>
+						<input
+							type="text"
+							class="form-control"
+							v-model.trim="nameFilter"
+							placeholder="Сортировка по названию"
+						>
 					</div>
 	        		<div class="col">
 						<select class="form-control" id="coupling" name="coupling" v-model="raionFilter">
@@ -174,6 +180,7 @@ export default {
 			],
 			raionFilter: -1,
 			adressFilter: '',
+			nameFilter: '',
 			center: {lat: 55.198016, lng: 61.359764},
 			showCalendarWork: false,
 			calendarWorkObject: {},
@@ -212,6 +219,10 @@ export default {
 			if(this.adressFilter.trim() !== ''){
 				const adressFilterTrimmed = this.adressFilter.trim().toLowerCase();
 				objects = objects.filter( object => object.address.toLowerCase().includes(adressFilterTrimmed));
+			}
+			if(this.nameFilter.trim() !== ''){
+				const nameFilterTrimmed = this.nameFilter.trim().toLowerCase();
+				objects = objects.filter( object => object.name.toLowerCase().includes(nameFilterTrimmed));
 			}
 			return objects;
 		},

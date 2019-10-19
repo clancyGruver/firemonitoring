@@ -6584,6 +6584,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 //import deviceComponent from './device-component.vue';
 
 
@@ -6613,6 +6619,7 @@ __webpack_require__.r(__webpack_exports__);
       }],
       raionFilter: -1,
       adressFilter: '',
+      nameFilter: '',
       center: {
         lat: 55.198016,
         lng: 61.359764
@@ -6660,6 +6667,13 @@ __webpack_require__.r(__webpack_exports__);
         var adressFilterTrimmed = this.adressFilter.trim().toLowerCase();
         objects = objects.filter(function (object) {
           return object.address.toLowerCase().includes(adressFilterTrimmed);
+        });
+      }
+
+      if (this.nameFilter.trim() !== '') {
+        var nameFilterTrimmed = this.nameFilter.trim().toLowerCase();
+        objects = objects.filter(function (object) {
+          return object.name.toLowerCase().includes(nameFilterTrimmed);
         });
       }
 
@@ -67384,6 +67398,32 @@ var render = function() {
                       return
                     }
                     _vm.adressFilter = $event.target.value.trim()
+                  },
+                  blur: function($event) {
+                    return _vm.$forceUpdate()
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model.trim",
+                    value: _vm.nameFilter,
+                    expression: "nameFilter",
+                    modifiers: { trim: true }
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: { type: "text", placeholder: "Сортировка по названию" },
+                domProps: { value: _vm.nameFilter },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.nameFilter = $event.target.value.trim()
                   },
                   blur: function($event) {
                     return _vm.$forceUpdate()
