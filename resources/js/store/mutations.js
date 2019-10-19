@@ -119,7 +119,13 @@ export default{
     ADD_OBJECT_DEVICE: (state, payload) => {
       const idx = state.current_object.devices.length;
       payload.isShow = false;
-      Vue.set(state.current_object.devices, idx, payload);
+      if(payload.parent_id){
+        const idx = state.current_object.devices.findIndex( dev => dev.id == payload.parent_id);
+        const alertIdx = state.current_object.devices[idx].alerts.length;
+        state.current_object.devices[idx].alerts.splice(alertIdx, 0, payload);
+      } else {
+        Vue.set(state.current_object.devices, idx, payload);
+      }
     },
     DELETE_OBJECT_DEVICE: (state, payload) => {
       const idx = state.current_object.devices.findIndex(obj => obj && (obj.id == payload) );

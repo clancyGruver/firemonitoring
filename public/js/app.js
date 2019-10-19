@@ -95857,7 +95857,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   ADD_OBJECT_DEVICE: function ADD_OBJECT_DEVICE(state, payload) {
     var idx = state.current_object.devices.length;
     payload.isShow = false;
-    vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.current_object.devices, idx, payload);
+
+    if (payload.parent_id) {
+      var _idx = state.current_object.devices.findIndex(function (dev) {
+        return dev.id == payload.parent_id;
+      });
+
+      var alertIdx = state.current_object.devices[_idx].alerts.length;
+
+      state.current_object.devices[_idx].alerts.splice(alertIdx, 0, payload);
+    } else {
+      vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.current_object.devices, idx, payload);
+    }
   },
   DELETE_OBJECT_DEVICE: function DELETE_OBJECT_DEVICE(state, payload) {
     var idx = state.current_object.devices.findIndex(function (obj) {
