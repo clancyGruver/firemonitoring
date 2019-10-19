@@ -20,6 +20,7 @@ class WiresController extends Controller
         }
         $obj = new Wire($params);
         $obj->save();
+        $obj = Wire::where('id', $obj->id)->with('sensors')->first();
 
         return response()->json($obj);
     }

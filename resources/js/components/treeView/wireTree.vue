@@ -13,7 +13,7 @@
 			</li>
 			<li v-for="(wire, wireIndex) in wires" :key="wireIndex">
 				<h3 class="pl-4 pointer">
-					<span @click="toggleWire(wireIndex)">
+					<span @click="toggleWire(wireIndex,wire)">
 						<span v-if="wire.isShow">-</span>
 						<span v-else>+</span>
 						{{ wire.description }}
@@ -69,7 +69,8 @@
 				  this.$store.dispatch('DELETE_WIRE', {object_device_id:this.ObjectDeviceId, id:wire.id});
 				}
 			},
-			toggleWire(wireIdx){
+			toggleWire(wireIdx,wire){
+				console.log(wire);
 				this.$store.commit('TOGGLE_WIRE_SHOW', {odid:this.ObjectDeviceId, wireIdx});
 			},
 		},

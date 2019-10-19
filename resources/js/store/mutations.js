@@ -146,8 +146,9 @@ export default{
     ADD_WIRE: (state, payload) => {
       const idx = state.current_object.devices.findIndex(obj => obj.id == payload.odid);
       const wireIdx = state.current_object.devices[idx].wires.length;
-      Vue.set(state.current_object.devices[idx].wires, wireIdx, payload.wire);
-      //state.current_object.devices[idx].wires.push(payload.wire);
+      //Vue.set(state.current_object.devices[idx].wires, wireIdx, payload.wire);
+      state.current_object.devices[idx].wires.splice(wireIdx, 0, payload.wire);
+      Vue.set(state.current_object.devices[idx].wires[wireIdx+1], sensors, []);
     },
     EDIT_WIRE:(state, payload) => {
       const idx = state.current_object.devices.findIndex(obj => obj && (obj.id == payload.object_device_id));
@@ -163,6 +164,9 @@ export default{
       const p = {...payload}
       const device_idx = state.current_object.devices.findIndex(obj => obj && (obj.id == p.odid) );
       const currentWire = state.current_object.devices[device_idx].wires[p.wireIdx];
+      if(!currentWire.isShow){
+        Vue.set(currentWire,'isShow',false);
+      }
       currentWire.isShow = !currentWire.isShow;
     },
     SET_SENSORS: (state, payload) => {

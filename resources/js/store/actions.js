@@ -293,8 +293,7 @@ export default{
       .then(
         response => {
           const data = {};
-          payload.wire.id = response.data.id;
-          payload.wire.sensors = [];
+          payload.wire = response.data;
           data.wire = payload.wire;
           data.odid = payload.odid;
           commit('ADD_WIRE', data);
