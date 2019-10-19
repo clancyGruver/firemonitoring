@@ -107,7 +107,7 @@ class ObjectsController extends Controller
             'contact_phone' => 'required|max:255',
         ]);
         $params = $request->except('_token');
-        $params['project_isset'] = isset($params['project_isset']) ? 1 : 0;
+        $params['project_isset'] = isset($params['project_isset']) && $params['project_isset'] ? $params['project_isset'] : 0;
         $obj = new MO($params);
         $obj->created_user_id = $request->header('x-user');
         $obj->save();

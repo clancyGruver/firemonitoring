@@ -1,0 +1,2 @@
+TODOS:
+- objects.soue_type => tinyint(1) UNSIGNED

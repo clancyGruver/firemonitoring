@@ -183,7 +183,7 @@ export default {
                 contact_phone: '',
                 director_name: '',
                 director_phone: '',
-                project_isset: false,
+                project_isset: 0,
                 project_cipher: '',
                 project_year: 0,
                 soue_type: 0,
