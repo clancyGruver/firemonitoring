@@ -6,7 +6,7 @@
 				<div class="row">
 					<div class="col">
                         <ul class="list-unstyled">
-                            <li v-for="device in availAntennas.devices">
+                            <li v-for="device in availAntennas.devices" :key="device.id">
                                 <span class="h2 font-weight-bold mb-0" @click="addDevice(device)">{{device.name}}</span>
                             </li>
                         </ul>

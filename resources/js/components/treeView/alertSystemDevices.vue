@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<antenna-device v-show="atennaEdit" :deviceData="deviceData" v-on:end-adding="atennaEdit=false"/>
 		<ul class="list-unstyled">
 			<li  v-for="(item, itemIdx) in items" :key="itemIdx">
 				<h4 class="pl-4 ml-4">
@@ -40,36 +41,36 @@
 </template>
 
 <script>
-	export default
-	{
-		components: {
-		},
-		props: ['items'],
-		data: function () {
-			return {
+import antennaDevice from '../editForms/antenna';
+export default
+{
+	components: {antennaDevice},
+	props: ['items','typeIdx'],
+	data: function () {
+		return {
+			atennaEdit: false,
+		}
+	},
+	methods: {
+		deleteDevice(device){
+			if(confirm(`Вы действительно хотите удалить ${device.name}`)){
+				this.$store.dispatch('DELETE_OBJECT_DEVICE', device.id);
 			}
 		},
-		methods: {
-			deleteDevice(device){
-				if(confirm(`Вы действительно хотите удалить ${device.name}`)){
-				  this.$store.dispatch('DELETE_OBJECT_DEVICE', device.id);
-				}
-			},
-			isReglamented(deviceId){ return !this.notReglamented.includes(deviceId) },
-			setMarker(device){
-				const typeIdx = 'App\\device_system_voice_alert';
-				this.$store.commit('TOGGLE_MAP');
-				this.$store.commit('SET_MAP_ACTIVE_ALARM',{
-					typeIdx:typeIdx,
-					alertId:device.id,
-					deviceId:device.parent_device_id,
-				});
-			},
+		isReglamented(deviceId){ return !this.notReglamented.includes(deviceId) },
+		setMarker(device){
+			this.$store.commit('TOGGLE_MAP');
+			this.$store.commit('SET_MAP_ACTIVE_ALARM',{
+				typeIdx: this.typeIdx,
+				alertId: device.id,
+				deviceId: device.parent_device_id,
+			});
 		},
-		computed:{
-			notReglamented(){return this.$store.getters.UNREGLAMENTED_DEVICES},
-		}
+	},
+	computed:{
+		notReglamented(){return this.$store.getters.UNREGLAMENTED_DEVICES},
 	}
+}
 </script>
 
 <style scoped>

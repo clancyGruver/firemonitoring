@@ -8688,6 +8688,213 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _editForms_antenna__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../editForms/antenna */ "./resources/js/components/editForms/antenna.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    antennaDevice: _editForms_antenna__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  props: ['items', 'typeIdx'],
+  data: function data() {
+    return {
+      atennaEdit: false
+    };
+  },
+  methods: {
+    deleteDevice: function deleteDevice(device) {
+      if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(device.name))) {
+        this.$store.dispatch('DELETE_OBJECT_DEVICE', device.id);
+      }
+    },
+    isReglamented: function isReglamented(deviceId) {
+      return !this.notReglamented.includes(deviceId);
+    },
+    setMarker: function setMarker(device) {
+      this.$store.commit('TOGGLE_MAP');
+      this.$store.commit('SET_MAP_ACTIVE_ALARM', {
+        typeIdx: this.typeIdx,
+        alertId: device.id,
+        deviceId: device.parent_device_id
+      });
+    }
+  },
+  computed: {
+    notReglamented: function notReglamented() {
+      return this.$store.getters.UNREGLAMENTED_DEVICES;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _antennaParams__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./antennaParams */ "./resources/js/components/treeView/antenna/antennaParams.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    antennaParams: _antennaParams__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    return {
+      antennaParams: {},
+      errors: [],
+      device: null,
+      tbl_name: 'App\\device_antenna'
+    };
+  },
+  methods: {
+    check: function check() {
+      var res = true;
+      this.errors = [];
+
+      if (!this.antennaParams.setup_place) {
+        this.errors.push('Требуется указать место установки.');
+        res = false;
+      }
+
+      if (!this.antennaParams.mast_isset) {
+        this.errors.push('Требуется указать наличие мачты.');
+        res = false;
+      }
+
+      if (!this.device) {
+        this.errors.push('Не выбрана антенна.');
+        res = false;
+      }
+
+      return res;
+    },
+    add: function add(device) {
+      if (!check()) return false;
+      this.cancel();
+      /*this.$store.dispatch('NEW_DISTRICT',{name: this.name})
+      			.then(() => this.cancel())
+      			.catch(error => {
+      				this.$aws.alert('При добавлении участка произошли ошибки');
+      				console.log(error);
+      			});*/
+    },
+    cancel: function cancel() {
+      this.name = "";
+      this.$modal.hide('add-antenna');
+    }
+  },
+  computed: {
+    availAntennas: function availAntennas() {
+      return this.$store.getters.AVAILABLE_DEVICES[this.tbl_name];
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -8730,35 +8937,44 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  components: {},
-  props: ['items'],
+  props: {
+    deviceData: {
+      type: Object,
+      "default": function _default() {}
+    }
+  },
   data: function data() {
-    return {};
+    return {
+      errors: []
+    };
   },
   methods: {
-    deleteDevice: function deleteDevice(device) {
-      if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(device.name))) {
-        this.$store.dispatch('DELETE_OBJECT_DEVICE', device.id);
-      }
-    },
-    isReglamented: function isReglamented(deviceId) {
-      return !this.notReglamented.includes(deviceId);
-    },
-    setMarker: function setMarker(device) {
-      var typeIdx = 'App\\device_system_voice_alert';
-      this.$store.commit('TOGGLE_MAP');
-      this.$store.commit('SET_MAP_ACTIVE_ALARM', {
-        typeIdx: typeIdx,
-        alertId: device.id,
-        deviceId: device.parent_device_id
+    save: function save() {
+      if (!this.check()) return false;
+      console.log(this.deviceData);
+      this.$store.dispatch('UPDATE_OBJECT_DEVICE_PARAMS', {
+        type: 'antenna',
+        data: this.deviceData
       });
+    },
+    check: function check() {
+      var res = true;
+      this.errors = [];
+
+      if (!this.deviceData.setup_place) {
+        this.errors.push('Требуется указать место установки.');
+        res = false;
+      }
+
+      if (!this.deviceData.mast_isset) {
+        this.errors.push('Требуется указать наличие мачты.');
+        res = false;
+      }
+
+      return res;
     }
   },
-  computed: {
-    notReglamented: function notReglamented() {
-      return this.$store.getters.UNREGLAMENTED_DEVICES;
-    }
-  }
+  computed: {}
 });
 
 /***/ }),
@@ -8778,7 +8994,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wireTree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./wireTree */ "./resources/js/components/treeView/wireTree.vue");
 /* harmony import */ var _alarmDevices__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../alarmDevices */ "./resources/js/components/alarmDevices.vue");
 /* harmony import */ var _alertSystemDevices__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./alertSystemDevices */ "./resources/js/components/treeView/alertSystemDevices.vue");
-/* harmony import */ var _editForms_antenna__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../editForms/antenna */ "./resources/js/components/editForms/antenna.vue");
+/* harmony import */ var _antenna_add_antenna__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./antenna/add-antenna */ "./resources/js/components/treeView/antenna/add-antenna.vue");
 /* harmony import */ var _editForms_rspiParams__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../editForms/rspiParams */ "./resources/js/components/editForms/rspiParams.vue");
 //
 //
@@ -8864,11 +9080,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 
- //edit params forms
 
 
 
@@ -8880,13 +9108,13 @@ __webpack_require__.r(__webpack_exports__);
     alertSystemDevices: _alertSystemDevices__WEBPACK_IMPORTED_MODULE_4__["default"],
     DatePicker: vue2_datepicker__WEBPACK_IMPORTED_MODULE_0___default.a,
     rspiParams: _editForms_rspiParams__WEBPACK_IMPORTED_MODULE_6__["default"],
-    antennaDevice: _editForms_antenna__WEBPACK_IMPORTED_MODULE_5__["default"]
+    addAntenna: _antenna_add_antenna__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   data: function data() {
     return {
       addAlarmShow: false,
       addDeviceShow: false,
-      atennaEdit: false,
+      addAntennaShow: false,
       FormMethodAllowed: ['new', 'edit'],
       ObjectDeviceId: null,
       typeIdx: null,
@@ -8897,6 +9125,15 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    addChildrenNodeHandler: function addChildrenNodeHandler(typeIdx, device) {
+      if (typeIdx === 'App\\device_system_voice_alert') {
+        this.addAlarmShow = true;
+      } else if (typeIdx === 'App\\device_rspi') {
+        this.addAntennaShow = true;
+      }
+
+      this.deviceData = device;
+    },
     dateChanged: function dateChanged(device) {
       this.$store.dispatch('SET_DEVICE_SETUP_YEAR', {
         setup_year: device.setup_year.getFullYear(),
@@ -61788,7 +62025,7 @@ var render = function() {
                   "nav nav-pills nav-justified flex-column flex-md-row"
               },
               _vm._l(_vm.availDevs, function(devClass, index) {
-                return index != "sensors"
+                return !["sensors", "antennas"].includes(index)
                   ? _c("li", { key: index, staticClass: "nav-item" }, [
                       _c(
                         "a",
@@ -61904,8 +62141,11 @@ var render = function() {
                     _c(
                       "ul",
                       { staticClass: "list-unstyled" },
-                      _vm._l(_vm.deviceCategory.devices, function(device) {
-                        return _c("li", [
+                      _vm._l(_vm.deviceCategory.devices, function(
+                        device,
+                        index
+                      ) {
+                        return _c("li", { key: index }, [
                           _c(
                             "span",
                             {
@@ -71592,86 +71832,457 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "ul",
-      { staticClass: "list-unstyled" },
-      _vm._l(_vm.items, function(item, itemIdx) {
-        return _c("li", { key: itemIdx }, [
+  return _c(
+    "div",
+    [
+      _c("antenna-device", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.atennaEdit,
+            expression: "atennaEdit"
+          }
+        ],
+        attrs: { deviceData: _vm.deviceData },
+        on: {
+          "end-adding": function($event) {
+            _vm.atennaEdit = false
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c(
+        "ul",
+        { staticClass: "list-unstyled" },
+        _vm._l(_vm.items, function(item, itemIdx) {
+          return _c("li", { key: itemIdx }, [
+            _c(
+              "h4",
+              { staticClass: "pl-4 ml-4" },
+              [
+                _c("router-link", {
+                  staticClass: "ml-2 fas pointer",
+                  class: {
+                    "fa-times-circle text-danger": !item.is_good,
+                    "fa-check-circle text-success": item.is_good
+                  },
+                  attrs: {
+                    to: {
+                      name: "objectDeviceLimitaion",
+                      params: {
+                        objectDeviceId: item.id
+                      }
+                    },
+                    tag: "i"
+                  }
+                }),
+                _vm._v(" "),
+                _c("router-link", {
+                  staticClass: "ml-2 fas pointer",
+                  class: {
+                    "fa-times-circle text-danger": !_vm.isReglamented(item.id),
+                    "fa-check-circle text-success": _vm.isReglamented(item.id)
+                  },
+                  attrs: {
+                    to: {
+                      name: "objectDeviceReglaments",
+                      params: {
+                        objectDeviceId: item.id
+                      }
+                    },
+                    tag: "i"
+                  }
+                }),
+                _vm._v("\n\t\t\t\t" + _vm._s(item.name) + "\n\t\t\t\t"),
+                _c("i", {
+                  staticClass: "ml-4 fas fa-edit text-warning pointer",
+                  on: {
+                    click: function($event) {
+                      return _vm.editDevice(item)
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("i", {
+                  staticClass: "ml-2 fas fa-times text-danger pointer",
+                  on: {
+                    click: function($event) {
+                      return _vm.deleteDevice(item)
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("i", {
+                  staticClass: "ml-2 fas fa-map-marker text-danger pointer",
+                  on: {
+                    click: function($event) {
+                      return _vm.setMarker(item)
+                    }
+                  }
+                })
+              ],
+              1
+            )
+          ])
+        }),
+        0
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=template&id=ef93dd2c&":
+/*!*******************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=template&id=ef93dd2c& ***!
+  \*******************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "modal",
+    { attrs: { name: "add-antenna", transition: "pop-out" } },
+    [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("h5", { staticClass: "card-title" }, [_vm._v("Добавить антенну")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col" }, [
+              _c(
+                "ul",
+                { staticClass: "list-unstyled" },
+                _vm._l(_vm.availAntennas.devices, function(device) {
+                  return _c("li", { key: device.id }, [
+                    _c(
+                      "span",
+                      {
+                        staticClass: "h2 font-weight-bold mb-0",
+                        on: {
+                          click: function($event) {
+                            return _vm.addDevice(device)
+                          }
+                        }
+                      },
+                      [_vm._v(_vm._s(device.name))]
+                    )
+                  ])
+                }),
+                0
+              )
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "col" },
+              [
+                _c("antenna-params", {
+                  attrs: { deviceData: _vm.antennaParams },
+                  on: {
+                    "update:deviceData": function($event) {
+                      _vm.antennaParams = $event
+                    },
+                    "update:device-data": function($event) {
+                      _vm.antennaParams = $event
+                    }
+                  }
+                })
+              ],
+              1
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "button-set" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-success",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.add($event)
+                  }
+                }
+              },
+              [_vm._v("Добавить")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-danger",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.cancel($event)
+                  }
+                }
+              },
+              [_vm._v("Отмена")]
+            )
+          ])
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=template&id=9c629b88&":
+/*!*********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=template&id=9c629b88& ***!
+  \*********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "card" }, [
+    _c("div", { staticClass: "card-header" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _vm.errors.length
+        ? _c("div", { staticClass: "text-muted text-center mt-2" }, [
+            _c("p", [
+              _c("b", [_vm._v("Пожалуйста исправьте указанные ошибки:")]),
+              _vm._v(" "),
+              _c(
+                "ul",
+                _vm._l(_vm.errors, function(error, index) {
+                  return _c(
+                    "li",
+                    {
+                      key: index,
+                      staticClass: "alert alert-danger",
+                      attrs: { role: "alert" }
+                    },
+                    [_vm._v(_vm._s(error))]
+                  )
+                }),
+                0
+              )
+            ])
+          ])
+        : _vm._e()
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card-body modal-body" }, [
+      _c("form", [
+        _c("div", { staticClass: "form-group col" }, [
+          _c("label", { attrs: { for: "setup_place" } }, [
+            _vm._v("Место установки")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.deviceData.setup_place,
+                expression: "deviceData.setup_place"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: {
+              id: "setup_place",
+              name: "setup_place",
+              type: "text",
+              placeholder: "Место установки"
+            },
+            domProps: { value: _vm.deviceData.setup_place },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.deviceData, "setup_place", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group col custom-control" }, [
+          _c("label", { attrs: { for: "mast_isset" } }, [
+            _vm._v("Наличие мачты")
+          ]),
+          _vm._v(" "),
           _c(
-            "h4",
-            { staticClass: "pl-4 ml-4" },
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.deviceData.mast_isset,
+                  expression: "deviceData.mast_isset"
+                }
+              ],
+              staticClass: "form-control",
+              attrs: { id: "mast_isset", name: "mast_isset" },
+              on: {
+                change: function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.$set(
+                    _vm.deviceData,
+                    "mast_isset",
+                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                  )
+                }
+              }
+            },
             [
-              _c("router-link", {
-                staticClass: "ml-2 fas pointer",
-                class: {
-                  "fa-times-circle text-danger": !item.is_good,
-                  "fa-check-circle text-success": item.is_good
-                },
-                attrs: {
-                  to: {
-                    name: "objectDeviceLimitaion",
-                    params: {
-                      objectDeviceId: item.id
-                    }
-                  },
-                  tag: "i"
-                }
-              }),
+              _c("option", { attrs: { disabled: "", value: "" } }, [
+                _vm._v("Выберите один из вариантов")
+              ]),
               _vm._v(" "),
-              _c("router-link", {
-                staticClass: "ml-2 fas pointer",
-                class: {
-                  "fa-times-circle text-danger": !_vm.isReglamented(item.id),
-                  "fa-check-circle text-success": _vm.isReglamented(item.id)
-                },
-                attrs: {
-                  to: {
-                    name: "objectDeviceReglaments",
-                    params: {
-                      objectDeviceId: item.id
-                    }
-                  },
-                  tag: "i"
-                }
-              }),
-              _vm._v("\n\t\t\t\t" + _vm._s(item.name) + "\n\t\t\t\t"),
-              _c("i", {
-                staticClass: "ml-4 fas fa-edit text-warning pointer",
-                on: {
-                  click: function($event) {
-                    return _vm.editDevice(item)
+              _c("option", { attrs: { value: "1" } }, [_vm._v("Есть")]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "0" } }, [_vm._v("Нет")])
+            ]
+          )
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.deviceData.mast_isset == 1,
+                expression: "deviceData.mast_isset == 1"
+              }
+            ]
+          },
+          [
+            _c("div", { staticClass: "form-group col" }, [
+              _c("label", { attrs: { for: "mast_height" } }, [
+                _vm._v("Высота мачты")
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.deviceData.mast_height,
+                    expression: "deviceData.mast_height"
                   }
-                }
-              }),
-              _vm._v(" "),
-              _c("i", {
-                staticClass: "ml-2 fas fa-times text-danger pointer",
+                ],
+                staticClass: "form-control",
+                attrs: {
+                  id: "mast_height",
+                  name: "mast_height",
+                  type: "number"
+                },
+                domProps: { value: _vm.deviceData.mast_height },
                 on: {
-                  click: function($event) {
-                    return _vm.deleteDevice(item)
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c("i", {
-                staticClass: "ml-2 fas fa-map-marker text-danger pointer",
-                on: {
-                  click: function($event) {
-                    return _vm.setMarker(item)
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.deviceData, "mast_height", $event.target.value)
                   }
                 }
               })
-            ],
-            1
+            ])
+          ]
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group col custom-control" }, [
+          _c("label", { attrs: { for: "cable_type" } }, [_vm._v("Тип кабеля")]),
+          _vm._v(" "),
+          _c(
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.deviceData.cable_type,
+                  expression: "deviceData.cable_type"
+                }
+              ],
+              staticClass: "form-control",
+              attrs: { id: "cable_type", name: "cable_type" },
+              on: {
+                change: function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.$set(
+                    _vm.deviceData,
+                    "cable_type",
+                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                  )
+                }
+              }
+            },
+            [
+              _c("option", { attrs: { disabled: "", value: "" } }, [
+                _vm._v("Выберите один из вариантов")
+              ]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "RK 50" } }, [_vm._v("RK 50")]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "RG 213" } }, [_vm._v("RG 213")])
+            ]
           )
         ])
-      }),
-      0
-    )
+      ])
+    ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "text-muted text-center" }, [
+      _c("small", [_vm._v("Свойства антенны")])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -71719,21 +72330,18 @@ var render = function() {
         }
       }),
       _vm._v(" "),
-      _c("hr", { staticClass: "mt-2" }),
-      _vm._v(" "),
-      _c("antenna-device", {
+      _c("add-antenna", {
         directives: [
           {
             name: "show",
             rawName: "v-show",
-            value: _vm.atennaEdit,
-            expression: "atennaEdit"
+            value: _vm.rspiParamsShow,
+            expression: "rspiParamsShow"
           }
         ],
-        attrs: { deviceData: _vm.deviceData },
         on: {
           "end-adding": function($event) {
-            _vm.atennaEdit = false
+            _vm.rspiParamsShow = false
           }
         }
       }),
@@ -71771,6 +72379,8 @@ var render = function() {
           }
         }
       }),
+      _vm._v(" "),
+      _c("hr", { staticClass: "mt-2" }),
       _vm._v(" "),
       _vm._l(_vm.tree, function(type, typeIdx) {
         return _c(
@@ -71828,6 +72438,7 @@ var render = function() {
                       }),
                       _vm._v(" "),
                       [
+                        "App\\device_rspi",
                         "App\\device_aps",
                         "App\\device_system_voice_alert"
                       ].indexOf(typeIdx) > -1
@@ -71940,15 +72551,18 @@ var render = function() {
                           rawName: "v-show",
                           value:
                             device.isShow &&
-                            typeIdx == "App\\device_system_voice_alert",
+                            [
+                              "App\\device_rspi",
+                              "App\\device_system_voice_alert"
+                            ].includes(typeIdx),
                           expression:
-                            "device.isShow && typeIdx == 'App\\\\device_system_voice_alert'"
+                            "device.isShow && ['App\\\\device_rspi','App\\\\device_system_voice_alert'].includes(typeIdx)"
                         }
                       ]
                     },
                     [
                       _c("alert-system-devices", {
-                        attrs: { items: device.alarms }
+                        attrs: { items: device.alarms, typeIdx: typeIdx }
                       }),
                       _vm._v(" "),
                       _c(
@@ -71958,12 +72572,21 @@ var render = function() {
                           attrs: { type: "button" },
                           on: {
                             click: function($event) {
-                              _vm.addAlarmShow = true
-                              _vm.deviceData = device
+                              return _vm.addChildrenNodeHandler(typeIdx, device)
                             }
                           }
                         },
-                        [_vm._v("Добавить извещатель")]
+                        [
+                          _vm._v(
+                            "\n\t\t\t\t\tДобавить " +
+                              _vm._s(
+                                typeIdx == "App\\device_system_voice_alert"
+                                  ? "оповещатель"
+                                  : "антенну"
+                              ) +
+                              "\n\t\t\t\t"
+                          )
+                        ]
                       )
                     ],
                     1
@@ -93256,6 +93879,144 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_template_id_166de83a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_alertSystemDevices_vue_vue_type_template_id_166de83a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/antenna/add-antenna.vue":
+/*!******************************************************************!*\
+  !*** ./resources/js/components/treeView/antenna/add-antenna.vue ***!
+  \******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _add_antenna_vue_vue_type_template_id_ef93dd2c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./add-antenna.vue?vue&type=template&id=ef93dd2c& */ "./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=template&id=ef93dd2c&");
+/* harmony import */ var _add_antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./add-antenna.vue?vue&type=script&lang=js& */ "./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _add_antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _add_antenna_vue_vue_type_template_id_ef93dd2c___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _add_antenna_vue_vue_type_template_id_ef93dd2c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/treeView/antenna/add-antenna.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_add_antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./add-antenna.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_add_antenna_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=template&id=ef93dd2c&":
+/*!*************************************************************************************************!*\
+  !*** ./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=template&id=ef93dd2c& ***!
+  \*************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_add_antenna_vue_vue_type_template_id_ef93dd2c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./add-antenna.vue?vue&type=template&id=ef93dd2c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/antenna/add-antenna.vue?vue&type=template&id=ef93dd2c&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_add_antenna_vue_vue_type_template_id_ef93dd2c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_add_antenna_vue_vue_type_template_id_ef93dd2c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/antenna/antennaParams.vue":
+/*!********************************************************************!*\
+  !*** ./resources/js/components/treeView/antenna/antennaParams.vue ***!
+  \********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _antennaParams_vue_vue_type_template_id_9c629b88___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./antennaParams.vue?vue&type=template&id=9c629b88& */ "./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=template&id=9c629b88&");
+/* harmony import */ var _antennaParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antennaParams.vue?vue&type=script&lang=js& */ "./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _antennaParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _antennaParams_vue_vue_type_template_id_9c629b88___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _antennaParams_vue_vue_type_template_id_9c629b88___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/treeView/antenna/antennaParams.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_antennaParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./antennaParams.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_antennaParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=template&id=9c629b88&":
+/*!***************************************************************************************************!*\
+  !*** ./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=template&id=9c629b88& ***!
+  \***************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_antennaParams_vue_vue_type_template_id_9c629b88___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./antennaParams.vue?vue&type=template&id=9c629b88& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/treeView/antenna/antennaParams.vue?vue&type=template&id=9c629b88&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_antennaParams_vue_vue_type_template_id_9c629b88___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_antennaParams_vue_vue_type_template_id_9c629b88___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

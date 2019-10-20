@@ -7,15 +7,26 @@
 		>
 			Добавить оборудование
 		</button>
-		<add-device :creating="addDeviceShow" v-on:end-adding="addDeviceShow = !addDeviceShow" />
-		<hr class="mt-2">
-		<antenna-device v-show="atennaEdit" :deviceData="deviceData" v-on:end-adding="atennaEdit=false"/>
-		<alarm-devices v-show="addAlarmShow" :deviceData="deviceData" v-on:end-adding="addAlarmShow = false"/>
+		<add-device
+			:creating="addDeviceShow"
+			v-on:end-adding="addDeviceShow = !addDeviceShow"
+		/>
+		<add-antenna
+			v-show="rspiParamsShow"
+			v-on:end-adding="rspiParamsShow = false"
+		/>
+		<alarm-devices
+			v-show="addAlarmShow"
+			:deviceData="deviceData"
+			v-on:end-adding="addAlarmShow = false"
+		/>
 		<rspi-params
 			v-show="rspiParamsShow"
 			v-on:end-adding="rspiParamsShow = false"
 			:deviceData="deviceData"
 		/>
+		<hr class="mt-2">
+		
 		<ul class="list-unstyled" v-for="(type, typeIdx) in tree" :key="typeIdx">
 			<h3 class="underline">{{type.name}}</h3>
 			<li v-for="device in type.items" :key="device.id">
@@ -48,7 +59,7 @@
 							}"
 							tag="i">
 					</router-link>
-					<span @click="toggle(device)" class="pointer" v-if="['App\\device_aps','App\\device_system_voice_alert'].indexOf(typeIdx) >-1 ">
+					<span @click="toggle(device)" class="pointer" v-if="['App\\device_rspi','App\\device_aps','App\\device_system_voice_alert'].indexOf(typeIdx) >-1 ">
 						<span v-if="device.isShow">-</span>
 						<span v-else>+</span>
 						{{ device.name }}
@@ -72,9 +83,11 @@
 					<i class="ml-2 fas fa-times text-danger pointer" @click="deleteDevice(device)"></i>
 					<i v-if="btiIsset" class="ml-2 fas fa-map-marker text-danger pointer" @click="setMarker(typeIdx, device)"></i>
 				</h4>
-				<div v-show="device.isShow && typeIdx == 'App\\device_system_voice_alert'"  >
-					<alert-system-devices :items="device.alarms" />
-					<button type="button" class="btn btn-outline-success mt-4" @click="addAlarmShow = true; deviceData = device">Добавить извещатель</button>
+				<div v-show="device.isShow && ['App\\device_rspi','App\\device_system_voice_alert'].includes(typeIdx)"  >
+					<alert-system-devices :items="device.alarms" :typeIdx="typeIdx" />
+					<button type="button" class="btn btn-outline-success mt-4" @click="addChildrenNodeHandler(typeIdx, device)">
+						Добавить {{typeIdx == 'App\\device_system_voice_alert' ? 'оповещатель' : 'антенну'}}
+					</button>
 				</div>
 				<wire-tree v-show="device.isShow && typeIdx == 'App\\device_aps'" :wires="device.wires" :wires_count="device.wires_count" :typeIdx="typeIdx" :ObjectDeviceId="device.id" />
 			</li>
@@ -88,8 +101,7 @@ import addDevice from '../add-device';
 import wireTree from './wireTree';
 import alarmDevices from '../alarmDevices';
 import alertSystemDevices from './alertSystemDevices';
-//edit params forms
-import antennaDevice from '../editForms/antenna';
+import addAntenna from './antenna/add-antenna';
 import rspiParams from '../editForms/rspiParams';
 
 	export default
@@ -101,13 +113,13 @@ import rspiParams from '../editForms/rspiParams';
 			alertSystemDevices,
 			DatePicker,
 			rspiParams,
-			antennaDevice,
+			addAntenna,
 		},
 		data: function () {
 			return {
 				addAlarmShow:false,
 				addDeviceShow: false,
-				atennaEdit: false,
+				addAntennaShow: false,
 
 				FormMethodAllowed: ['new','edit'],
 				ObjectDeviceId: null,
@@ -121,6 +133,15 @@ import rspiParams from '../editForms/rspiParams';
 			}
 		},
 		methods: {
+			addChildrenNodeHandler(typeIdx, device){
+				if(typeIdx === 'App\\device_system_voice_alert'){
+					this.addAlarmShow = true; 
+				}
+				else if(typeIdx === 'App\\device_rspi'){
+					this.addAntennaShow = true; 
+				}
+				this.deviceData = device
+			},
 			dateChanged(device){
 				this.$store.dispatch('SET_DEVICE_SETUP_YEAR', {
 					setup_year: device.setup_year.getFullYear(),
