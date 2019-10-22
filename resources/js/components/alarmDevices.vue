@@ -34,7 +34,7 @@
 			}
 		},
 		methods: {
-			addDevice(device, tbl_name){
+			addDevice(device){
         //device.tbl_name = tbl_name
         const result = {
           object_id: this.$route.params.id,

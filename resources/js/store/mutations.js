@@ -1,6 +1,8 @@
 import Vue from 'vue';
 
 export default{
+  SET_CABLE_TYPES: (state, payload) => state.cables = payload,
+  ADD_CABLE_TYPE: (state, payload) => state.cables.push(payload),
   TOGGLE_SIDEBAR: state => state.sideBarACtive = !state.sideBarACtive,
   CHANGE_PRELOADER: (state, payload) => {
     if(payload)
@@ -299,6 +301,7 @@ export default{
       state.markerObj.bti_files_id = obj.bti_files_id = p.bti_plan_id;
     },
     UPDATE_OBJECT_DEVICE_PARAMS:(state, payload) => {
+      console.log(payload);
       const idx = state.current_object.devices.findIndex( dev => dev && (dev.id == payload.device_id));
       state.current_object.devices[idx].params = payload;
     },

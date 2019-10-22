@@ -25,6 +25,7 @@ class DeviceAntennaController extends Controller
             $item = new DAP($params);
             $item->save();
         }
+        return response()->json($item);
     }
 
     public function getJson(){

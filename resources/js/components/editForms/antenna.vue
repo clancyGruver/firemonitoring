@@ -54,11 +54,12 @@
 
 						        <div class="form-group col custom-control">
 						            <label class="" for="cable_type">Тип кабеля</label>
-									<select class="form-control" id="cable_type" name="cable_type" v-model="deviceData.cable_type">
-									  <option disabled value="" >Выберите один из вариантов</option>
-									  <option value="RK 50">RK 50</option>
-									  <option value="RG 213">RG 213</option>
-									</select>
+									<autocomplete
+										:search="search"
+										:default-value="getCableTypeName"
+								    	@submit="handleCableType"
+								    >
+								    </autocomplete>
 						        </div>
 
 
@@ -78,46 +79,68 @@
 </template>
 
 <script>
-	export default{
-		props: {
-			deviceData: {
-				type: Object,
-				default: () => {}
+import Autocomplete from '@trevoreyre/autocomplete-vue';
+import '@trevoreyre/autocomplete-vue/dist/style.css';
+
+export default{
+components:{Autocomplete},
+	props: {
+		deviceData: {
+			type: Object,
+			default: () => {}
+		}
+	},
+	data: function () {
+		return {
+			errors: [],
+		}
+	},
+	methods: {
+		handleCableType(cableType){
+			this.$store.dispatch('CHECK_CABLE_TYPE', cableType)
+						.then( resp => this.deviceData.cable_type = resp);
+		},
+		search(input) {
+			const result = this.cableTypes.filter( cableType => {
+				return cableType.toLowerCase()
+								.includes(input.toLowerCase())
+			})
+			result.unshift(input);
+			return result;
+		},
+		save(){
+			if(!this.check())
+				return false;
+			this.$store.dispatch('UPDATE_OBJECT_DEVICE_PARAMS', {type:'antenna', data: this.deviceData});
+			this.cancel();
+		},
+		cancel () {
+			this.$emit('end-adding');
+		},
+		check(){
+			let res = true;
+			this.errors = [];
+			if (!this.deviceData.setup_place) {
+				this.errors.push('Требуется указать место установки.');
+				res = false;
 			}
-		},
-		data: function () {
-			return {
-				errors: [],
+			if (![0,1].includes(this.deviceData.mast_isset)) {
+				this.errors.push('Требуется указать наличие мачты.');
+				res = false;
 			}
+			return res;
 		},
-		methods: {
-			save(){
-				if(!this.check())
-					return false;
-				console.log(this.deviceData);
-				this.$store.dispatch('UPDATE_OBJECT_DEVICE_PARAMS', {type:'antenna', data: this.deviceData});
-				this.cancel();
-			},
-			cancel () {
-				this.$emit('end-adding')
-			},
-			check(){
-				let res = true;
-				this.errors = [];
-				if (!this.deviceData.setup_place) {
-					this.errors.push('Требуется указать место установки.');
-					res = false;
-				}
-				if (!this.deviceData.mast_isset) {
-					this.errors.push('Требуется указать наличие мачты.');
-					res = false;
-				}
-				return res;
-			},
-		},
-		computed:{
+	},
+	computed: {
+		cableTypes(){ return this.$store.getters.CABLE_TYPES.map( cableType => cableType.name); },
+		getCableTypeName() {
+			const cableId = this.deviceData.cable_type;
+			const cableType = this.$store.getters.CABLE_TYPES.find( ct => ct.id == cableId);
+			console.log(cableId, cableType, this.$store.getters.CABLE_TYPES);
+			return cableType ? cableType.name : '';
 		},
 	}
+}
 </script>
 
 <style scoped>

@@ -12,8 +12,7 @@
 			v-on:end-adding="addDeviceShow = !addDeviceShow"
 		/>
 		<add-antenna
-			v-show="rspiParamsShow"
-			v-on:end-adding="rspiParamsShow = false"
+			:deviceData="deviceData"
 		/>
 		<alarm-devices
 			v-show="addAlarmShow"
@@ -119,7 +118,6 @@ import rspiParams from '../editForms/rspiParams';
 			return {
 				addAlarmShow:false,
 				addDeviceShow: false,
-				addAntennaShow: false,
 
 				FormMethodAllowed: ['new','edit'],
 				ObjectDeviceId: null,
@@ -135,10 +133,10 @@ import rspiParams from '../editForms/rspiParams';
 		methods: {
 			addChildrenNodeHandler(typeIdx, device){
 				if(typeIdx === 'App\\device_system_voice_alert'){
-					this.addAlarmShow = true; 
+					this.addAlarmShow = true;
 				}
 				else if(typeIdx === 'App\\device_rspi'){
-					this.addAntennaShow = true; 
+					this.$modal.show('add-antenna')
 				}
 				this.deviceData = device
 			},

@@ -1,2 +1,4 @@
 TODOS:
 - objects.soue_type => tinyint(1) UNSIGNED
+- cable_types => new table
+- ALTER TABLE `device_antenna_params` CHANGE `cable_type` `cable_type` INT UNSIGNED NULL;

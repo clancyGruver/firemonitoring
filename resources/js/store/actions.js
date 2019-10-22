@@ -11,6 +11,10 @@ export default{
           //this.$store.commit('CHANGE_PRELOADER',false);
         } );
     },
+    async LOAD_CABLE_TYPES({commit},payload){
+      axios.post(`/api/cableTypes/getAll`)
+          .then(response => commit('SET_CABLE_TYPES', response.data));
+    },
     async LOAD_OBJECTS({commit}) {
       await axios.post(`/api/objects`)
         .then( response => commit('SET_OBJECTS', response.data));
@@ -386,5 +390,49 @@ export default{
             districtId: payload.districtId,
             object: response.data,
           }));
+    },
+    async CHECK_CABLE_TYPE({commit, getters},payload){
+      const allCableTypes = getters.CABLE_TYPES.map( ct => ct.name );
+      const currentCableType = payload;
+      if(allCableTypes.includes(currentCableType)){
+        const ctId = getters.CABLE_TYPES.find( ct => ct.name == currentCableType );
+        return ctId.id;
+      } else {
+        const resp = await axios.post(`/api/cableTypes/add`, {name:payload});
+        commit('ADD_CABLE_TYPE', resp.data);
+        return resp.data.id;
+      }
+    },
+    async ADD_ANTENNA({commit, getters, state},payload){
+      //check if cable type isset and set id
+      const allCableTypes = getters.CABLE_TYPES.map( ct => ct.name );
+      const currentCableType = payload.antennaParams.cable_type;
+      if(allCableTypes.includes(currentCableType)){
+        const ctId = getters.CABLE_TYPES.find( ct => ct.name == currentCableType );
+        payload.antennaParams.cable_type = ctId.id;
+      }
+      else{
+        const resp = await axios.post(`/api/cableTypes/add`, {name:payload.antennaParams.cable_type});
+        commit('ADD_CABLE_TYPE', resp.data);
+        payload.antennaParams.cable_type = resp.data.id;
+      }
+      //check if cable type isset and set id
+
+      const objectDeviceParams = {
+        device_id: payload.device_id,
+        object_id: payload.object_id,
+        parent_id: payload.parent_id,
+        tbl_name: payload.tbl_name,
+      }
+      axios.post('/api/objectdevice/store',objectDeviceParams)
+        .then(response => {
+            commit('ADD_OBJECT_DEVICE', response.data);
+            const deviceIdx = state.current_object.devices.find( dev => dev.id == response.data.id);
+            const antennaParams = payload.antennaParams;
+            antennaParams.device_id = response.data.id;
+            axios.post('/api/antenna/storeParams',antennaParams).then(
+              response => commit('UPDATE_OBJECT_DEVICE_PARAMS', response.data)
+            )
+      });
     },
 }

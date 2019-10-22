@@ -1,18 +1,22 @@
 <template>
-	<modal name="add-antenna" transition="pop-out">
+	<modal name="add-antenna" transition="pop-out" height="auto">
 		<div class="card">
 			<div class="card-body">
-				<h5 class="card-title">Добавить антенну</h5>
+				<h5 class="card-title text-center">Добавить антенну</h5>
 				<div class="row">
 					<div class="col">
+						<div v-if="device">
+							<h3>{{device.name}}</h3>
+							<hr>
+						</div>
                         <ul class="list-unstyled">
-                            <li v-for="device in availAntennas.devices" :key="device.id">
+                            <li v-for="device in availAntennas.devices" :key="device.id" class="pointer">
                                 <span class="h2 font-weight-bold mb-0" @click="addDevice(device)">{{device.name}}</span>
                             </li>
                         </ul>
 					</div>
 					<div class="col">
-						<antenna-params :deviceData.sync="antennaParams"> </antenna-params>
+						<antenna-params :antennaParams.sync="antennaParams"> </antenna-params>
 					</div>
 				</div>
 
@@ -28,11 +32,17 @@
 import antennaParams from './antennaParams';
 
 export default{
+  	name: 'addAntenna',
 	components: {antennaParams},
+	props: {
+		deviceData: {
+			type: Object,
+			default: function(){ return {} }
+		}
+	},
 	data: function () {
 		return {
 			antennaParams:{},
-			errors: [],
 			device: null,
 			tbl_name: 'App\\device_antenna',
 		}
@@ -40,24 +50,37 @@ export default{
 	methods: {
 		check(){
 			let res = true;
-			this.errors = [];
+			const errors = [];
 			if (!this.antennaParams.setup_place) {
-				this.errors.push('Требуется указать место установки.');
+				errors.push('Требуется указать место установки.');
 				res = false;
 			}
 			if (!this.antennaParams.mast_isset) {
-				this.errors.push('Требуется указать наличие мачты.');
+				errors.push('Требуется указать наличие мачты.');
 				res = false;
 			}
 			if(!this.device){
-		        this.errors.push('Не выбрана антенна.');
+		        errors.push('Не выбрана антенна.');
 				res = false;
 	      	}
+	      	errors.map( error => this.$awn.alert(error) );
 			return res;
 		},
-	  	add(device){
-  			if(!check()) return false;
-
+		addDevice(device){
+			this.device = device;
+		},
+	  	add(){
+  			if(!this.check()) return false;
+	        //device.tbl_name = tbl_name
+	        const result = {
+	          object_id: this.$route.params.id,
+	          parent_id: this.deviceData.id,
+	          device_id: this.device.id,
+	          tbl_name : 'App\\device_antenna',
+	          antennaParams: this.antennaParams,
+	        }
+	        console.log(result);
+			this.$store.dispatch('ADD_ANTENNA', result);
 	    	this.cancel();
 	  		/*this.$store.dispatch('NEW_DISTRICT',{name: this.name})
 	  					.then(() => this.cancel())
@@ -67,12 +90,11 @@ export default{
 	  					});*/
 	  	},
 	  	cancel(){
-	  		this.name = "";
 	  		this.$modal.hide('add-antenna');
 	  	},
 	},
 	computed:{
-		availAntennas(){ return this.$store.getters.AVAILABLE_DEVICES[this.tbl_name] }
+		availAntennas(){ return this.$store.getters.AVAILABLE_DEVICES['antennas'] }
 	},
 }
 </script>

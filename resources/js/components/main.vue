@@ -50,6 +50,8 @@
       this.$store.dispatch('LOAD_UNREGLAMENTED_DEVICES')
         .catch( error => this.$awn.alert('Оборудование с непроведенными регламентными работами не загружено'));
 
+      this.$store.dispatch('LOAD_CABLE_TYPES')
+        .catch( error => this.$awn.alert('Типы кабелей незагружены'));
       this.$store.dispatch('LOAD_USERS')
         .catch( error => this.$awn.alert('Пользователи не загружены'));
       this.$store.dispatch('LOAD_DISTRICTS')

@@ -216,4 +216,5 @@ export default{
       const wireIdx = state.current_object.devices[deviceIdx].wires.findIndex( wire =>  wire && (wire.id == wireId) );
       return state.current_object.devices[deviceIdx].wires[wireIdx];
     },
+    CABLE_TYPES: state => state.cables,
 }

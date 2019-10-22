@@ -23,3 +23,6 @@ git pull origin master
 
 # git upload
 git push origin master
+
+#allow permissions to log
+sudo chmod 0777 ./storage -R

@@ -1,6 +1,10 @@
 <template>
 	<div>
-		<antenna-device v-show="atennaEdit" :deviceData="deviceData" v-on:end-adding="atennaEdit=false"/>
+		<antenna-device
+			v-show="atennaEdit"
+			:deviceData="deviceData"
+			v-on:end-adding="atennaEdit=false"
+		/>
 		<ul class="list-unstyled">
 			<li  v-for="(item, itemIdx) in items" :key="itemIdx">
 				<h4 class="pl-4 ml-4">
@@ -49,9 +53,17 @@ export default
 	data: function () {
 		return {
 			atennaEdit: false,
+			deviceData: {},
 		}
 	},
 	methods: {
+		editDevice(item){
+			if(this.typeIdx == 'App\\device_rspi'){
+				this.atennaEdit = !this.atennaEdit;
+				this.deviceData = device.params ? device.params : {};
+			}
+			return false;
+		},
 		deleteDevice(device){
 			if(confirm(`Вы действительно хотите удалить ${device.name}`)){
 				this.$store.dispatch('DELETE_OBJECT_DEVICE', device.id);

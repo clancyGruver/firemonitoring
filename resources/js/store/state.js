@@ -3,6 +3,7 @@ export default{
 	showPreloader: false,
 	limitedObjects: 0,
 	raions: [],
+	cables: [],
 	objects: [],
 	districts: [],
 	current_object: {},

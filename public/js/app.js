@@ -3045,7 +3045,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    addDevice: function addDevice(device, tbl_name) {
+    addDevice: function addDevice(device) {
       //device.tbl_name = tbl_name
       var result = {
         object_id: this.$route.params.id,
@@ -3846,6 +3846,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _trevoreyre_autocomplete_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @trevoreyre/autocomplete-vue */ "./node_modules/@trevoreyre/autocomplete-vue/dist/autocomplete.esm.js");
+/* harmony import */ var _trevoreyre_autocomplete_vue_dist_style_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @trevoreyre/autocomplete-vue/dist/style.css */ "./node_modules/@trevoreyre/autocomplete-vue/dist/style.css");
+/* harmony import */ var _trevoreyre_autocomplete_vue_dist_style_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_trevoreyre_autocomplete_vue_dist_style_css__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -3925,7 +3928,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    Autocomplete: _trevoreyre_autocomplete_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   props: {
     deviceData: {
       type: Object,
@@ -3938,9 +3947,22 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    handleCableType: function handleCableType(cableType) {
+      var _this = this;
+
+      this.$store.dispatch('CHECK_CABLE_TYPE', cableType).then(function (resp) {
+        return _this.deviceData.cable_type = resp;
+      });
+    },
+    search: function search(input) {
+      var result = this.cableTypes.filter(function (cableType) {
+        return cableType.toLowerCase().includes(input.toLowerCase());
+      });
+      result.unshift(input);
+      return result;
+    },
     save: function save() {
       if (!this.check()) return false;
-      console.log(this.deviceData);
       this.$store.dispatch('UPDATE_OBJECT_DEVICE_PARAMS', {
         type: 'antenna',
         data: this.deviceData
@@ -3959,7 +3981,7 @@ __webpack_require__.r(__webpack_exports__);
         res = false;
       }
 
-      if (!this.deviceData.mast_isset) {
+      if (![0, 1].includes(this.deviceData.mast_isset)) {
         this.errors.push('Требуется указать наличие мачты.');
         res = false;
       }
@@ -3967,7 +3989,21 @@ __webpack_require__.r(__webpack_exports__);
       return res;
     }
   },
-  computed: {}
+  computed: {
+    cableTypes: function cableTypes() {
+      return this.$store.getters.CABLE_TYPES.map(function (cableType) {
+        return cableType.name;
+      });
+    },
+    getCableTypeName: function getCableTypeName() {
+      var cableId = this.deviceData.cable_type;
+      var cableType = this.$store.getters.CABLE_TYPES.find(function (ct) {
+        return ct.id == cableId;
+      });
+      console.log(cableId, cableType, this.$store.getters.CABLE_TYPES);
+      return cableType ? cableType.name : '';
+    }
+  }
 });
 
 /***/ }),
@@ -5841,6 +5877,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               this.$store.dispatch('LOAD_UNREGLAMENTED_DEVICES')["catch"](function (error) {
                 return _this.$awn.alert('Оборудование с непроведенными регламентными работами не загружено');
               });
+              this.$store.dispatch('LOAD_CABLE_TYPES')["catch"](function (error) {
+                return _this.$awn.alert('Типы кабелей незагружены');
+              });
               this.$store.dispatch('LOAD_USERS')["catch"](function (error) {
                 return _this.$awn.alert('Пользователи не загружены');
               });
@@ -5848,7 +5887,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return _this.$awn.alert('Участки не загружены');
               });
 
-            case 10:
+            case 11:
             case "end":
               return _context.stop();
           }
@@ -8731,6 +8770,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -8739,10 +8782,19 @@ __webpack_require__.r(__webpack_exports__);
   props: ['items', 'typeIdx'],
   data: function data() {
     return {
-      atennaEdit: false
+      atennaEdit: false,
+      deviceData: {}
     };
   },
   methods: {
+    editDevice: function editDevice(device) {
+      if (this.typeIdx == 'App\\device_rspi') {
+        this.atennaEdit = !this.atennaEdit;
+        this.deviceData = device.params ? device.params : {};
+      }
+
+      return false;
+    },
     deleteDevice: function deleteDevice(device) {
       if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(device.name))) {
         this.$store.dispatch('DELETE_OBJECT_DEVICE', device.id);
@@ -8805,43 +8857,73 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'addAntenna',
   components: {
     antennaParams: _antennaParams__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  props: {
+    deviceData: {
+      type: Object,
+      "default": function _default() {
+        return {};
+      }
+    }
   },
   data: function data() {
     return {
       antennaParams: {},
-      errors: [],
       device: null,
       tbl_name: 'App\\device_antenna'
     };
   },
   methods: {
     check: function check() {
+      var _this = this;
+
       var res = true;
-      this.errors = [];
+      var errors = [];
 
       if (!this.antennaParams.setup_place) {
-        this.errors.push('Требуется указать место установки.');
+        errors.push('Требуется указать место установки.');
         res = false;
       }
 
       if (!this.antennaParams.mast_isset) {
-        this.errors.push('Требуется указать наличие мачты.');
+        errors.push('Требуется указать наличие мачты.');
         res = false;
       }
 
       if (!this.device) {
-        this.errors.push('Не выбрана антенна.');
+        errors.push('Не выбрана антенна.');
         res = false;
       }
 
+      errors.map(function (error) {
+        return _this.$awn.alert(error);
+      });
       return res;
     },
-    add: function add(device) {
-      if (!check()) return false;
+    addDevice: function addDevice(device) {
+      this.device = device;
+    },
+    add: function add() {
+      if (!this.check()) return false; //device.tbl_name = tbl_name
+
+      var result = {
+        object_id: this.$route.params.id,
+        parent_id: this.deviceData.id,
+        device_id: this.device.id,
+        tbl_name: 'App\\device_antenna',
+        antennaParams: this.antennaParams
+      };
+      console.log(result);
+      this.$store.dispatch('ADD_ANTENNA', result);
       this.cancel();
       /*this.$store.dispatch('NEW_DISTRICT',{name: this.name})
       			.then(() => this.cancel())
@@ -8851,13 +8933,12 @@ __webpack_require__.r(__webpack_exports__);
       			});*/
     },
     cancel: function cancel() {
-      this.name = "";
       this.$modal.hide('add-antenna');
     }
   },
   computed: {
     availAntennas: function availAntennas() {
-      return this.$store.getters.AVAILABLE_DEVICES[this.tbl_name];
+      return this.$store.getters.AVAILABLE_DEVICES['antennas'];
     }
   }
 });
@@ -8873,6 +8954,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _trevoreyre_autocomplete_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @trevoreyre/autocomplete-vue */ "./node_modules/@trevoreyre/autocomplete-vue/dist/autocomplete.esm.js");
+/* harmony import */ var _trevoreyre_autocomplete_vue_dist_style_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @trevoreyre/autocomplete-vue/dist/style.css */ "./node_modules/@trevoreyre/autocomplete-vue/dist/style.css");
+/* harmony import */ var _trevoreyre_autocomplete_vue_dist_style_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_trevoreyre_autocomplete_vue_dist_style_css__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -8936,9 +9020,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    Autocomplete: _trevoreyre_autocomplete_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   props: {
-    deviceData: {
+    antennaParams: {
       type: Object,
       "default": function _default() {}
     }
@@ -8951,30 +9040,47 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     save: function save() {
       if (!this.check()) return false;
-      console.log(this.deviceData);
+      console.log(this.antennaParams);
       this.$store.dispatch('UPDATE_OBJECT_DEVICE_PARAMS', {
         type: 'antenna',
-        data: this.deviceData
+        data: this.antennaParams
       });
+    },
+    handleCableType: function handleCableType(cableType) {
+      this.$store.dispatch('CHECK_CABLE_TYPE', cableType);
+      this.antennaParams.cable_type = cableType;
     },
     check: function check() {
       var res = true;
       this.errors = [];
 
-      if (!this.deviceData.setup_place) {
+      if (!this.antennaParams.setup_place) {
         this.errors.push('Требуется указать место установки.');
         res = false;
       }
 
-      if (!this.deviceData.mast_isset) {
+      if (!this.antennaParams.mast_isset) {
         this.errors.push('Требуется указать наличие мачты.');
         res = false;
       }
 
       return res;
+    },
+    search: function search(input) {
+      var result = this.cableTypes.filter(function (cableType) {
+        return cableType.toLowerCase().includes(input.toLowerCase());
+      });
+      result.unshift(input);
+      return result;
     }
   },
-  computed: {}
+  computed: {
+    cableTypes: function cableTypes() {
+      return this.$store.getters.CABLE_TYPES.map(function (cableType) {
+        return cableType.name;
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -9092,7 +9198,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 
@@ -9114,7 +9219,6 @@ __webpack_require__.r(__webpack_exports__);
     return {
       addAlarmShow: false,
       addDeviceShow: false,
-      addAntennaShow: false,
       FormMethodAllowed: ['new', 'edit'],
       ObjectDeviceId: null,
       typeIdx: null,
@@ -9129,7 +9233,7 @@ __webpack_require__.r(__webpack_exports__);
       if (typeIdx === 'App\\device_system_voice_alert') {
         this.addAlarmShow = true;
       } else if (typeIdx === 'App\\device_rspi') {
-        this.addAntennaShow = true;
+        this.$modal.show('add-antenna');
       }
 
       this.deviceData = device;
@@ -14316,7 +14420,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\r\n  border-radius: 2px;\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\n  border-radius: 2px;\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -14354,7 +14458,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.preloader[data-v-192877e2] {\r\n\twidth: inherit;\r\n\theight: 100%;\r\n\tdisplay: flex;\r\n\tbackground-color: #e3e3e3;\n}\n.sk-cube-grid[data-v-192877e2] {\r\n  width: 4em;\r\n  height: 4em;\r\n  margin: auto;\n}\n.sk-cube[data-v-192877e2] {\r\n    width: 33%;\r\n    height: 33%;\r\n    background-color: #337ab7;\r\n    float: left;\r\n    -webkit-animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\r\n            animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n}\n.sk-cube-1[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n.sk-cube-2[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.3s;\r\n\t        animation-delay: 0.3s;\n}\n.sk-cube-3[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.4s;\r\n\t        animation-delay: 0.4s;\n}\n.sk-cube-4[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.1s;\r\n\t        animation-delay: 0.1s;\n}\n.sk-cube-5[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n.sk-cube-6[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.3s;\r\n\t        animation-delay: 0.3s;\n}\n.sk-cube-7[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0s;\r\n\t        animation-delay: 0s;\n}\n.sk-cube-8[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.1s;\r\n\t        animation-delay: 0.1s;\n}\n.sk-cube-9[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n@-webkit-keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\r\n    -webkit-transform: scale3D(1,1,1);\r\n            transform: scale3D(1,1,1);\n}\n35%           {\r\n    -webkit-transform: scale3D(0,0,1);\r\n            transform: scale3D(0,0,1);\n}\n}\n@keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\r\n    -webkit-transform: scale3D(1,1,1);\r\n            transform: scale3D(1,1,1);\n}\n35%           {\r\n    -webkit-transform: scale3D(0,0,1);\r\n            transform: scale3D(0,0,1);\n}\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.preloader[data-v-192877e2] {\n\twidth: inherit;\n\theight: 100%;\n\tdisplay: flex;\n\tbackground-color: #e3e3e3;\n}\n.sk-cube-grid[data-v-192877e2] {\n  width: 4em;\n  height: 4em;\n  margin: auto;\n}\n.sk-cube[data-v-192877e2] {\n    width: 33%;\n    height: 33%;\n    background-color: #337ab7;\n    float: left;\n    -webkit-animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n            animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n}\n.sk-cube-1[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n.sk-cube-2[data-v-192877e2] {\n\t-webkit-animation-delay: 0.3s;\n\t        animation-delay: 0.3s;\n}\n.sk-cube-3[data-v-192877e2] {\n\t-webkit-animation-delay: 0.4s;\n\t        animation-delay: 0.4s;\n}\n.sk-cube-4[data-v-192877e2] {\n\t-webkit-animation-delay: 0.1s;\n\t        animation-delay: 0.1s;\n}\n.sk-cube-5[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n.sk-cube-6[data-v-192877e2] {\n\t-webkit-animation-delay: 0.3s;\n\t        animation-delay: 0.3s;\n}\n.sk-cube-7[data-v-192877e2] {\n\t-webkit-animation-delay: 0s;\n\t        animation-delay: 0s;\n}\n.sk-cube-8[data-v-192877e2] {\n\t-webkit-animation-delay: 0.1s;\n\t        animation-delay: 0.1s;\n}\n.sk-cube-9[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n@-webkit-keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\n    -webkit-transform: scale3D(1,1,1);\n            transform: scale3D(1,1,1);\n}\n35%           {\n    -webkit-transform: scale3D(0,0,1);\n            transform: scale3D(0,0,1);\n}\n}\n@keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\n    -webkit-transform: scale3D(1,1,1);\n            transform: scale3D(1,1,1);\n}\n35%           {\n    -webkit-transform: scale3D(0,0,1);\n            transform: scale3D(0,0,1);\n}\n}\n\n", ""]);
 
 // exports
 
@@ -14373,7 +14477,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-0a9e7104] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-0a9e7104] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-content[data-v-0a9e7104] {\r\n  background-color: rgba(0,0,0,0);\n}\n.modal-mask .modal-container .modal-content[data-v-0a9e7104] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-0a9e7104] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-0a9e7104] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-0a9e7104] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-0a9e7104] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-0a9e7104] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-0a9e7104]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-0a9e7104] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-0a9e7104]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-0a9e7104]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-0a9e7104], .modal-leave-active[data-v-0a9e7104] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-0a9e7104], .modal-leave-active .modal-container[data-v-0a9e7104] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-0a9e7104] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-0a9e7104] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-content[data-v-0a9e7104] {\n  background-color: rgba(0,0,0,0);\n}\n.modal-mask .modal-container .modal-content[data-v-0a9e7104] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-0a9e7104] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-0a9e7104] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-0a9e7104] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-0a9e7104] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-0a9e7104] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-0a9e7104]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-0a9e7104] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-0a9e7104]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-0a9e7104]:hover {\n  color: white;\n}\n.modal-enter[data-v-0a9e7104], .modal-leave-active[data-v-0a9e7104] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-0a9e7104], .modal-leave-active .modal-container[data-v-0a9e7104] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -14392,7 +14496,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-3742b9f5] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-3742b9f5] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-content[data-v-3742b9f5] {\r\n  background-color: rgba(0,0,0,0);\n}\n.modal-mask .modal-container .modal-content[data-v-3742b9f5] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-3742b9f5] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-3742b9f5] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-3742b9f5] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-3742b9f5] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-3742b9f5] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-3742b9f5]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-3742b9f5] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-3742b9f5]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-3742b9f5]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-3742b9f5], .modal-leave-active[data-v-3742b9f5] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-3742b9f5], .modal-leave-active .modal-container[data-v-3742b9f5] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-3742b9f5] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-3742b9f5] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-content[data-v-3742b9f5] {\n  background-color: rgba(0,0,0,0);\n}\n.modal-mask .modal-container .modal-content[data-v-3742b9f5] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-3742b9f5] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-3742b9f5] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-3742b9f5] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-3742b9f5] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-3742b9f5] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-3742b9f5]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-3742b9f5] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-3742b9f5]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-3742b9f5]:hover {\n  color: white;\n}\n.modal-enter[data-v-3742b9f5], .modal-leave-active[data-v-3742b9f5] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-3742b9f5], .modal-leave-active .modal-container[data-v-3742b9f5] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -14525,7 +14629,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.pointer{\r\n  cursor:pointer;\n}\n.fade-enter-active, .fade-leave-active {\r\n  transition: opacity 0.5s;\n}\n.fade-enter, .fade-leave-to {\r\n  opacity: 0;\n}\n.wrapper {\r\n  display: block;\n}\n.logo {\r\n   align-self: center;\r\n   color: #fff;\r\n   font-weight: bold;\r\n   font-family: 'Lato'\n}\n.main-nav {\r\n   display: flex;\r\n   justify-content: space-between;\r\n   padding: 0.5rem 0.8rem;\n}\n.navbar-brand,.navbar-brand:hover{\r\n   color:#32325d;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.pointer{\n  cursor:pointer;\n}\n.fade-enter-active, .fade-leave-active {\n  transition: opacity 0.5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.wrapper {\n  display: block;\n}\n.logo {\n   align-self: center;\n   color: #fff;\n   font-weight: bold;\n   font-family: 'Lato'\n}\n.main-nav {\n   display: flex;\n   justify-content: space-between;\n   padding: 0.5rem 0.8rem;\n}\n.navbar-brand,.navbar-brand:hover{\n   color:#32325d;\n}\n\n", ""]);
 
 // exports
 
@@ -14544,7 +14648,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-4ff44dc0] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, .5);\r\n  display: table;\r\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-4ff44dc0] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-4ff44dc0] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-4ff44dc0] {\n  display: table-cell;\n  vertical-align: middle;\n}\n\n", ""]);
 
 // exports
 
@@ -14582,7 +14686,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.reglament_badge{\r\n\tfont-size: 100%;\r\n\tfont-weight: bold;\r\n\tcolor: #333;\n}\n.mx-calendar{\r\n\tbackground-color: white;\r\n\tborder: 1px solid #73879c;\n}\n.mx-calendar-content{\r\n\twidth:100%;\n}\r\n", ""]);
+exports.push([module.i, "\n.reglament_badge{\n\tfont-size: 100%;\n\tfont-weight: bold;\n\tcolor: #333;\n}\n.mx-calendar{\n\tbackground-color: white;\n\tborder: 1px solid #73879c;\n}\n.mx-calendar-content{\n\twidth:100%;\n}\n", ""]);
 
 // exports
 
@@ -14601,7 +14705,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-30364831] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\r\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -64344,56 +64448,15 @@ var render = function() {
                           _vm._v("Тип кабеля")
                         ]),
                         _vm._v(" "),
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.deviceData.cable_type,
-                                expression: "deviceData.cable_type"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: { id: "cable_type", name: "cable_type" },
-                            on: {
-                              change: function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.$set(
-                                  _vm.deviceData,
-                                  "cable_type",
-                                  $event.target.multiple
-                                    ? $$selectedVal
-                                    : $$selectedVal[0]
-                                )
-                              }
-                            }
+                        _c("autocomplete", {
+                          attrs: {
+                            search: _vm.search,
+                            "default-value": _vm.getCableTypeName
                           },
-                          [
-                            _c(
-                              "option",
-                              { attrs: { disabled: "", value: "" } },
-                              [_vm._v("Выберите один из вариантов")]
-                            ),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "RK 50" } }, [
-                              _vm._v("RK 50")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "RG 213" } }, [
-                              _vm._v("RG 213")
-                            ])
-                          ]
-                        )
-                      ]
+                          on: { submit: _vm.handleCableType }
+                        })
+                      ],
+                      1
                     ),
                     _vm._v(" "),
                     _c("div", {}, [
@@ -71848,6 +71911,7 @@ var render = function() {
         on: {
           "end-adding": function($event) {
             _vm.atennaEdit = false
+            _vm.deviceData = {}
           }
         }
       }),
@@ -71956,19 +72020,29 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "modal",
-    { attrs: { name: "add-antenna", transition: "pop-out" } },
+    { attrs: { name: "add-antenna", transition: "pop-out", height: "auto" } },
     [
       _c("div", { staticClass: "card" }, [
         _c("div", { staticClass: "card-body" }, [
-          _c("h5", { staticClass: "card-title" }, [_vm._v("Добавить антенну")]),
+          _c("h5", { staticClass: "card-title text-center" }, [
+            _vm._v("Добавить антенну")
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "row" }, [
             _c("div", { staticClass: "col" }, [
+              _vm.device
+                ? _c("div", [
+                    _c("h3", [_vm._v(_vm._s(_vm.device.name))]),
+                    _vm._v(" "),
+                    _c("hr")
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
               _c(
                 "ul",
                 { staticClass: "list-unstyled" },
                 _vm._l(_vm.availAntennas.devices, function(device) {
-                  return _c("li", { key: device.id }, [
+                  return _c("li", { key: device.id, staticClass: "pointer" }, [
                     _c(
                       "span",
                       {
@@ -71992,12 +72066,12 @@ var render = function() {
               { staticClass: "col" },
               [
                 _c("antenna-params", {
-                  attrs: { deviceData: _vm.antennaParams },
+                  attrs: { antennaParams: _vm.antennaParams },
                   on: {
-                    "update:deviceData": function($event) {
+                    "update:antennaParams": function($event) {
                       _vm.antennaParams = $event
                     },
-                    "update:device-data": function($event) {
+                    "update:antenna-params": function($event) {
                       _vm.antennaParams = $event
                     }
                   }
@@ -72106,8 +72180,8 @@ var render = function() {
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.deviceData.setup_place,
-                expression: "deviceData.setup_place"
+                value: _vm.antennaParams.setup_place,
+                expression: "antennaParams.setup_place"
               }
             ],
             staticClass: "form-control",
@@ -72117,13 +72191,13 @@ var render = function() {
               type: "text",
               placeholder: "Место установки"
             },
-            domProps: { value: _vm.deviceData.setup_place },
+            domProps: { value: _vm.antennaParams.setup_place },
             on: {
               input: function($event) {
                 if ($event.target.composing) {
                   return
                 }
-                _vm.$set(_vm.deviceData, "setup_place", $event.target.value)
+                _vm.$set(_vm.antennaParams, "setup_place", $event.target.value)
               }
             }
           })
@@ -72141,8 +72215,8 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.deviceData.mast_isset,
-                  expression: "deviceData.mast_isset"
+                  value: _vm.antennaParams.mast_isset,
+                  expression: "antennaParams.mast_isset"
                 }
               ],
               staticClass: "form-control",
@@ -72158,7 +72232,7 @@ var render = function() {
                       return val
                     })
                   _vm.$set(
-                    _vm.deviceData,
+                    _vm.antennaParams,
                     "mast_isset",
                     $event.target.multiple ? $$selectedVal : $$selectedVal[0]
                   )
@@ -72184,8 +72258,8 @@ var render = function() {
               {
                 name: "show",
                 rawName: "v-show",
-                value: _vm.deviceData.mast_isset == 1,
-                expression: "deviceData.mast_isset == 1"
+                value: _vm.antennaParams.mast_isset == 1,
+                expression: "antennaParams.mast_isset == 1"
               }
             ]
           },
@@ -72200,8 +72274,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.deviceData.mast_height,
-                    expression: "deviceData.mast_height"
+                    value: _vm.antennaParams.mast_height,
+                    expression: "antennaParams.mast_height"
                   }
                 ],
                 staticClass: "form-control",
@@ -72210,13 +72284,17 @@ var render = function() {
                   name: "mast_height",
                   type: "number"
                 },
-                domProps: { value: _vm.deviceData.mast_height },
+                domProps: { value: _vm.antennaParams.mast_height },
                 on: {
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.$set(_vm.deviceData, "mast_height", $event.target.value)
+                    _vm.$set(
+                      _vm.antennaParams,
+                      "mast_height",
+                      $event.target.value
+                    )
                   }
                 }
               })
@@ -72224,51 +72302,21 @@ var render = function() {
           ]
         ),
         _vm._v(" "),
-        _c("div", { staticClass: "form-group col custom-control" }, [
-          _c("label", { attrs: { for: "cable_type" } }, [_vm._v("Тип кабеля")]),
-          _vm._v(" "),
-          _c(
-            "select",
-            {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.deviceData.cable_type,
-                  expression: "deviceData.cable_type"
-                }
-              ],
-              staticClass: "form-control",
-              attrs: { id: "cable_type", name: "cable_type" },
-              on: {
-                change: function($event) {
-                  var $$selectedVal = Array.prototype.filter
-                    .call($event.target.options, function(o) {
-                      return o.selected
-                    })
-                    .map(function(o) {
-                      var val = "_value" in o ? o._value : o.value
-                      return val
-                    })
-                  _vm.$set(
-                    _vm.deviceData,
-                    "cable_type",
-                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-                  )
-                }
-              }
-            },
-            [
-              _c("option", { attrs: { disabled: "", value: "" } }, [
-                _vm._v("Выберите один из вариантов")
-              ]),
-              _vm._v(" "),
-              _c("option", { attrs: { value: "RK 50" } }, [_vm._v("RK 50")]),
-              _vm._v(" "),
-              _c("option", { attrs: { value: "RG 213" } }, [_vm._v("RG 213")])
-            ]
-          )
-        ])
+        _c(
+          "div",
+          { staticClass: "form-group col custom-control" },
+          [
+            _c("label", { attrs: { for: "cable_type" } }, [
+              _vm._v("Тип кабеля")
+            ]),
+            _vm._v(" "),
+            _c("autocomplete", {
+              attrs: { search: _vm.search },
+              on: { submit: _vm.handleCableType }
+            })
+          ],
+          1
+        )
       ])
     ])
   ])
@@ -72330,21 +72378,7 @@ var render = function() {
         }
       }),
       _vm._v(" "),
-      _c("add-antenna", {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.rspiParamsShow,
-            expression: "rspiParamsShow"
-          }
-        ],
-        on: {
-          "end-adding": function($event) {
-            _vm.rspiParamsShow = false
-          }
-        }
-      }),
+      _c("add-antenna", { attrs: { deviceData: _vm.deviceData } }),
       _vm._v(" "),
       _c("alarm-devices", {
         directives: [
@@ -94800,22 +94834,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }); //this.$store.commit('CHANGE_PRELOADER',false);
     });
   },
-  LOAD_OBJECTS: function () {
-    var _LOAD_OBJECTS = _asyncToGenerator(
+  LOAD_CABLE_TYPES: function () {
+    var _LOAD_CABLE_TYPES = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(_ref2) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(_ref2, payload) {
       var commit;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               commit = _ref2.commit;
-              _context.next = 3;
-              return axios.post("/api/objects").then(function (response) {
-                return commit('SET_OBJECTS', response.data);
+              axios.post("/api/cableTypes/getAll").then(function (response) {
+                return commit('SET_CABLE_TYPES', response.data);
               });
 
-            case 3:
+            case 2:
             case "end":
               return _context.stop();
           }
@@ -94823,14 +94856,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee);
     }));
 
-    function LOAD_OBJECTS(_x) {
-      return _LOAD_OBJECTS.apply(this, arguments);
+    function LOAD_CABLE_TYPES(_x, _x2) {
+      return _LOAD_CABLE_TYPES.apply(this, arguments);
     }
 
-    return LOAD_OBJECTS;
+    return LOAD_CABLE_TYPES;
   }(),
-  LOAD_RAIONS: function () {
-    var _LOAD_RAIONS = _asyncToGenerator(
+  LOAD_OBJECTS: function () {
+    var _LOAD_OBJECTS = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(_ref3) {
       var commit;
@@ -94840,8 +94873,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               commit = _ref3.commit;
               _context2.next = 3;
-              return axios.post("/api/raions").then(function (response) {
-                return commit('SET_RAIONS', response.data);
+              return axios.post("/api/objects").then(function (response) {
+                return commit('SET_OBJECTS', response.data);
               });
 
             case 3:
@@ -94852,14 +94885,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee2);
     }));
 
-    function LOAD_RAIONS(_x2) {
-      return _LOAD_RAIONS.apply(this, arguments);
+    function LOAD_OBJECTS(_x3) {
+      return _LOAD_OBJECTS.apply(this, arguments);
     }
 
-    return LOAD_RAIONS;
+    return LOAD_OBJECTS;
   }(),
-  LOAD_SENSORS: function () {
-    var _LOAD_SENSORS = _asyncToGenerator(
+  LOAD_RAIONS: function () {
+    var _LOAD_RAIONS = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(_ref4) {
       var commit;
@@ -94869,8 +94902,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               commit = _ref4.commit;
               _context3.next = 3;
-              return axios.post('/api/sensors/getall').then(function (response) {
-                return commit('SET_SENSORS', response.data);
+              return axios.post("/api/raions").then(function (response) {
+                return commit('SET_RAIONS', response.data);
               });
 
             case 3:
@@ -94881,14 +94914,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee3);
     }));
 
-    function LOAD_SENSORS(_x3) {
-      return _LOAD_SENSORS.apply(this, arguments);
+    function LOAD_RAIONS(_x4) {
+      return _LOAD_RAIONS.apply(this, arguments);
     }
 
-    return LOAD_SENSORS;
+    return LOAD_RAIONS;
   }(),
-  LOAD_AVAILABLE_DEVICES: function () {
-    var _LOAD_AVAILABLE_DEVICES = _asyncToGenerator(
+  LOAD_SENSORS: function () {
+    var _LOAD_SENSORS = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(_ref5) {
       var commit;
@@ -94898,8 +94931,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               commit = _ref5.commit;
               _context4.next = 3;
-              return axios.post("/api/devices/getbyclass").then(function (response) {
-                return commit('SET_AVAILABLE_DEVICES', response.data);
+              return axios.post('/api/sensors/getall').then(function (response) {
+                return commit('SET_SENSORS', response.data);
               });
 
             case 3:
@@ -94910,14 +94943,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee4);
     }));
 
-    function LOAD_AVAILABLE_DEVICES(_x4) {
-      return _LOAD_AVAILABLE_DEVICES.apply(this, arguments);
+    function LOAD_SENSORS(_x5) {
+      return _LOAD_SENSORS.apply(this, arguments);
     }
 
-    return LOAD_AVAILABLE_DEVICES;
+    return LOAD_SENSORS;
   }(),
-  LOAD_DISTRICTS: function () {
-    var _LOAD_DISTRICTS = _asyncToGenerator(
+  LOAD_AVAILABLE_DEVICES: function () {
+    var _LOAD_AVAILABLE_DEVICES = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(_ref6) {
       var commit;
@@ -94927,8 +94960,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               commit = _ref6.commit;
               _context5.next = 3;
-              return axios.post("/api/district/getAll").then(function (response) {
-                return commit('SET_DISTRICTS', response.data);
+              return axios.post("/api/devices/getbyclass").then(function (response) {
+                return commit('SET_AVAILABLE_DEVICES', response.data);
               });
 
             case 3:
@@ -94939,7 +94972,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee5);
     }));
 
-    function LOAD_DISTRICTS(_x5) {
+    function LOAD_AVAILABLE_DEVICES(_x6) {
+      return _LOAD_AVAILABLE_DEVICES.apply(this, arguments);
+    }
+
+    return LOAD_AVAILABLE_DEVICES;
+  }(),
+  LOAD_DISTRICTS: function () {
+    var _LOAD_DISTRICTS = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(_ref7) {
+      var commit;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              commit = _ref7.commit;
+              _context6.next = 3;
+              return axios.post("/api/district/getAll").then(function (response) {
+                return commit('SET_DISTRICTS', response.data);
+              });
+
+            case 3:
+            case "end":
+              return _context6.stop();
+          }
+        }
+      }, _callee6);
+    }));
+
+    function LOAD_DISTRICTS(_x7) {
       return _LOAD_DISTRICTS.apply(this, arguments);
     }
 
@@ -94948,15 +95010,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   CHANGE_OBJECT_LL: function () {
     var _CHANGE_OBJECT_LL = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(_ref7, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee7(_ref8, payload) {
       var state, commit, getters, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee7$(_context7) {
         while (1) {
-          switch (_context6.prev = _context6.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
-              state = _ref7.state, commit = _ref7.commit, getters = _ref7.getters;
+              state = _ref8.state, commit = _ref8.commit, getters = _ref8.getters;
               p = _objectSpread({}, payload);
-              _context6.next = 4;
+              _context7.next = 4;
               return axios.post("/api/objects/storeCoords/".concat(state.object_id), p).then(function (response) {
                 return commit('SET_OBJECT_LL', {
                   p: p,
@@ -94966,13 +95028,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 4:
             case "end":
-              return _context6.stop();
+              return _context7.stop();
           }
         }
-      }, _callee6);
+      }, _callee7);
     }));
 
-    function CHANGE_OBJECT_LL(_x6, _x7) {
+    function CHANGE_OBJECT_LL(_x8, _x9) {
       return _CHANGE_OBJECT_LL.apply(this, arguments);
     }
 
@@ -94981,14 +95043,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   OBJECT_UPDATE: function () {
     var _OBJECT_UPDATE = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee7(_ref8) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee8(_ref9) {
       var state, commit, getters;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee7$(_context7) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee8$(_context8) {
         while (1) {
-          switch (_context7.prev = _context7.next) {
+          switch (_context8.prev = _context8.next) {
             case 0:
-              state = _ref8.state, commit = _ref8.commit, getters = _ref8.getters;
-              _context7.next = 3;
+              state = _ref9.state, commit = _ref9.commit, getters = _ref9.getters;
+              _context8.next = 3;
               return axios.post("/api/objects/update/".concat(state.current_object.id), state.current_object).then(function (response) {
                 return commit('UPDATE_CURRENT_OBJECT', {
                   getters: getters
@@ -94997,13 +95059,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context7.stop();
+              return _context8.stop();
           }
         }
-      }, _callee7);
+      }, _callee8);
     }));
 
-    function OBJECT_UPDATE(_x8) {
+    function OBJECT_UPDATE(_x10) {
       return _OBJECT_UPDATE.apply(this, arguments);
     }
 
@@ -95012,15 +95074,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   SET_DEVICE_COORDS: function () {
     var _SET_DEVICE_COORDS = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee8(_ref9, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee9(_ref10, payload) {
       var commit, state, getters, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee8$(_context8) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee9$(_context9) {
         while (1) {
-          switch (_context8.prev = _context8.next) {
+          switch (_context9.prev = _context9.next) {
             case 0:
-              commit = _ref9.commit, state = _ref9.state, getters = _ref9.getters;
+              commit = _ref10.commit, state = _ref10.state, getters = _ref10.getters;
               p = _objectSpread({}, payload);
-              _context8.next = 4;
+              _context9.next = 4;
               return axios.post("/api/objectdevice/storeCoords/".concat(state.markerObj.id), {
                 lat: p.coords.lat,
                 lng: p.coords.lng,
@@ -95034,13 +95096,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 4:
             case "end":
-              return _context8.stop();
+              return _context9.stop();
           }
         }
-      }, _callee8);
+      }, _callee9);
     }));
 
-    function SET_DEVICE_COORDS(_x9, _x10) {
+    function SET_DEVICE_COORDS(_x11, _x12) {
       return _SET_DEVICE_COORDS.apply(this, arguments);
     }
 
@@ -95049,15 +95111,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   SET_SENSOR_COORDS: function () {
     var _SET_SENSOR_COORDS = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee9(_ref10, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee10(_ref11, payload) {
       var commit, state, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee9$(_context9) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee10$(_context10) {
         while (1) {
-          switch (_context9.prev = _context9.next) {
+          switch (_context10.prev = _context10.next) {
             case 0:
-              commit = _ref10.commit, state = _ref10.state;
+              commit = _ref11.commit, state = _ref11.state;
               p = _objectSpread({}, payload);
-              _context9.next = 4;
+              _context10.next = 4;
               return axios.post("/api/sensorwire/storeCoords/".concat(state.markerObj.id), {
                 lat: p.coords.lat,
                 lng: p.coords.lng,
@@ -95068,13 +95130,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 4:
             case "end":
-              return _context9.stop();
+              return _context10.stop();
           }
         }
-      }, _callee9);
+      }, _callee10);
     }));
 
-    function SET_SENSOR_COORDS(_x11, _x12) {
+    function SET_SENSOR_COORDS(_x13, _x14) {
       return _SET_SENSOR_COORDS.apply(this, arguments);
     }
 
@@ -95083,13 +95145,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   SET_ALERT_COORDS: function () {
     var _SET_ALERT_COORDS = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee10(_ref11, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee11(_ref12, payload) {
       var commit, state, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee10$(_context10) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee11$(_context11) {
         while (1) {
-          switch (_context10.prev = _context10.next) {
+          switch (_context11.prev = _context11.next) {
             case 0:
-              commit = _ref11.commit, state = _ref11.state;
+              commit = _ref12.commit, state = _ref12.state;
               p = _objectSpread({}, payload);
               axios.post("/api/sys_alert_dev/storeCoords/".concat(state.markerObj.dsvad), {
                 lat: p.coords.lat,
@@ -95101,13 +95163,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context10.stop();
+              return _context11.stop();
           }
         }
-      }, _callee10);
+      }, _callee11);
     }));
 
-    function SET_ALERT_COORDS(_x13, _x14) {
+    function SET_ALERT_COORDS(_x15, _x16) {
       return _SET_ALERT_COORDS.apply(this, arguments);
     }
 
@@ -95116,13 +95178,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   UPDATE_LIMITATION: function () {
     var _UPDATE_LIMITATION = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee11(_ref12, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee12(_ref13, payload) {
       var commit, getters, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee11$(_context11) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee12$(_context12) {
         while (1) {
-          switch (_context11.prev = _context11.next) {
+          switch (_context12.prev = _context12.next) {
             case 0:
-              commit = _ref12.commit, getters = _ref12.getters;
+              commit = _ref13.commit, getters = _ref13.getters;
               p = _objectSpread({}, payload);
               axios.post("/api/limitations/update/".concat(p.id), {
                 text: p.text,
@@ -95136,13 +95198,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context11.stop();
+              return _context12.stop();
           }
         }
-      }, _callee11);
+      }, _callee12);
     }));
 
-    function UPDATE_LIMITATION(_x15, _x16) {
+    function UPDATE_LIMITATION(_x17, _x18) {
       return _UPDATE_LIMITATION.apply(this, arguments);
     }
 
@@ -95151,13 +95213,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   INSERT_LIMITATION: function () {
     var _INSERT_LIMITATION = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee12(_ref13, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee13(_ref14, payload) {
       var commit, getters, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee12$(_context12) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee13$(_context13) {
         while (1) {
-          switch (_context12.prev = _context12.next) {
+          switch (_context13.prev = _context13.next) {
             case 0:
-              commit = _ref13.commit, getters = _ref13.getters;
+              commit = _ref14.commit, getters = _ref14.getters;
               p = _objectSpread({}, payload);
               axios.post("/api/limitations/insert", p).then(function (response) {
                 return commit('ADD_LIMITATION', {
@@ -95173,13 +95235,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context12.stop();
+              return _context13.stop();
           }
         }
-      }, _callee12);
+      }, _callee13);
     }));
 
-    function INSERT_LIMITATION(_x17, _x18) {
+    function INSERT_LIMITATION(_x19, _x20) {
       return _INSERT_LIMITATION.apply(this, arguments);
     }
 
@@ -95188,13 +95250,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   DELETE_LIMITATION: function () {
     var _DELETE_LIMITATION = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee13(_ref14, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee14(_ref15, payload) {
       var commit, getters, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee13$(_context13) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee14$(_context14) {
         while (1) {
-          switch (_context13.prev = _context13.next) {
+          switch (_context14.prev = _context14.next) {
             case 0:
-              commit = _ref14.commit, getters = _ref14.getters;
+              commit = _ref15.commit, getters = _ref15.getters;
               p = _objectSpread({}, payload);
               axios.post("/api/limitations/delete/".concat(p.id)).then(function (response) {
                 return commit('REMOVE_LIMITATION', {
@@ -95205,13 +95267,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context13.stop();
+              return _context14.stop();
           }
         }
-      }, _callee13);
+      }, _callee14);
     }));
 
-    function DELETE_LIMITATION(_x19, _x20) {
+    function DELETE_LIMITATION(_x21, _x22) {
       return _DELETE_LIMITATION.apply(this, arguments);
     }
 
@@ -95220,13 +95282,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   LOAD_LIMITED_OBJECTS: function () {
     var _LOAD_LIMITED_OBJECTS = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee14(_ref15) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee15(_ref16) {
       var commit, getters, objectsIds;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee14$(_context14) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee15$(_context15) {
         while (1) {
-          switch (_context14.prev = _context14.next) {
+          switch (_context15.prev = _context15.next) {
             case 0:
-              commit = _ref15.commit, getters = _ref15.getters;
+              commit = _ref16.commit, getters = _ref16.getters;
 
               /*
                 Send request to load objects with limitations
@@ -95243,13 +95305,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context14.stop();
+              return _context15.stop();
           }
         }
-      }, _callee14);
+      }, _callee15);
     }));
 
-    function LOAD_LIMITED_OBJECTS(_x21) {
+    function LOAD_LIMITED_OBJECTS(_x23) {
       return _LOAD_LIMITED_OBJECTS.apply(this, arguments);
     }
 
@@ -95258,13 +95320,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   TOGGLE_DEVICE_ISGOOD: function () {
     var _TOGGLE_DEVICE_ISGOOD = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee15(_ref16, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee16(_ref17, payload) {
       var commit, dispatch, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee15$(_context15) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee16$(_context16) {
         while (1) {
-          switch (_context15.prev = _context15.next) {
+          switch (_context16.prev = _context16.next) {
             case 0:
-              commit = _ref16.commit, dispatch = _ref16.dispatch;
+              commit = _ref17.commit, dispatch = _ref17.dispatch;
 
               /*
                 Send request to store object_device_reglament_limitations
@@ -95294,13 +95356,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context15.stop();
+              return _context16.stop();
           }
         }
-      }, _callee15);
+      }, _callee16);
     }));
 
-    function TOGGLE_DEVICE_ISGOOD(_x22, _x23) {
+    function TOGGLE_DEVICE_ISGOOD(_x24, _x25) {
       return _TOGGLE_DEVICE_ISGOOD.apply(this, arguments);
     }
 
@@ -95309,13 +95371,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   DELETE_REGLAMENT_ELEMENT: function () {
     var _DELETE_REGLAMENT_ELEMENT = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee16(_ref17, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee17(_ref18, payload) {
       var commit, getters, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee16$(_context16) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee17$(_context17) {
         while (1) {
-          switch (_context16.prev = _context16.next) {
+          switch (_context17.prev = _context17.next) {
             case 0:
-              commit = _ref17.commit, getters = _ref17.getters;
+              commit = _ref18.commit, getters = _ref18.getters;
               p = _objectSpread({}, payload);
               axios.post("/api/reglamentElement/delete/".concat(p.elementId)).then(function () {
                 return commit('DELETE_REGLAMENT_ELEMENT', {
@@ -95326,13 +95388,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context16.stop();
+              return _context17.stop();
           }
         }
-      }, _callee16);
+      }, _callee17);
     }));
 
-    function DELETE_REGLAMENT_ELEMENT(_x24, _x25) {
+    function DELETE_REGLAMENT_ELEMENT(_x26, _x27) {
       return _DELETE_REGLAMENT_ELEMENT.apply(this, arguments);
     }
 
@@ -95341,13 +95403,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   SAVE_REGLAMENT_ELEMENT: function () {
     var _SAVE_REGLAMENT_ELEMENT = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee17(_ref18, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee18(_ref19, payload) {
       var commit, getters;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee17$(_context17) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee18$(_context18) {
         while (1) {
-          switch (_context17.prev = _context17.next) {
+          switch (_context18.prev = _context18.next) {
             case 0:
-              commit = _ref18.commit, getters = _ref18.getters;
+              commit = _ref19.commit, getters = _ref19.getters;
               if (payload.id * 1 < 0 && payload.text != '') axios.post("/api/reglamentElement/add", payload).then(function (response) {
                 return commit('ADD_REGLAMENT_ELEMENT', {
                   getters: getters,
@@ -95368,22 +95430,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 2:
             case "end":
-              return _context17.stop();
+              return _context18.stop();
           }
         }
-      }, _callee17);
+      }, _callee18);
     }));
 
-    function SAVE_REGLAMENT_ELEMENT(_x26, _x27) {
+    function SAVE_REGLAMENT_ELEMENT(_x28, _x29) {
       return _SAVE_REGLAMENT_ELEMENT.apply(this, arguments);
     }
 
     return SAVE_REGLAMENT_ELEMENT;
   }(),
-  SAVE_REGLAMENT: function SAVE_REGLAMENT(_ref19, payload) {
-    var commit = _ref19.commit,
-        getters = _ref19.getters,
-        dispatch = _ref19.dispatch;
+  SAVE_REGLAMENT: function SAVE_REGLAMENT(_ref20, payload) {
+    var commit = _ref20.commit,
+        getters = _ref20.getters,
+        dispatch = _ref20.dispatch;
 
     var p = _objectSpread({}, payload);
 
@@ -95401,37 +95463,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         p.elements.map(
         /*#__PURE__*/
         function () {
-          var _ref20 = _asyncToGenerator(
-          /*#__PURE__*/
-          _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee18(elem) {
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee18$(_context18) {
-              while (1) {
-                switch (_context18.prev = _context18.next) {
-                  case 0:
-                    return _context18.abrupt("return", dispatch('SAVE_REGLAMENT_ELEMENT', _objectSpread({}, elem, {
-                      type: p.type,
-                      device_id: p.device_id
-                    })));
-
-                  case 1:
-                  case "end":
-                    return _context18.stop();
-                }
-              }
-            }, _callee18);
-          }));
-
-          return function (_x28) {
-            return _ref20.apply(this, arguments);
-          };
-        }());
-        res.type = 'old';
-      });else {
-      //save new reglament
-      axios.post("/api/reglament/add", p).then(function (response) {
-        if (p.elements && p.elements.length > 0) p.elements.map(
-        /*#__PURE__*/
-        function () {
           var _ref21 = _asyncToGenerator(
           /*#__PURE__*/
           _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee19(elem) {
@@ -95441,8 +95472,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   case 0:
                     return _context19.abrupt("return", dispatch('SAVE_REGLAMENT_ELEMENT', _objectSpread({}, elem, {
                       type: p.type,
-                      device_id: p.device_id,
-                      device_reglament_id: response.data.id
+                      device_id: p.device_id
                     })));
 
                   case 1:
@@ -95453,8 +95483,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             }, _callee19);
           }));
 
-          return function (_x29) {
+          return function (_x30) {
             return _ref21.apply(this, arguments);
+          };
+        }());
+        res.type = 'old';
+      });else {
+      //save new reglament
+      axios.post("/api/reglament/add", p).then(function (response) {
+        if (p.elements && p.elements.length > 0) p.elements.map(
+        /*#__PURE__*/
+        function () {
+          var _ref22 = _asyncToGenerator(
+          /*#__PURE__*/
+          _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee20(elem) {
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee20$(_context20) {
+              while (1) {
+                switch (_context20.prev = _context20.next) {
+                  case 0:
+                    return _context20.abrupt("return", dispatch('SAVE_REGLAMENT_ELEMENT', _objectSpread({}, elem, {
+                      type: p.type,
+                      device_id: p.device_id,
+                      device_reglament_id: response.data.id
+                    })));
+
+                  case 1:
+                  case "end":
+                    return _context20.stop();
+                }
+              }
+            }, _callee20);
+          }));
+
+          return function (_x31) {
+            return _ref22.apply(this, arguments);
           };
         }());
         commit('ADD_REGLAMENT', {
@@ -95473,46 +95535,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   DELETE_REGLAMENT: function () {
     var _DELETE_REGLAMENT = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee20(_ref22, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee21(_ref23, payload) {
       var commit, getters;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee20$(_context20) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee21$(_context21) {
         while (1) {
-          switch (_context20.prev = _context20.next) {
+          switch (_context21.prev = _context21.next) {
             case 0:
-              commit = _ref22.commit, getters = _ref22.getters;
+              commit = _ref23.commit, getters = _ref23.getters;
               axios.post("/api/reglament/delete/".concat(payload.reglamentId)).then(function (response) {
                 return commit('DELETE_REGLAMENT', {
                   getters: getters,
                   payload: payload
                 });
-              });
-
-            case 2:
-            case "end":
-              return _context20.stop();
-          }
-        }
-      }, _callee20);
-    }));
-
-    function DELETE_REGLAMENT(_x30, _x31) {
-      return _DELETE_REGLAMENT.apply(this, arguments);
-    }
-
-    return DELETE_REGLAMENT;
-  }(),
-  LOAD_UNREGLAMENTED_DEVICES: function () {
-    var _LOAD_UNREGLAMENTED_DEVICES = _asyncToGenerator(
-    /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee21(_ref23) {
-      var commit;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee21$(_context21) {
-        while (1) {
-          switch (_context21.prev = _context21.next) {
-            case 0:
-              commit = _ref23.commit;
-              axios.post("/api/reglament/unworked").then(function (response) {
-                return commit('SET_UNREGLAMENTED_DEVICES', response.data);
               });
 
             case 2:
@@ -95523,7 +95557,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee21);
     }));
 
-    function LOAD_UNREGLAMENTED_DEVICES(_x32) {
+    function DELETE_REGLAMENT(_x32, _x33) {
+      return _DELETE_REGLAMENT.apply(this, arguments);
+    }
+
+    return DELETE_REGLAMENT;
+  }(),
+  LOAD_UNREGLAMENTED_DEVICES: function () {
+    var _LOAD_UNREGLAMENTED_DEVICES = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee22(_ref24) {
+      var commit;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee22$(_context22) {
+        while (1) {
+          switch (_context22.prev = _context22.next) {
+            case 0:
+              commit = _ref24.commit;
+              axios.post("/api/reglament/unworked").then(function (response) {
+                return commit('SET_UNREGLAMENTED_DEVICES', response.data);
+              });
+
+            case 2:
+            case "end":
+              return _context22.stop();
+          }
+        }
+      }, _callee22);
+    }));
+
+    function LOAD_UNREGLAMENTED_DEVICES(_x34) {
       return _LOAD_UNREGLAMENTED_DEVICES.apply(this, arguments);
     }
 
@@ -95532,27 +95594,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   SEND_DEVICE_REGLAMENT: function () {
     var _SEND_DEVICE_REGLAMENT = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee22(_ref24, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee23(_ref25, payload) {
       var dispatch;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee22$(_context22) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee23$(_context23) {
         while (1) {
-          switch (_context22.prev = _context22.next) {
+          switch (_context23.prev = _context23.next) {
             case 0:
-              dispatch = _ref24.dispatch;
-              _context22.next = 3;
+              dispatch = _ref25.dispatch;
+              _context23.next = 3;
               return axios.post("/api/reglament/updateWork/".concat(payload)).then(function (response) {
                 return console.log(response);
               });
 
             case 3:
             case "end":
-              return _context22.stop();
+              return _context23.stop();
           }
         }
-      }, _callee22);
+      }, _callee23);
     }));
 
-    function SEND_DEVICE_REGLAMENT(_x33, _x34) {
+    function SEND_DEVICE_REGLAMENT(_x35, _x36) {
       return _SEND_DEVICE_REGLAMENT.apply(this, arguments);
     }
 
@@ -95561,29 +95623,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   TOGGLE_DEVICE_REGLAMENT: function () {
     var _TOGGLE_DEVICE_REGLAMENT = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee23(_ref25, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee24(_ref26, payload) {
       var dispatch, res;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee23$(_context23) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee24$(_context24) {
         while (1) {
-          switch (_context23.prev = _context23.next) {
+          switch (_context24.prev = _context24.next) {
             case 0:
-              dispatch = _ref25.dispatch;
-              _context23.next = 3;
+              dispatch = _ref26.dispatch;
+              _context24.next = 3;
               return axios.post("/api/reglament/updateWork/".concat(payload.reglamentWorkId));
 
             case 3:
-              res = _context23.sent;
+              res = _context24.sent;
               dispatch('LOAD_UNREGLAMENTED_DEVICES');
 
             case 5:
             case "end":
-              return _context23.stop();
+              return _context24.stop();
           }
         }
-      }, _callee23);
+      }, _callee24);
     }));
 
-    function TOGGLE_DEVICE_REGLAMENT(_x35, _x36) {
+    function TOGGLE_DEVICE_REGLAMENT(_x37, _x38) {
       return _TOGGLE_DEVICE_REGLAMENT.apply(this, arguments);
     }
 
@@ -95592,36 +95654,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   LOAD_USERS: function () {
     var _LOAD_USERS = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee24(_ref26) {
-      var commit;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee24$(_context24) {
-        while (1) {
-          switch (_context24.prev = _context24.next) {
-            case 0:
-              commit = _ref26.commit;
-              _context24.next = 3;
-              return axios.post("/api/users/getAll").then(function (response) {
-                commit('SET_USERS', response.data);
-              });
-
-            case 3:
-            case "end":
-              return _context24.stop();
-          }
-        }
-      }, _callee24);
-    }));
-
-    function LOAD_USERS(_x37) {
-      return _LOAD_USERS.apply(this, arguments);
-    }
-
-    return LOAD_USERS;
-  }(),
-  DELETE_USER: function () {
-    var _DELETE_USER = _asyncToGenerator(
-    /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee25(_ref27, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee25(_ref27) {
       var commit;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee25$(_context25) {
         while (1) {
@@ -95629,8 +95662,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               commit = _ref27.commit;
               _context25.next = 3;
-              return axios.post("/api/users/delete/".concat(payload.id)).then(function (success) {
-                return commit('DELETE_USER', payload.id);
+              return axios.post("/api/users/getAll").then(function (response) {
+                commit('SET_USERS', response.data);
               });
 
             case 3:
@@ -95641,7 +95674,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee25);
     }));
 
-    function DELETE_USER(_x38, _x39) {
+    function LOAD_USERS(_x39) {
+      return _LOAD_USERS.apply(this, arguments);
+    }
+
+    return LOAD_USERS;
+  }(),
+  DELETE_USER: function () {
+    var _DELETE_USER = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee26(_ref28, payload) {
+      var commit;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee26$(_context26) {
+        while (1) {
+          switch (_context26.prev = _context26.next) {
+            case 0:
+              commit = _ref28.commit;
+              _context26.next = 3;
+              return axios.post("/api/users/delete/".concat(payload.id)).then(function (success) {
+                return commit('DELETE_USER', payload.id);
+              });
+
+            case 3:
+            case "end":
+              return _context26.stop();
+          }
+        }
+      }, _callee26);
+    }));
+
+    function DELETE_USER(_x40, _x41) {
       return _DELETE_USER.apply(this, arguments);
     }
 
@@ -95650,13 +95712,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   UPDATE_USER: function () {
     var _UPDATE_USER = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee26(_ref28, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee27(_ref29, payload) {
       var commit, getters;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee26$(_context26) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee27$(_context27) {
         while (1) {
-          switch (_context26.prev = _context26.next) {
+          switch (_context27.prev = _context27.next) {
             case 0:
-              commit = _ref28.commit, getters = _ref28.getters;
+              commit = _ref29.commit, getters = _ref29.getters;
               if (payload.id) axios.post("/api/users/update/".concat(payload.id), payload).then(function (success) {
                 return commit('UPDATE_USER', {
                   getters: getters,
@@ -95668,13 +95730,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 2:
             case "end":
-              return _context26.stop();
+              return _context27.stop();
           }
         }
-      }, _callee26);
+      }, _callee27);
     }));
 
-    function UPDATE_USER(_x40, _x41) {
+    function UPDATE_USER(_x42, _x43) {
       return _UPDATE_USER.apply(this, arguments);
     }
 
@@ -95683,43 +95745,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   TOGGLE_RAION: function () {
     var _TOGGLE_RAION = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee27(_ref29, payload) {
-      var commit, dispatch;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee27$(_context27) {
-        while (1) {
-          switch (_context27.prev = _context27.next) {
-            case 0:
-              commit = _ref29.commit, dispatch = _ref29.dispatch;
-              axios.post("/api/raions/".concat(payload)).then(function (success) {
-                return dispatch('LOAD_RAIONS');
-              });
-
-            case 2:
-            case "end":
-              return _context27.stop();
-          }
-        }
-      }, _callee27);
-    }));
-
-    function TOGGLE_RAION(_x42, _x43) {
-      return _TOGGLE_RAION.apply(this, arguments);
-    }
-
-    return TOGGLE_RAION;
-  }(),
-  DELETE_DEVICE: function () {
-    var _DELETE_DEVICE = _asyncToGenerator(
-    /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee28(_ref30, payload) {
-      var commit;
+      var commit, dispatch;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee28$(_context28) {
         while (1) {
           switch (_context28.prev = _context28.next) {
             case 0:
-              commit = _ref30.commit;
-              axios.post("/api/devices/delete/".concat(payload.type, "/").concat(payload.id)).then(function (response) {
-                return commit('DELETE_AVAILABLE_DEVICE', payload);
+              commit = _ref30.commit, dispatch = _ref30.dispatch;
+              axios.post("/api/raions/".concat(payload)).then(function (success) {
+                return dispatch('LOAD_RAIONS');
               });
 
             case 2:
@@ -95730,14 +95764,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee28);
     }));
 
-    function DELETE_DEVICE(_x44, _x45) {
-      return _DELETE_DEVICE.apply(this, arguments);
+    function TOGGLE_RAION(_x44, _x45) {
+      return _TOGGLE_RAION.apply(this, arguments);
     }
 
-    return DELETE_DEVICE;
+    return TOGGLE_RAION;
   }(),
-  DELETE_OBJECT_DEVICE: function () {
-    var _DELETE_OBJECT_DEVICE = _asyncToGenerator(
+  DELETE_DEVICE: function () {
+    var _DELETE_DEVICE = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee29(_ref31, payload) {
       var commit;
@@ -95746,8 +95780,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context29.prev = _context29.next) {
             case 0:
               commit = _ref31.commit;
-              axios.post("/api/objectdevice/delete/".concat(payload)).then(function (response) {
-                return commit('DELETE_OBJECT_DEVICE', payload);
+              axios.post("/api/devices/delete/".concat(payload.type, "/").concat(payload.id)).then(function (response) {
+                return commit('DELETE_AVAILABLE_DEVICE', payload);
               });
 
             case 2:
@@ -95758,15 +95792,43 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee29);
     }));
 
-    function DELETE_OBJECT_DEVICE(_x46, _x47) {
+    function DELETE_DEVICE(_x46, _x47) {
+      return _DELETE_DEVICE.apply(this, arguments);
+    }
+
+    return DELETE_DEVICE;
+  }(),
+  DELETE_OBJECT_DEVICE: function () {
+    var _DELETE_OBJECT_DEVICE = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee30(_ref32, payload) {
+      var commit;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee30$(_context30) {
+        while (1) {
+          switch (_context30.prev = _context30.next) {
+            case 0:
+              commit = _ref32.commit;
+              axios.post("/api/objectdevice/delete/".concat(payload)).then(function (response) {
+                return commit('DELETE_OBJECT_DEVICE', payload);
+              });
+
+            case 2:
+            case "end":
+              return _context30.stop();
+          }
+        }
+      }, _callee30);
+    }));
+
+    function DELETE_OBJECT_DEVICE(_x48, _x49) {
       return _DELETE_OBJECT_DEVICE.apply(this, arguments);
     }
 
     return DELETE_OBJECT_DEVICE;
   }(),
-  UPDATE_DEVICE: function UPDATE_DEVICE(_ref32, payload) {
-    var commit = _ref32.commit,
-        getters = _ref32.getters;
+  UPDATE_DEVICE: function UPDATE_DEVICE(_ref33, payload) {
+    var commit = _ref33.commit,
+        getters = _ref33.getters;
     var config = {
       headers: {
         'content-type': 'multipart/form-data'
@@ -95791,13 +95853,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   ADD_OBJECT_DEVICE: function () {
     var _ADD_OBJECT_DEVICE = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee30(_ref33, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee31(_ref34, payload) {
       var commit, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee30$(_context30) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee31$(_context31) {
         while (1) {
-          switch (_context30.prev = _context30.next) {
+          switch (_context31.prev = _context31.next) {
             case 0:
-              commit = _ref33.commit;
+              commit = _ref34.commit;
               p = _objectSpread({}, payload);
               axios.post('/api/objectdevice/store', p).then(function (response) {
                 var resp = response.data;
@@ -95813,13 +95875,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context30.stop();
+              return _context31.stop();
           }
         }
-      }, _callee30);
+      }, _callee31);
     }));
 
-    function ADD_OBJECT_DEVICE(_x48, _x49) {
+    function ADD_OBJECT_DEVICE(_x50, _x51) {
       return _ADD_OBJECT_DEVICE.apply(this, arguments);
     }
 
@@ -95828,13 +95890,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   TOGGLE_DEVICE_SHOW: function () {
     var _TOGGLE_DEVICE_SHOW = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee31(_ref34, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee32(_ref35, payload) {
       var commit, getters;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee31$(_context31) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee32$(_context32) {
         while (1) {
-          switch (_context31.prev = _context31.next) {
+          switch (_context32.prev = _context32.next) {
             case 0:
-              commit = _ref34.commit, getters = _ref34.getters;
+              commit = _ref35.commit, getters = _ref35.getters;
               commit('TOGGLE_DEVICE_SHOW', {
                 payload: payload,
                 getters: getters
@@ -95842,13 +95904,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 2:
             case "end":
-              return _context31.stop();
+              return _context32.stop();
           }
         }
-      }, _callee31);
+      }, _callee32);
     }));
 
-    function TOGGLE_DEVICE_SHOW(_x50, _x51) {
+    function TOGGLE_DEVICE_SHOW(_x52, _x53) {
       return _TOGGLE_DEVICE_SHOW.apply(this, arguments);
     }
 
@@ -95857,13 +95919,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   ADD_WIRE: function () {
     var _ADD_WIRE = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee32(_ref35, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee33(_ref36, payload) {
       var commit, getters;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee32$(_context32) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee33$(_context33) {
         while (1) {
-          switch (_context32.prev = _context32.next) {
+          switch (_context33.prev = _context33.next) {
             case 0:
-              commit = _ref35.commit, getters = _ref35.getters;
+              commit = _ref36.commit, getters = _ref36.getters;
               axios.post('/api/wire/store', {
                 object_device_id: payload.odid,
                 wire_data: payload.wire
@@ -95877,13 +95939,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 2:
             case "end":
-              return _context32.stop();
+              return _context33.stop();
           }
         }
-      }, _callee32);
+      }, _callee33);
     }));
 
-    function ADD_WIRE(_x52, _x53) {
+    function ADD_WIRE(_x54, _x55) {
       return _ADD_WIRE.apply(this, arguments);
     }
 
@@ -95892,13 +95954,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   UPDATE_OBJECT_DEVICE_PARAMS: function () {
     var _UPDATE_OBJECT_DEVICE_PARAMS = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee33(_ref36, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee34(_ref37, payload) {
       var commit, p, url;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee33$(_context33) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee34$(_context34) {
         while (1) {
-          switch (_context33.prev = _context33.next) {
+          switch (_context34.prev = _context34.next) {
             case 0:
-              commit = _ref36.commit;
+              commit = _ref37.commit;
               p = _objectSpread({}, payload);
               url = "/api/".concat(p.type, "/storeParams");
               /*const id = p.data.id || '';
@@ -95911,13 +95973,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 4:
             case "end":
-              return _context33.stop();
+              return _context34.stop();
           }
         }
-      }, _callee33);
+      }, _callee34);
     }));
 
-    function UPDATE_OBJECT_DEVICE_PARAMS(_x54, _x55) {
+    function UPDATE_OBJECT_DEVICE_PARAMS(_x56, _x57) {
       return _UPDATE_OBJECT_DEVICE_PARAMS.apply(this, arguments);
     }
 
@@ -95925,35 +95987,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   }(),
   EDIT_WIRE: function () {
     var _EDIT_WIRE = _asyncToGenerator(
-    /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee34(_ref37, payload) {
-      var commit, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee34$(_context34) {
-        while (1) {
-          switch (_context34.prev = _context34.next) {
-            case 0:
-              commit = _ref37.commit;
-              p = _objectSpread({}, payload);
-              axios.post("/api/wire/update/".concat(p.wire.id), p.wire).then(function (response) {
-                return commit('EDIT_WIRE', p.wire);
-              });
-
-            case 3:
-            case "end":
-              return _context34.stop();
-          }
-        }
-      }, _callee34);
-    }));
-
-    function EDIT_WIRE(_x56, _x57) {
-      return _EDIT_WIRE.apply(this, arguments);
-    }
-
-    return EDIT_WIRE;
-  }(),
-  DELETE_WIRE: function () {
-    var _DELETE_WIRE = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee35(_ref38, payload) {
       var commit, p;
@@ -95963,8 +95996,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               commit = _ref38.commit;
               p = _objectSpread({}, payload);
-              axios.post("/api/wire/delete/".concat(p.id)).then(function (response) {
-                return commit('DELETE_WIRE', p);
+              axios.post("/api/wire/update/".concat(p.wire.id), p.wire).then(function (response) {
+                return commit('EDIT_WIRE', p.wire);
               });
 
             case 3:
@@ -95975,7 +96008,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee35);
     }));
 
-    function DELETE_WIRE(_x58, _x59) {
+    function EDIT_WIRE(_x58, _x59) {
+      return _EDIT_WIRE.apply(this, arguments);
+    }
+
+    return EDIT_WIRE;
+  }(),
+  DELETE_WIRE: function () {
+    var _DELETE_WIRE = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee36(_ref39, payload) {
+      var commit, p;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee36$(_context36) {
+        while (1) {
+          switch (_context36.prev = _context36.next) {
+            case 0:
+              commit = _ref39.commit;
+              p = _objectSpread({}, payload);
+              axios.post("/api/wire/delete/".concat(p.id)).then(function (response) {
+                return commit('DELETE_WIRE', p);
+              });
+
+            case 3:
+            case "end":
+              return _context36.stop();
+          }
+        }
+      }, _callee36);
+    }));
+
+    function DELETE_WIRE(_x60, _x61) {
       return _DELETE_WIRE.apply(this, arguments);
     }
 
@@ -95984,13 +96046,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   ADD_SENSOR_TO_WIRE: function () {
     var _ADD_SENSOR_TO_WIRE = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee36(_ref39, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee37(_ref40, payload) {
       var commit, dispatch, p;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee36$(_context36) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee37$(_context37) {
         while (1) {
-          switch (_context36.prev = _context36.next) {
+          switch (_context37.prev = _context37.next) {
             case 0:
-              commit = _ref39.commit, dispatch = _ref39.dispatch;
+              commit = _ref40.commit, dispatch = _ref40.dispatch;
               p = _objectSpread({}, payload);
               axios.post('/api/sensorwire/add', payload).then(function (response) {
                 return response.data.map(function (respData) {
@@ -96006,13 +96068,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
             case "end":
-              return _context36.stop();
+              return _context37.stop();
           }
         }
-      }, _callee36);
+      }, _callee37);
     }));
 
-    function ADD_SENSOR_TO_WIRE(_x60, _x61) {
+    function ADD_SENSOR_TO_WIRE(_x62, _x63) {
       return _ADD_SENSOR_TO_WIRE.apply(this, arguments);
     }
 
@@ -96021,34 +96083,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   DELETE_SENSOR_ON_WIRE: function () {
     var _DELETE_SENSOR_ON_WIRE = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee37(_ref40, payload) {
-      var commit;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee37$(_context37) {
-        while (1) {
-          switch (_context37.prev = _context37.next) {
-            case 0:
-              commit = _ref40.commit;
-              axios.post("/api/sensorwire/delete/".concat(payload.sensorId)).then(function (response) {
-                return commit('DELETE_SENSOR_ON_WIRE', payload);
-              });
-
-            case 2:
-            case "end":
-              return _context37.stop();
-          }
-        }
-      }, _callee37);
-    }));
-
-    function DELETE_SENSOR_ON_WIRE(_x62, _x63) {
-      return _DELETE_SENSOR_ON_WIRE.apply(this, arguments);
-    }
-
-    return DELETE_SENSOR_ON_WIRE;
-  }(),
-  UPDATE_SENSOR_TO_WIRE: function () {
-    var _UPDATE_SENSOR_TO_WIRE = _asyncToGenerator(
-    /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee38(_ref41, payload) {
       var commit;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee38$(_context38) {
@@ -96056,11 +96090,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context38.prev = _context38.next) {
             case 0:
               commit = _ref41.commit;
-              axios.post('/api/sensorwire/update', payload).then(function (response) {
-                return commit('UPDATE_SENSOR_TO_WIRE', {
-                  sensorData: payload,
-                  responseData: response.data
-                });
+              axios.post("/api/sensorwire/delete/".concat(payload.sensorId)).then(function (response) {
+                return commit('DELETE_SENSOR_ON_WIRE', payload);
               });
 
             case 2:
@@ -96071,14 +96102,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee38);
     }));
 
-    function UPDATE_SENSOR_TO_WIRE(_x64, _x65) {
-      return _UPDATE_SENSOR_TO_WIRE.apply(this, arguments);
+    function DELETE_SENSOR_ON_WIRE(_x64, _x65) {
+      return _DELETE_SENSOR_ON_WIRE.apply(this, arguments);
     }
 
-    return UPDATE_SENSOR_TO_WIRE;
+    return DELETE_SENSOR_ON_WIRE;
   }(),
-  CALENDAR_ADD_OBJECT: function () {
-    var _CALENDAR_ADD_OBJECT = _asyncToGenerator(
+  UPDATE_SENSOR_TO_WIRE: function () {
+    var _UPDATE_SENSOR_TO_WIRE = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee39(_ref42, payload) {
       var commit;
@@ -96087,8 +96118,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context39.prev = _context39.next) {
             case 0:
               commit = _ref42.commit;
-              axios.post('/api/calendar/addObject', payload).then(function (response) {
-                return console.log(response);
+              axios.post('/api/sensorwire/update', payload).then(function (response) {
+                return commit('UPDATE_SENSOR_TO_WIRE', {
+                  sensorData: payload,
+                  responseData: response.data
+                });
               });
 
             case 2:
@@ -96099,7 +96133,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee39);
     }));
 
-    function CALENDAR_ADD_OBJECT(_x66, _x67) {
+    function UPDATE_SENSOR_TO_WIRE(_x66, _x67) {
+      return _UPDATE_SENSOR_TO_WIRE.apply(this, arguments);
+    }
+
+    return UPDATE_SENSOR_TO_WIRE;
+  }(),
+  CALENDAR_ADD_OBJECT: function () {
+    var _CALENDAR_ADD_OBJECT = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee40(_ref43, payload) {
+      var commit;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee40$(_context40) {
+        while (1) {
+          switch (_context40.prev = _context40.next) {
+            case 0:
+              commit = _ref43.commit;
+              axios.post('/api/calendar/addObject', payload).then(function (response) {
+                return console.log(response);
+              });
+
+            case 2:
+            case "end":
+              return _context40.stop();
+          }
+        }
+      }, _callee40);
+    }));
+
+    function CALENDAR_ADD_OBJECT(_x68, _x69) {
       return _CALENDAR_ADD_OBJECT.apply(this, arguments);
     }
 
@@ -96108,31 +96170,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   ADD_NEW_OBJECT: function () {
     var _ADD_NEW_OBJECT = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee40(_ref43, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee41(_ref44, payload) {
       var commit, resp, id;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee40$(_context40) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee41$(_context41) {
         while (1) {
-          switch (_context40.prev = _context40.next) {
+          switch (_context41.prev = _context41.next) {
             case 0:
-              commit = _ref43.commit;
-              _context40.next = 3;
+              commit = _ref44.commit;
+              _context41.next = 3;
               return axios.post('/api/objects/addObject', payload);
 
             case 3:
-              resp = _context40.sent;
+              resp = _context41.sent;
               commit('ADD_NEW_OBJECT', resp.data);
               id = resp.data.id;
               _router_js__WEBPACK_IMPORTED_MODULE_1__["router"].push("/objects/".concat(id, "/main"));
 
             case 7:
             case "end":
-              return _context40.stop();
+              return _context41.stop();
           }
         }
-      }, _callee40);
+      }, _callee41);
     }));
 
-    function ADD_NEW_OBJECT(_x68, _x69) {
+    function ADD_NEW_OBJECT(_x70, _x71) {
       return _ADD_NEW_OBJECT.apply(this, arguments);
     }
 
@@ -96141,34 +96203,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   SET_DEVICE_SETUP_YEAR: function () {
     var _SET_DEVICE_SETUP_YEAR = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee41(_ref44, payload) {
-      var commit;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee41$(_context41) {
-        while (1) {
-          switch (_context41.prev = _context41.next) {
-            case 0:
-              commit = _ref44.commit;
-              axios.post("/api/objectdevice/storeSetupYear/".concat(payload.object_device_id), payload).then(function (response) {
-                return commit('SET_DEVICE_SETUP_YEAR', payload);
-              });
-
-            case 2:
-            case "end":
-              return _context41.stop();
-          }
-        }
-      }, _callee41);
-    }));
-
-    function SET_DEVICE_SETUP_YEAR(_x70, _x71) {
-      return _SET_DEVICE_SETUP_YEAR.apply(this, arguments);
-    }
-
-    return SET_DEVICE_SETUP_YEAR;
-  }(),
-  NEW_DISTRICT: function () {
-    var _NEW_DISTRICT = _asyncToGenerator(
-    /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee42(_ref45, payload) {
       var commit;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee42$(_context42) {
@@ -96176,8 +96210,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context42.prev = _context42.next) {
             case 0:
               commit = _ref45.commit;
-              axios.post('/api/district/store', payload).then(function (response) {
-                return commit('NEW_DISTRICT', response.data);
+              axios.post("/api/objectdevice/storeSetupYear/".concat(payload.object_device_id), payload).then(function (response) {
+                return commit('SET_DEVICE_SETUP_YEAR', payload);
               });
 
             case 2:
@@ -96188,14 +96222,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee42);
     }));
 
-    function NEW_DISTRICT(_x72, _x73) {
-      return _NEW_DISTRICT.apply(this, arguments);
+    function SET_DEVICE_SETUP_YEAR(_x72, _x73) {
+      return _SET_DEVICE_SETUP_YEAR.apply(this, arguments);
     }
 
-    return NEW_DISTRICT;
+    return SET_DEVICE_SETUP_YEAR;
   }(),
-  CHANGE_DISTRICT_NAME: function () {
-    var _CHANGE_DISTRICT_NAME = _asyncToGenerator(
+  NEW_DISTRICT: function () {
+    var _NEW_DISTRICT = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee43(_ref46, payload) {
       var commit;
@@ -96204,10 +96238,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context43.prev = _context43.next) {
             case 0:
               commit = _ref46.commit;
-              axios.post("/api/district/update/".concat(payload.id), {
-                name: payload.name
-              }).then(function (response) {
-                return commit('CHANGE_DISTRICT_NAME', payload);
+              axios.post('/api/district/store', payload).then(function (response) {
+                return commit('NEW_DISTRICT', response.data);
               });
 
             case 2:
@@ -96218,14 +96250,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee43);
     }));
 
-    function CHANGE_DISTRICT_NAME(_x74, _x75) {
-      return _CHANGE_DISTRICT_NAME.apply(this, arguments);
+    function NEW_DISTRICT(_x74, _x75) {
+      return _NEW_DISTRICT.apply(this, arguments);
     }
 
-    return CHANGE_DISTRICT_NAME;
+    return NEW_DISTRICT;
   }(),
-  DELETE_DISTRICT: function () {
-    var _DELETE_DISTRICT = _asyncToGenerator(
+  CHANGE_DISTRICT_NAME: function () {
+    var _CHANGE_DISTRICT_NAME = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee44(_ref47, payload) {
       var commit;
@@ -96234,8 +96266,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context44.prev = _context44.next) {
             case 0:
               commit = _ref47.commit;
-              axios.post("/api/district/delete/".concat(payload)).then(function (response) {
-                return commit('DELETE_DISTRICT', payload);
+              axios.post("/api/district/update/".concat(payload.id), {
+                name: payload.name
+              }).then(function (response) {
+                return commit('CHANGE_DISTRICT_NAME', payload);
               });
 
             case 2:
@@ -96246,14 +96280,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee44);
     }));
 
-    function DELETE_DISTRICT(_x76, _x77) {
-      return _DELETE_DISTRICT.apply(this, arguments);
+    function CHANGE_DISTRICT_NAME(_x76, _x77) {
+      return _CHANGE_DISTRICT_NAME.apply(this, arguments);
     }
 
-    return DELETE_DISTRICT;
+    return CHANGE_DISTRICT_NAME;
   }(),
-  NEW_USER_DISTRICT: function () {
-    var _NEW_USER_DISTRICT = _asyncToGenerator(
+  DELETE_DISTRICT: function () {
+    var _DELETE_DISTRICT = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee45(_ref48, payload) {
       var commit;
@@ -96262,6 +96296,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context45.prev = _context45.next) {
             case 0:
               commit = _ref48.commit;
+              axios.post("/api/district/delete/".concat(payload)).then(function (response) {
+                return commit('DELETE_DISTRICT', payload);
+              });
+
+            case 2:
+            case "end":
+              return _context45.stop();
+          }
+        }
+      }, _callee45);
+    }));
+
+    function DELETE_DISTRICT(_x78, _x79) {
+      return _DELETE_DISTRICT.apply(this, arguments);
+    }
+
+    return DELETE_DISTRICT;
+  }(),
+  NEW_USER_DISTRICT: function () {
+    var _NEW_USER_DISTRICT = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee46(_ref49, payload) {
+      var commit;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee46$(_context46) {
+        while (1) {
+          switch (_context46.prev = _context46.next) {
+            case 0:
+              commit = _ref49.commit;
               axios.post("/api/districtUser/store/".concat(payload.districtId), {
                 user_id: payload.user.id
               }).then(function (response) {
@@ -96273,13 +96335,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 2:
             case "end":
-              return _context45.stop();
+              return _context46.stop();
           }
         }
-      }, _callee45);
+      }, _callee46);
     }));
 
-    function NEW_USER_DISTRICT(_x78, _x79) {
+    function NEW_USER_DISTRICT(_x80, _x81) {
       return _NEW_USER_DISTRICT.apply(this, arguments);
     }
 
@@ -96288,34 +96350,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   DELETE_DISTRICT_USER: function () {
     var _DELETE_DISTRICT_USER = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee46(_ref49, payload) {
-      var commit;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee46$(_context46) {
-        while (1) {
-          switch (_context46.prev = _context46.next) {
-            case 0:
-              commit = _ref49.commit;
-              axios.post("/api/districtUser/delete/".concat(payload.userId)).then(function () {
-                return commit('DELETE_DISTRICT_USER', payload);
-              });
-
-            case 2:
-            case "end":
-              return _context46.stop();
-          }
-        }
-      }, _callee46);
-    }));
-
-    function DELETE_DISTRICT_USER(_x80, _x81) {
-      return _DELETE_DISTRICT_USER.apply(this, arguments);
-    }
-
-    return DELETE_DISTRICT_USER;
-  }(),
-  DELETE_DISTRICT_OBJECT: function () {
-    var _DELETE_DISTRICT_OBJECT = _asyncToGenerator(
-    /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee47(_ref50, payload) {
       var commit;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee47$(_context47) {
@@ -96323,8 +96357,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context47.prev = _context47.next) {
             case 0:
               commit = _ref50.commit;
-              axios.post("/api/districtObject/delete/".concat(payload.objectId)).then(function () {
-                return commit('DELETE_DISTRICT_OBJECT', payload);
+              axios.post("/api/districtUser/delete/".concat(payload.userId)).then(function () {
+                return commit('DELETE_DISTRICT_USER', payload);
               });
 
             case 2:
@@ -96335,14 +96369,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee47);
     }));
 
-    function DELETE_DISTRICT_OBJECT(_x82, _x83) {
-      return _DELETE_DISTRICT_OBJECT.apply(this, arguments);
+    function DELETE_DISTRICT_USER(_x82, _x83) {
+      return _DELETE_DISTRICT_USER.apply(this, arguments);
     }
 
-    return DELETE_DISTRICT_OBJECT;
+    return DELETE_DISTRICT_USER;
   }(),
-  SET_OBJECT_DISTRICT: function () {
-    var _SET_OBJECT_DISTRICT = _asyncToGenerator(
+  DELETE_DISTRICT_OBJECT: function () {
+    var _DELETE_DISTRICT_OBJECT = _asyncToGenerator(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee48(_ref51, payload) {
       var commit;
@@ -96351,6 +96385,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context48.prev = _context48.next) {
             case 0:
               commit = _ref51.commit;
+              axios.post("/api/districtObject/delete/".concat(payload.objectId)).then(function () {
+                return commit('DELETE_DISTRICT_OBJECT', payload);
+              });
+
+            case 2:
+            case "end":
+              return _context48.stop();
+          }
+        }
+      }, _callee48);
+    }));
+
+    function DELETE_DISTRICT_OBJECT(_x84, _x85) {
+      return _DELETE_DISTRICT_OBJECT.apply(this, arguments);
+    }
+
+    return DELETE_DISTRICT_OBJECT;
+  }(),
+  SET_OBJECT_DISTRICT: function () {
+    var _SET_OBJECT_DISTRICT = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee49(_ref52, payload) {
+      var commit;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee49$(_context49) {
+        while (1) {
+          switch (_context49.prev = _context49.next) {
+            case 0:
+              commit = _ref52.commit;
               axios.post("/api/districtObject/store/".concat(payload.districtId), {
                 object_id: payload.objectId
               }).then(function (response) {
@@ -96362,17 +96424,140 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 2:
             case "end":
-              return _context48.stop();
+              return _context49.stop();
           }
         }
-      }, _callee48);
+      }, _callee49);
     }));
 
-    function SET_OBJECT_DISTRICT(_x84, _x85) {
+    function SET_OBJECT_DISTRICT(_x86, _x87) {
       return _SET_OBJECT_DISTRICT.apply(this, arguments);
     }
 
     return SET_OBJECT_DISTRICT;
+  }(),
+  CHECK_CABLE_TYPE: function () {
+    var _CHECK_CABLE_TYPE = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee50(_ref53, payload) {
+      var commit, getters, allCableTypes, currentCableType, ctId, resp;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee50$(_context50) {
+        while (1) {
+          switch (_context50.prev = _context50.next) {
+            case 0:
+              commit = _ref53.commit, getters = _ref53.getters;
+              allCableTypes = getters.CABLE_TYPES.map(function (ct) {
+                return ct.name;
+              });
+              currentCableType = payload;
+
+              if (!allCableTypes.includes(currentCableType)) {
+                _context50.next = 8;
+                break;
+              }
+
+              ctId = getters.CABLE_TYPES.find(function (ct) {
+                return ct.name == currentCableType;
+              });
+              return _context50.abrupt("return", ctId.id);
+
+            case 8:
+              _context50.next = 10;
+              return axios.post("/api/cableTypes/add", {
+                name: payload
+              });
+
+            case 10:
+              resp = _context50.sent;
+              commit('ADD_CABLE_TYPE', resp.data);
+              return _context50.abrupt("return", resp.data.id);
+
+            case 13:
+            case "end":
+              return _context50.stop();
+          }
+        }
+      }, _callee50);
+    }));
+
+    function CHECK_CABLE_TYPE(_x88, _x89) {
+      return _CHECK_CABLE_TYPE.apply(this, arguments);
+    }
+
+    return CHECK_CABLE_TYPE;
+  }(),
+  ADD_ANTENNA: function () {
+    var _ADD_ANTENNA = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee51(_ref54, payload) {
+      var commit, getters, state, allCableTypes, currentCableType, ctId, resp, objectDeviceParams;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee51$(_context51) {
+        while (1) {
+          switch (_context51.prev = _context51.next) {
+            case 0:
+              commit = _ref54.commit, getters = _ref54.getters, state = _ref54.state;
+              //check if cable type isset and set id
+              allCableTypes = getters.CABLE_TYPES.map(function (ct) {
+                return ct.name;
+              });
+              currentCableType = payload.antennaParams.cable_type;
+
+              if (!allCableTypes.includes(currentCableType)) {
+                _context51.next = 8;
+                break;
+              }
+
+              ctId = getters.CABLE_TYPES.find(function (ct) {
+                return ct.name == currentCableType;
+              });
+              payload.antennaParams.cable_type = ctId.id;
+              _context51.next = 13;
+              break;
+
+            case 8:
+              _context51.next = 10;
+              return axios.post("/api/cableTypes/add", {
+                name: payload.antennaParams.cable_type
+              });
+
+            case 10:
+              resp = _context51.sent;
+              commit('ADD_CABLE_TYPE', resp.data);
+              payload.antennaParams.cable_type = resp.data.id;
+
+            case 13:
+              //check if cable type isset and set id
+              objectDeviceParams = {
+                device_id: payload.device_id,
+                object_id: payload.object_id,
+                parent_id: payload.parent_id,
+                tbl_name: payload.tbl_name
+              };
+              axios.post('/api/objectdevice/store', objectDeviceParams).then(function (response) {
+                commit('ADD_OBJECT_DEVICE', response.data);
+                var deviceIdx = state.current_object.devices.find(function (dev) {
+                  return dev.id == response.data.id;
+                });
+                var antennaParams = payload.antennaParams;
+                antennaParams.device_id = response.data.id;
+                axios.post('/api/antenna/storeParams', antennaParams).then(function (response) {
+                  return commit('UPDATE_OBJECT_DEVICE_PARAMS', response.data);
+                });
+              });
+
+            case 15:
+            case "end":
+              return _context51.stop();
+          }
+        }
+      }, _callee51);
+    }));
+
+    function ADD_ANTENNA(_x90, _x91) {
+      return _ADD_ANTENNA.apply(this, arguments);
+    }
+
+    return ADD_ANTENNA;
   }()
 });
 
@@ -96761,6 +96946,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       });
       return state.current_object.devices[deviceIdx].wires[wireIdx];
     };
+  },
+  CABLE_TYPES: function CABLE_TYPES(state) {
+    return state.cables;
   }
 });
 
@@ -96783,6 +96971,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  SET_CABLE_TYPES: function SET_CABLE_TYPES(state, payload) {
+    return state.cables = payload;
+  },
+  ADD_CABLE_TYPE: function ADD_CABLE_TYPE(state, payload) {
+    return state.cables.push(payload);
+  },
   TOGGLE_SIDEBAR: function TOGGLE_SIDEBAR(state) {
     return state.sideBarACtive = !state.sideBarACtive;
   },
@@ -97174,6 +97368,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     state.markerObj.bti_files_id = obj.bti_files_id = p.bti_plan_id;
   },
   UPDATE_OBJECT_DEVICE_PARAMS: function UPDATE_OBJECT_DEVICE_PARAMS(state, payload) {
+    console.log(payload);
     var idx = state.current_object.devices.findIndex(function (dev) {
       return dev && dev.id == payload.device_id;
     });
@@ -97387,6 +97582,7 @@ __webpack_require__.r(__webpack_exports__);
   showPreloader: false,
   limitedObjects: 0,
   raions: [],
+  cables: [],
   objects: [],
   districts: [],
   current_object: {},
@@ -97426,8 +97622,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\XAMPP\htdocs\firemonitoring\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\XAMPP\htdocs\firemonitoring\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
