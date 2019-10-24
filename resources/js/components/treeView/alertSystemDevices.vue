@@ -1,9 +1,7 @@
 <template>
 	<div>
-		<antenna-device
-			v-show="atennaEdit"
+		<antenna-params
 			:deviceData="deviceData"
-			v-on:end-adding="atennaEdit=false"
 		/>
 		<ul class="list-unstyled">
 			<li  v-for="(item, itemIdx) in items" :key="itemIdx">
@@ -45,22 +43,21 @@
 </template>
 
 <script>
-import antennaDevice from '../editForms/antenna';
+import antennaParams from '../editForms/antenna';
 export default
 {
-	components: {antennaDevice},
+	components: {antennaParams},
 	props: ['items','typeIdx'],
 	data: function () {
 		return {
-			atennaEdit: false,
 			deviceData: {},
 		}
 	},
 	methods: {
 		editDevice(item){
 			if(this.typeIdx == 'App\\device_rspi'){
-				this.atennaEdit = !this.atennaEdit;
-				this.deviceData = device.params ? device.params : {};
+				this.deviceData = item.params ? item.params : {};
+				this.$modal.show('antenna-params');
 			}
 			return false;
 		},

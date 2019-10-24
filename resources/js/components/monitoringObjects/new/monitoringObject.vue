@@ -212,14 +212,8 @@ export default {
             if(!this.object.lng || !this.object.lat){
                 errors.push('Не введены координаты объекта');
             }
-            if(!this.object.contact_name){
-                errors.push('Не введено ФИО ответственного');
-            }
             if(!this.object.director_name){
                 errors.push('Не введено ФИО руководителя');
-            }
-            if(!this.object.contact_phone){
-                errors.push('Не введен телефон ответственного');
             }
             if(!this.object.director_phone){
                 errors.push('Не введен телефон руководителя');

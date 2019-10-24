@@ -18,7 +18,7 @@ class device_antenna extends Device
 
     public function getIconAttribute(){
         return [
-            'good' => Storage::url('icons/antennas/antenna.png'),
+            'good' => Storage::url('icons/antennas/antenna_green.png'),
             'bad' => Storage::url('icons/antennas/antenna_red.png'),
         ];
     }

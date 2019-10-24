@@ -80,21 +80,32 @@
 	    		if(typeof(this.markers) == "undefined" || this.markers.length < 1)
 	    			return false;
 	    		this.markers.map(marker => {
-	    			const markerParams = {}
+					const markerParams = {}
 	    			if(marker.icon != 'default'){
+						let icon = marker.icon.good;
+						if(marker.deviceType == "sensor"){
+							if(marker.isGood == 0){	
+								icon = marker.icon.bad;
+							} else if(marker.sp5 == 0) {
+								icon = marker.icon.sp5;
+							}
+						}
+						else{
+							icon = marker.isGood ? marker.icon.good : marker.icon.bad;
+						}
 	    				markerParams.icon = L.icon({
-	    					iconUrl: marker.isGood ? marker.icon.good : marker.icon.bad,
+	    					iconUrl: icon,
 	    					iconSize: [38, 38],
 	    				});
 	    			} else{
 	    				markerParams.icon = L.icon({
-	    					iconUrl: marker.isGood ? '/uploads/icons/device.png' : '/uploads/icons/device_red.png',
+	    					iconUrl: marker.isGood ? '/uploads/icons/device_green.png' : '/uploads/icons/device_red.png',
 	    					iconSize: [34, 17],
 	    				});
 	    			}
 	    			const theMarker = L.marker({lat: marker.lat, lng: marker.lng}, markerParams);
 	    			theMarker.on('click',(e)=>console.log(e));
-	    			theMarker.bindPopup(`${marker.name}`);
+	    			theMarker.bindPopup(`${marker.name}${marker.comment ? '<br/>' + marker.comment : ''}`);
 	    			self.mapMarkers.push(theMarker);
 	    			theMarker.addTo(self.map);
 	    		});

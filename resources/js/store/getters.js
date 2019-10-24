@@ -74,7 +74,9 @@ export default{
                           sensorId: sensor.id,
                           deviceType: 'sensor',
                           isGood: sensor.is_good,
+                          sp5: sensor.SP5_valid,
                           name: `Извещатель ${device.name}/${wire.description}/${sensor.name}`,
+                          comment: sensor.comment,
                         })
                       }
                     )

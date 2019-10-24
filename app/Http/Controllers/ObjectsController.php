@@ -86,8 +86,6 @@ class ObjectsController extends Controller
             'address' => 'required|max:255|nullable',
             'director_name' => 'required|max:255|nullable',
             'director_phone' => 'required|max:255|nullable',
-            'contact_name' => 'required|max:255|nullable',
-            'contact_phone' => 'required|max:255|nullable',
         ]);
         $obj = MO::find($id);
         $params = $request->all();
@@ -103,8 +101,6 @@ class ObjectsController extends Controller
             'address' => 'required|max:255',
             'director_name' => 'required|max:255',
             'director_phone' => 'required|max:255',
-            'contact_name' => 'required|max:255',
-            'contact_phone' => 'required|max:255',
         ]);
         $params = $request->except('_token');
         $params['project_isset'] = isset($params['project_isset']) && $params['project_isset'] ? $params['project_isset'] : 0;

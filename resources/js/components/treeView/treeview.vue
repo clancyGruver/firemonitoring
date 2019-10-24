@@ -20,8 +20,6 @@
 			v-on:end-adding="addAlarmShow = false"
 		/>
 		<rspi-params
-			v-show="rspiParamsShow"
-			v-on:end-adding="rspiParamsShow = false"
 			:deviceData="deviceData"
 		/>
 		<hr class="mt-2">
@@ -119,15 +117,12 @@ import rspiParams from '../editForms/rspiParams';
 				addAlarmShow:false,
 				addDeviceShow: false,
 
-				FormMethodAllowed: ['new','edit'],
 				ObjectDeviceId: null,
 				typeIdx: null,
 
 				deviceFormShow: false,
 				deviceFormMethod: 'edit',
 				deviceData:{},
-
-				rspiParamsShow: false,
 			}
 		},
 		methods: {
@@ -155,10 +150,8 @@ import rspiParams from '../editForms/rspiParams';
 					device.params.device_id = device.id;
 				device.params.tbl_name = typeIdx;
 				this.deviceData = device.params;
-				if(typeIdx == 'App\\device_antenna')
-					this.atennaEdit = true;
-				else if(typeIdx == 'App\\device_rspi')
-					this.rspiParamsShow = true;
+				if(typeIdx == 'App\\device_rspi')
+					this.$modal.show('rspi-params');
 			},
 			deleteDevice(device){
 				if(confirm(`Вы действительно хотите удалить ${device.name}`)){

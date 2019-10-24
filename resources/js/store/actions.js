@@ -417,7 +417,6 @@ export default{
         payload.antennaParams.cable_type = resp.data.id;
       }
       //check if cable type isset and set id
-
       const objectDeviceParams = {
         device_id: payload.device_id,
         object_id: payload.object_id,
@@ -426,12 +425,13 @@ export default{
       }
       axios.post('/api/objectdevice/store',objectDeviceParams)
         .then(response => {
-            commit('ADD_OBJECT_DEVICE', response.data);
-            const deviceIdx = state.current_object.devices.find( dev => dev.id == response.data.id);
             const antennaParams = payload.antennaParams;
             antennaParams.device_id = response.data.id;
             axios.post('/api/antenna/storeParams',antennaParams).then(
-              response => commit('UPDATE_OBJECT_DEVICE_PARAMS', response.data)
+              resp => {
+                response.data.params = resp.data;
+                commit('ADD_OBJECT_DEVICE', response.data);
+              }
             )
       });
     },
