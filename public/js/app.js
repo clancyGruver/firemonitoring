@@ -3263,6 +3263,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -3279,6 +3300,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   methods: {
+    setAccumulatorCount: function setAccumulatorCount(e) {
+      this.device.accumulator_count = e;
+    },
+    setBatteryCapacity: function setBatteryCapacity(e) {
+      this.device.battery_capacity = e;
+    },
+    setOutputVoltage: function setOutputVoltage(e) {
+      this.device.output_voltage = e;
+    },
     setPower: function setPower(e) {
       this.device.power = e;
     },
@@ -3363,6 +3393,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           res.power = curDev.power ? curDev.power : null;
           res.type = curDev.type ? curDev.type : null;
         }
+
+        if (this.device_type == 'power_supply') {
+          res.accumulator_count = curDev.accumulator_count ? curDev.accumulator_count : null;
+          res.battery_capacity = curDev.battery_capacity ? curDev.battery_capacity : null;
+          res.output_voltage = curDev.output_voltage ? curDev.output_voltage : null;
+        }
       } else {
         res.name = '';
         res.instruction = '';
@@ -3374,6 +3410,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (this.device_type == 'alerts') {
           res.power = 0;
           res.type = '';
+        }
+
+        if (this.device_type == 'power_supply') {
+          res.accumulator_count = 0;
+          res.battery_capacity = 0;
+          res.output_voltage = 0;
         }
       }
 
@@ -5406,6 +5448,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -14421,7 +14476,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\r\n  border-radius: 2px;\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\n  border-radius: 2px;\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -14459,7 +14514,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.preloader[data-v-192877e2] {\r\n\twidth: inherit;\r\n\theight: 100%;\r\n\tdisplay: flex;\r\n\tbackground-color: #e3e3e3;\n}\n.sk-cube-grid[data-v-192877e2] {\r\n  width: 4em;\r\n  height: 4em;\r\n  margin: auto;\n}\n.sk-cube[data-v-192877e2] {\r\n    width: 33%;\r\n    height: 33%;\r\n    background-color: #337ab7;\r\n    float: left;\r\n    -webkit-animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\r\n            animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n}\n.sk-cube-1[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n.sk-cube-2[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.3s;\r\n\t        animation-delay: 0.3s;\n}\n.sk-cube-3[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.4s;\r\n\t        animation-delay: 0.4s;\n}\n.sk-cube-4[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.1s;\r\n\t        animation-delay: 0.1s;\n}\n.sk-cube-5[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n.sk-cube-6[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.3s;\r\n\t        animation-delay: 0.3s;\n}\n.sk-cube-7[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0s;\r\n\t        animation-delay: 0s;\n}\n.sk-cube-8[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.1s;\r\n\t        animation-delay: 0.1s;\n}\n.sk-cube-9[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n@-webkit-keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\r\n    -webkit-transform: scale3D(1,1,1);\r\n            transform: scale3D(1,1,1);\n}\n35%           {\r\n    -webkit-transform: scale3D(0,0,1);\r\n            transform: scale3D(0,0,1);\n}\n}\n@keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\r\n    -webkit-transform: scale3D(1,1,1);\r\n            transform: scale3D(1,1,1);\n}\n35%           {\r\n    -webkit-transform: scale3D(0,0,1);\r\n            transform: scale3D(0,0,1);\n}\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.preloader[data-v-192877e2] {\n\twidth: inherit;\n\theight: 100%;\n\tdisplay: flex;\n\tbackground-color: #e3e3e3;\n}\n.sk-cube-grid[data-v-192877e2] {\n  width: 4em;\n  height: 4em;\n  margin: auto;\n}\n.sk-cube[data-v-192877e2] {\n    width: 33%;\n    height: 33%;\n    background-color: #337ab7;\n    float: left;\n    -webkit-animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n            animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n}\n.sk-cube-1[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n.sk-cube-2[data-v-192877e2] {\n\t-webkit-animation-delay: 0.3s;\n\t        animation-delay: 0.3s;\n}\n.sk-cube-3[data-v-192877e2] {\n\t-webkit-animation-delay: 0.4s;\n\t        animation-delay: 0.4s;\n}\n.sk-cube-4[data-v-192877e2] {\n\t-webkit-animation-delay: 0.1s;\n\t        animation-delay: 0.1s;\n}\n.sk-cube-5[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n.sk-cube-6[data-v-192877e2] {\n\t-webkit-animation-delay: 0.3s;\n\t        animation-delay: 0.3s;\n}\n.sk-cube-7[data-v-192877e2] {\n\t-webkit-animation-delay: 0s;\n\t        animation-delay: 0s;\n}\n.sk-cube-8[data-v-192877e2] {\n\t-webkit-animation-delay: 0.1s;\n\t        animation-delay: 0.1s;\n}\n.sk-cube-9[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n@-webkit-keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\n    -webkit-transform: scale3D(1,1,1);\n            transform: scale3D(1,1,1);\n}\n35%           {\n    -webkit-transform: scale3D(0,0,1);\n            transform: scale3D(0,0,1);\n}\n}\n@keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\n    -webkit-transform: scale3D(1,1,1);\n            transform: scale3D(1,1,1);\n}\n35%           {\n    -webkit-transform: scale3D(0,0,1);\n            transform: scale3D(0,0,1);\n}\n}\n\n", ""]);
 
 // exports
 
@@ -14592,7 +14647,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.pointer{\r\n  cursor:pointer;\n}\n.fade-enter-active, .fade-leave-active {\r\n  transition: opacity 0.5s;\n}\n.fade-enter, .fade-leave-to {\r\n  opacity: 0;\n}\n.wrapper {\r\n  display: block;\n}\n.logo {\r\n   align-self: center;\r\n   color: #fff;\r\n   font-weight: bold;\r\n   font-family: 'Lato'\n}\n.main-nav {\r\n   display: flex;\r\n   justify-content: space-between;\r\n   padding: 0.5rem 0.8rem;\n}\n.navbar-brand,.navbar-brand:hover{\r\n   color:#32325d;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.pointer{\n  cursor:pointer;\n}\n.fade-enter-active, .fade-leave-active {\n  transition: opacity 0.5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.wrapper {\n  display: block;\n}\n.logo {\n   align-self: center;\n   color: #fff;\n   font-weight: bold;\n   font-family: 'Lato'\n}\n.main-nav {\n   display: flex;\n   justify-content: space-between;\n   padding: 0.5rem 0.8rem;\n}\n.navbar-brand,.navbar-brand:hover{\n   color:#32325d;\n}\n\n", ""]);
 
 // exports
 
@@ -14611,7 +14666,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-4ff44dc0] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, .5);\r\n  display: table;\r\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-4ff44dc0] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-4ff44dc0] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-4ff44dc0] {\n  display: table-cell;\n  vertical-align: middle;\n}\n\n", ""]);
 
 // exports
 
@@ -14649,7 +14704,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.reglament_badge{\r\n\tfont-size: 100%;\r\n\tfont-weight: bold;\r\n\tcolor: #333;\n}\n.mx-calendar{\r\n\tbackground-color: white;\r\n\tborder: 1px solid #73879c;\n}\n.mx-calendar-content{\r\n\twidth:100%;\n}\r\n", ""]);
+exports.push([module.i, "\n.reglament_badge{\n\tfont-size: 100%;\n\tfont-weight: bold;\n\tcolor: #333;\n}\n.mx-calendar{\n\tbackground-color: white;\n\tborder: 1px solid #73879c;\n}\n.mx-calendar-content{\n\twidth:100%;\n}\n", ""]);
 
 // exports
 
@@ -14668,7 +14723,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-30364831] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\r\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -63346,6 +63401,39 @@ var render = function() {
                         })
                       : _vm._e(),
                     _vm._v(" "),
+                    index == "accumulator_count"
+                      ? _c("custom-input", {
+                          attrs: {
+                            val: param,
+                            type: "number",
+                            name: "Количество аккумуляторов"
+                          },
+                          on: { changed: _vm.setAccumulatorCount }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    index == "battery_capacity"
+                      ? _c("custom-input", {
+                          attrs: {
+                            val: param,
+                            type: "number",
+                            name: "Емкость, Ач"
+                          },
+                          on: { changed: _vm.setBatteryCapacity }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    index == "output_voltage"
+                      ? _c("custom-input", {
+                          attrs: {
+                            val: param,
+                            type: "number",
+                            name: "Выходное напряжение, В"
+                          },
+                          on: { changed: _vm.setOutputVoltage }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
                     index == "power"
                       ? _c("custom-input", {
                           attrs: {
@@ -66135,6 +66223,34 @@ var render = function() {
                                   staticClass: "fas fa-bullhorn text-primary"
                                 }),
                                 _vm._v(" Оповещатели\n\t\t\t\t\t\t\t\t\t")
+                              ]
+                            )
+                          ],
+                          1
+                        ),
+                        _c(
+                          "li",
+                          { staticClass: "nav-item" },
+                          [
+                            _c(
+                              "router-link",
+                              {
+                                staticClass: "nav-link",
+                                attrs: {
+                                  "active-class": _vm.active,
+                                  to: {
+                                    path: "/devices/power_supply",
+                                    params: {
+                                      device_type: "power_supply"
+                                    }
+                                  }
+                                }
+                              },
+                              [
+                                _c("i", {
+                                  staticClass: "fas fa-bullhorn text-primary"
+                                }),
+                                _vm._v(" Блоки питания\n\t\t\t\t\t\t\t\t\t")
                               ]
                             )
                           ],
@@ -97441,8 +97557,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\XAMPP\htdocs\firemonitoring\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\XAMPP\htdocs\firemonitoring\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

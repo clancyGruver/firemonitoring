@@ -6,3 +6,4 @@ TODOS:
 - ALTER TABLE `objects` CHANGE `contact_name` `contact_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
 - ALTER TABLE `objects` CHANGE `contact_phone` `contact_phone` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
 - districts.id => primary autoincrement 
+- device_power_supplies

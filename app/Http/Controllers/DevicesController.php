@@ -10,6 +10,7 @@ use App\device_rspi;
 use App\device_alert;
 use App\device_system_voice_alert;
 use App\Sensor;
+use App\device_power_supply;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -36,6 +37,7 @@ class DevicesController extends Controller
         $voice_alerts = device_system_voice_alert::with(['limitations','reglaments'])->get();
         $aps = device_aps::with(['limitations','reglaments'])->get();
         $sensors = Sensor::with(['reglaments'])->get();
+        $power_supply = device_power_supply::with(['limitations','reglaments'])->get();
         $res = [
             'antennas'=> [
                 'name' => 'Антенна',
@@ -66,6 +68,11 @@ class DevicesController extends Controller
                 'name' =>'Извещатели',
                 'tbl_name' => 'App\Sensor',
                 'devices' => $sensors
+            ],
+            'power_supply' => [
+                'name' =>'Блок питания',
+                'tbl_name' => 'App\device_power_supply',
+                'devices' => $power_supply
             ],
         ];
 
@@ -103,6 +110,9 @@ class DevicesController extends Controller
             case 'sensors':
                 Sensor::destroy($id);
                 break;
+            case 'power_supply':
+                device_power_supply::destroy($id);
+                break;
             default: break;
         }
         return response(200);
@@ -133,6 +143,9 @@ class DevicesController extends Controller
                 break;
             case 'sensors':
                 $obj = new Sensor($data);
+                break;
+            case 'power_supply':
+                $obj = new device_power_supply($data);
                 break;
             default: break;
         }

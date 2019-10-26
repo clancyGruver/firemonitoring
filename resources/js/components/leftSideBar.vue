@@ -157,6 +157,19 @@
 									>
 										<i class="fas fa-bullhorn text-primary"></i> Оповещатели
 									</router-link>
+		                        <li class="nav-item">
+									<router-link
+										class="nav-link"
+										:active-class="active"
+										:to="{
+											path:`/devices/power_supply`,
+											params: {
+												device_type: 'power_supply',
+											}
+										}"
+									>
+										<i class="fas fa-bullhorn text-primary"></i> Блоки питания
+									</router-link>
 		                        </li>
 		                    </ul>
 		                </div>

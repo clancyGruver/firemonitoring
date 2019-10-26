@@ -115,4 +115,10 @@ Route::middleware('auth:api')->group(function(){
 
 	Route::post('/cableTypes/getAll', 'CableTypeController@index');
 	Route::post('/cableTypes/add', 'CableTypeController@add');
+
+	Route::post('/power_supply/getAll', 'DevicePowerSupplyController@index');
+	Route::post('/power_supply/getAne/{id}', 'DevicePowerSupplyController@detail');
+	Route::post('/power_supply/store', 'DevicePowerSupplyController@store');
+	Route::post('/power_supply/update/{id}', 'DevicePowerSupplyController@update');
+	Route::post('/power_supply/delete/{id}', 'DevicePowerSupplyController@delete');
 });

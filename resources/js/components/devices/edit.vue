@@ -39,6 +39,27 @@
 								v-on:changed="setWiresCount"
 							/>
 							<custom-input
+								:val="param"
+								:type="'number'"
+								name="Количество аккумуляторов"
+								v-if="index == 'accumulator_count'"
+								v-on:changed="setAccumulatorCount"
+							/>
+							<custom-input
+								:val="param"
+								:type="'number'"
+								name="Емкость, Ач"
+								v-if="index == 'battery_capacity'"
+								v-on:changed="setBatteryCapacity"
+							/>
+							<custom-input
+								:val="param"
+								:type="'number'"
+								name="Выходное напряжение, В"
+								v-if="index == 'output_voltage'"
+								v-on:changed="setOutputVoltage"
+							/>
+							<custom-input
 								v-if="index == 'power'"
 								:val="param"
 								:type="'number'"
@@ -99,6 +120,9 @@ export default{
 		}
 	},
 	methods:{
+		setAccumulatorCount(e){ this.device.accumulator_count = e; },
+		setBatteryCapacity(e){ this.device.battery_capacity = e; },
+		setOutputVoltage(e){ this.device.output_voltage = e; },
 		setPower(e){ this.device.power = e; },
 		handleAlertType(e){ this.device.type = e; },
 		setName(e){ this.device.name = e; },
@@ -165,6 +189,11 @@ export default{
 					res.power = curDev.power ? curDev.power : null;
 					res.type = curDev.type ? curDev.type : null;
 				}
+				if(this.device_type == 'power_supply'){
+					res.accumulator_count = curDev.accumulator_count ? curDev.accumulator_count : null;
+					res.battery_capacity = curDev.battery_capacity ? curDev.battery_capacity : null;
+					res.output_voltage = curDev.output_voltage ? curDev.output_voltage : null;
+				}
 			}
 			else{
 				res.name = '';
@@ -175,6 +204,11 @@ export default{
 				if(this.device_type == 'alerts'){
 					res.power = 0;
 					res.type = '';
+				}
+				if(this.device_type == 'power_supply'){
+					res.accumulator_count = 0;
+					res.battery_capacity = 0;
+					res.output_voltage = 0;
 				}
 			}
 			return res;
