@@ -172,7 +172,7 @@ import suggestions from '../../leaflet/suggetion';
 import Map from '../../leaflet/mapWithProps';
 
 export default {
-    components: { suggestions, Map},
+    components: { suggestions, Map },
 	data() {
 		return {
             object:{

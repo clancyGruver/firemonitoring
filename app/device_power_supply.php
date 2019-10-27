@@ -15,6 +15,7 @@ class device_power_supply extends Device
 		'battery_capacity',
 		'output_voltage',
 		'instruction',
+		'created_user_id',
     ];
 
     protected $appends = ['instrutionPath'];

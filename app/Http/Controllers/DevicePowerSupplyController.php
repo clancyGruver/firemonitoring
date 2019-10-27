@@ -33,7 +33,7 @@ class DevicePowerSupplyController extends Controller
         $obj->save();
         if($request->instruction){
             $obj->instruction = $request->instruction->getClientOriginalName();
-            $request->instruction->storeAs('instructions/power_suply/'.$obj->id, $request->instruction->getClientOriginalName());
+            $request->instruction->storeAs('instructions/power_supply/'.$obj->id, $request->instruction->getClientOriginalName());
             $obj->save();
         }
         return response()->json($obj);
@@ -42,13 +42,7 @@ class DevicePowerSupplyController extends Controller
     public function update($id, Request $request){
         $params = $request->all();
         $params['created_user_id'] = Auth::user()->id;
-        if(isset($params['id'])){
-            $item = DPS::find($id);
-            $item->update($params);
-        }
-        else{
-            $item = new DPS($params);
-            $item->save();
-        }
+        $item = DPS::find($id);
+        $item->update($params);
     }
 }

@@ -60,7 +60,7 @@
 			<Map :objects="objects" :center="center" />
 	    </div>
 	    <div class="row">
-	        <div class="table-responsive">
+	        <div class="table-responsive-xl">
 	            <table class="table align-items-center">
 	            <thead class="thead-light">
 	                <tr>
@@ -70,6 +70,7 @@
 	                  <th scope="col" class="border-0">Адрес</th>
 	                  <th scope="col" class="border-0">Директор</th>
 	                  <th scope="col" class="border-0">Контактное лицо</th>
+	                  <th scope="col" class="border-0">Договор</th>
 	                  <th scope="col" class="border-0"></th>
 	                </tr>
 	            </thead>
@@ -83,6 +84,7 @@
 	                    <td>{{object.address}}</td>
 	                    <td>{{object.director_name}}, {{object.director_phone}}</td>
 	                    <td>{{object.contact_name}}, {{object.contact_phone}}</td>
+	                    <td>{{ object.contract_id ? `№${object.contract_id}`:'' }}<br />{{ object.contract_ends_at ? `до ${object.contract_ends_at}`:'' }}</td>
 	                    <td>
 	                        <a
 	                        	href="#"

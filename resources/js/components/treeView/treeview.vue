@@ -23,7 +23,7 @@
 			:deviceData="deviceData"
 		/>
 		<hr class="mt-2">
-		
+
 		<ul class="list-unstyled" v-for="(type, typeIdx) in tree" :key="typeIdx">
 			<h3 class="underline">{{type.name}}</h3>
 			<li v-for="device in type.items" :key="device.id">
@@ -100,7 +100,8 @@ import alarmDevices from '../alarmDevices';
 import alertSystemDevices from './alertSystemDevices';
 import addAntenna from './antenna/add-antenna';
 import rspiParams from '../editForms/rspiParams';
-
+import apsParams from '../editForms/apsParams';
+import svaParams from '../editForms/svaParams';
 	export default
 	{
 		components: {
@@ -111,6 +112,8 @@ import rspiParams from '../editForms/rspiParams';
 			DatePicker,
 			rspiParams,
 			addAntenna,
+			svaParams,
+			apsParams,
 		},
 		data: function () {
 			return {
@@ -150,8 +153,15 @@ import rspiParams from '../editForms/rspiParams';
 					device.params.device_id = device.id;
 				device.params.tbl_name = typeIdx;
 				this.deviceData = device.params;
-				if(typeIdx == 'App\\device_rspi')
+				if(typeIdx == 'App\\device_rspi'){
 					this.$modal.show('rspi-params');
+				}
+				if(typeIdx == 'App\\device_system_voice_alert'){
+					this.$modal.show('sva-params');
+				}
+				if(typeIdx == 'App\\device_aps'){
+					this.$modal.show('aps-params');
+				}
 			},
 			deleteDevice(device){
 				if(confirm(`Вы действительно хотите удалить ${device.name}`)){

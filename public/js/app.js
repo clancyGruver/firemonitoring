@@ -3354,8 +3354,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       fd.append('name', this.device.name);
       if (this.device.newFile) fd.append('newFile', this.device.newFile);
       if (this.device.wires_count) fd.append('wires_count', this.device.wires_count * 1);
-      if (this.device.power) fd.append('power', this.device.power * 1);
+      if (this.device.power) fd.append('power', this.device.power.replace(',', '.') * 1);
       if (this.device.type) fd.append('type', this.device.type);
+      if (this.device.accumulator_count) fd.append('accumulator_count', this.device.accumulator_count.replace(',', '.') * 1);
+      if (this.device.battery_capacity) fd.append('battery_capacity', this.device.battery_capacity.replace(',', '.') * 1);
+      if (this.device.output_voltage) fd.append('output_voltage', this.device.output_voltage.replace(',', '.') * 1);
       return this.$store.dispatch('UPDATE_DEVICE', {
         fd: fd,
         device_type: this.device_type,
@@ -4006,6 +4009,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     save: function save() {
       if (!this.check()) return false;
+      this.deviceData.mast_height = this.deviceData.mast_height.replace(',', '.');
       this.$store.dispatch("UPDATE_OBJECT_DEVICE_PARAMS", {
         type: "antenna",
         data: this.deviceData
@@ -4048,6 +4052,124 @@ __webpack_require__.r(__webpack_exports__);
       return result;
     }
   }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/apsParams.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/editForms/apsParams.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "apsParams",
+  props: {
+    deviceData: {
+      type: Object,
+      "default": function _default() {}
+    }
+  },
+  data: function data() {},
+  methods: {
+    save: function save() {
+      if (!this.check()) return false;
+      this.$store.dispatch('UPDATE_OBJECT_DEVICE_PARAMS', {
+        type: 'aps',
+        data: this.deviceData
+      });
+      this.cancel();
+    },
+    cancel: function cancel() {
+      this.$modal.hide("aps-params");
+    },
+    check: function check() {
+      var res = true;
+      this.errors = [];
+      return res;
+    }
+  },
+  computed: {}
 });
 
 /***/ }),
@@ -4118,6 +4240,7 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {},
   methods: {
     changeHandler: function changeHandler() {
+      if (this.type == 'number') this.localVal = this.localVal.replace(',', '.');
       this.$emit('changed', this.localVal);
     }
   },
@@ -4338,6 +4461,124 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit('selected', newVal);
     }
   }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/svaParams.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/editForms/svaParams.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "svaParams",
+  props: {
+    deviceData: {
+      type: Object,
+      "default": function _default() {}
+    }
+  },
+  data: function data() {},
+  methods: {
+    save: function save() {
+      if (!this.check()) return false;
+      this.$store.dispatch('UPDATE_OBJECT_DEVICE_PARAMS', {
+        type: 'voice_alerts',
+        data: this.deviceData
+      });
+      this.cancel();
+    },
+    cancel: function cancel() {
+      this.$modal.hide("sva-params");
+    },
+    check: function check() {
+      var res = true;
+      this.errors = [];
+      return res;
+    }
+  },
+  computed: {}
 });
 
 /***/ }),
@@ -4832,7 +5073,7 @@ __webpack_require__.r(__webpack_exports__);
             bounds = new L.LatLngBounds(southWest, northEast);
 
         if (_this.map.hasLayer(_this.imageOverlay)) _this.map.removeLayer(_this.imageOverlay);
-        _this.imageOverlay = L.imageOverlay(_this.imgUrl, bounds);
+        _this.imageOverlay = L.imageOverlay(img.src, bounds);
 
         _this.imageOverlay.addTo(_this.map);
 
@@ -4865,6 +5106,8 @@ __webpack_require__.r(__webpack_exports__);
               icon = marker.icon.bad;
             } else if (marker.sp5 == 0) {
               icon = marker.icon.sp5;
+            } else {
+              icon = marker.icon.good;
             }
           } else {
             icon = marker.isGood ? marker.icon.good : marker.icon.bad;
@@ -6277,6 +6520,24 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _leaflet_suggetion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../leaflet/suggetion */ "./resources/js/components/leaflet/suggetion.vue");
+/* harmony import */ var vue2_datepicker__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue2-datepicker */ "./node_modules/vue2-datepicker/lib/index.js");
+/* harmony import */ var vue2_datepicker__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue2_datepicker__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -6437,12 +6698,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {};
   },
   components: {
-    suggestions: _leaflet_suggetion__WEBPACK_IMPORTED_MODULE_0__["default"]
+    suggestions: _leaflet_suggetion__WEBPACK_IMPORTED_MODULE_0__["default"],
+    DatePicker: vue2_datepicker__WEBPACK_IMPORTED_MODULE_1___default.a
   },
   methods: {
     updateAdressHandler: function updateAdressHandler(obj) {
@@ -6452,6 +6715,17 @@ __webpack_require__.r(__webpack_exports__);
     },
     updateObject: function updateObject() {
       var _this = this;
+
+      var createdDate = this.object.contract_created_at ? this.object.contract_created_at : null;
+      var endsDate = this.object.contract_ends_at ? this.object.contract_ends_at : null;
+
+      if (createdDate) {
+        this.object.contract_created_at = "".concat(createdDate.getFullYear(), "-").concat(createdDate.getMonth() + 1, "-").concat(createdDate.getDate());
+      }
+
+      if (endsDate) {
+        this.object.contract_ends_at = "".concat(endsDate.getFullYear(), "-").concat(endsDate.getMonth() + 1, "-").concat(endsDate.getDate());
+      }
 
       this.$store.dispatch('OBJECT_UPDATE').then(function (success) {
         return _this.$awn.success('Данные объекта сохранены');
@@ -6552,6 +6826,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _leaflet_allMap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../leaflet/allMap */ "./resources/js/components/leaflet/allMap.vue");
 /* harmony import */ var _calendarWork_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./calendarWork/index */ "./resources/js/components/monitoringObjects/calendarWork/index.vue");
+//
+//
 //
 //
 //
@@ -9162,6 +9438,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _alertSystemDevices__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./alertSystemDevices */ "./resources/js/components/treeView/alertSystemDevices.vue");
 /* harmony import */ var _antenna_add_antenna__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./antenna/add-antenna */ "./resources/js/components/treeView/antenna/add-antenna.vue");
 /* harmony import */ var _editForms_rspiParams__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../editForms/rspiParams */ "./resources/js/components/editForms/rspiParams.vue");
+/* harmony import */ var _editForms_apsParams__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../editForms/apsParams */ "./resources/js/components/editForms/apsParams.vue");
+/* harmony import */ var _editForms_svaParams__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../editForms/svaParams */ "./resources/js/components/editForms/svaParams.vue");
 //
 //
 //
@@ -9256,6 +9534,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
+
 
 
 
@@ -9271,7 +9551,9 @@ __webpack_require__.r(__webpack_exports__);
     alertSystemDevices: _alertSystemDevices__WEBPACK_IMPORTED_MODULE_4__["default"],
     DatePicker: vue2_datepicker__WEBPACK_IMPORTED_MODULE_0___default.a,
     rspiParams: _editForms_rspiParams__WEBPACK_IMPORTED_MODULE_6__["default"],
-    addAntenna: _antenna_add_antenna__WEBPACK_IMPORTED_MODULE_5__["default"]
+    addAntenna: _antenna_add_antenna__WEBPACK_IMPORTED_MODULE_5__["default"],
+    svaParams: _editForms_svaParams__WEBPACK_IMPORTED_MODULE_8__["default"],
+    apsParams: _editForms_apsParams__WEBPACK_IMPORTED_MODULE_7__["default"]
   },
   data: function data() {
     return {
@@ -9312,7 +9594,18 @@ __webpack_require__.r(__webpack_exports__);
       if (!('device_id' in device.params)) device.params.device_id = device.id;
       device.params.tbl_name = typeIdx;
       this.deviceData = device.params;
-      if (typeIdx == 'App\\device_rspi') this.$modal.show('rspi-params');
+
+      if (typeIdx == 'App\\device_rspi') {
+        this.$modal.show('rspi-params');
+      }
+
+      if (typeIdx == 'App\\device_system_voice_alert') {
+        this.$modal.show('sva-params');
+      }
+
+      if (typeIdx == 'App\\device_aps') {
+        this.$modal.show('aps-params');
+      }
     },
     deleteDevice: function deleteDevice(device) {
       if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ".concat(device.name))) {
@@ -14476,7 +14769,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\n  border-radius: 2px;\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\r\n  border-radius: 2px;\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
 
 // exports
 
@@ -14514,7 +14807,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.preloader[data-v-192877e2] {\n\twidth: inherit;\n\theight: 100%;\n\tdisplay: flex;\n\tbackground-color: #e3e3e3;\n}\n.sk-cube-grid[data-v-192877e2] {\n  width: 4em;\n  height: 4em;\n  margin: auto;\n}\n.sk-cube[data-v-192877e2] {\n    width: 33%;\n    height: 33%;\n    background-color: #337ab7;\n    float: left;\n    -webkit-animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n            animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n}\n.sk-cube-1[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n.sk-cube-2[data-v-192877e2] {\n\t-webkit-animation-delay: 0.3s;\n\t        animation-delay: 0.3s;\n}\n.sk-cube-3[data-v-192877e2] {\n\t-webkit-animation-delay: 0.4s;\n\t        animation-delay: 0.4s;\n}\n.sk-cube-4[data-v-192877e2] {\n\t-webkit-animation-delay: 0.1s;\n\t        animation-delay: 0.1s;\n}\n.sk-cube-5[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n.sk-cube-6[data-v-192877e2] {\n\t-webkit-animation-delay: 0.3s;\n\t        animation-delay: 0.3s;\n}\n.sk-cube-7[data-v-192877e2] {\n\t-webkit-animation-delay: 0s;\n\t        animation-delay: 0s;\n}\n.sk-cube-8[data-v-192877e2] {\n\t-webkit-animation-delay: 0.1s;\n\t        animation-delay: 0.1s;\n}\n.sk-cube-9[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n@-webkit-keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\n    -webkit-transform: scale3D(1,1,1);\n            transform: scale3D(1,1,1);\n}\n35%           {\n    -webkit-transform: scale3D(0,0,1);\n            transform: scale3D(0,0,1);\n}\n}\n@keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\n    -webkit-transform: scale3D(1,1,1);\n            transform: scale3D(1,1,1);\n}\n35%           {\n    -webkit-transform: scale3D(0,0,1);\n            transform: scale3D(0,0,1);\n}\n}\n\n", ""]);
+exports.push([module.i, "\n.preloader[data-v-192877e2] {\r\n\twidth: inherit;\r\n\theight: 100%;\r\n\tdisplay: flex;\r\n\tbackground-color: #e3e3e3;\n}\n.sk-cube-grid[data-v-192877e2] {\r\n  width: 4em;\r\n  height: 4em;\r\n  margin: auto;\n}\n.sk-cube[data-v-192877e2] {\r\n    width: 33%;\r\n    height: 33%;\r\n    background-color: #337ab7;\r\n    float: left;\r\n    -webkit-animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\r\n            animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n}\n.sk-cube-1[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n.sk-cube-2[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.3s;\r\n\t        animation-delay: 0.3s;\n}\n.sk-cube-3[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.4s;\r\n\t        animation-delay: 0.4s;\n}\n.sk-cube-4[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.1s;\r\n\t        animation-delay: 0.1s;\n}\n.sk-cube-5[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n.sk-cube-6[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.3s;\r\n\t        animation-delay: 0.3s;\n}\n.sk-cube-7[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0s;\r\n\t        animation-delay: 0s;\n}\n.sk-cube-8[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.1s;\r\n\t        animation-delay: 0.1s;\n}\n.sk-cube-9[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n@-webkit-keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\r\n    -webkit-transform: scale3D(1,1,1);\r\n            transform: scale3D(1,1,1);\n}\n35%           {\r\n    -webkit-transform: scale3D(0,0,1);\r\n            transform: scale3D(0,0,1);\n}\n}\n@keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\r\n    -webkit-transform: scale3D(1,1,1);\r\n            transform: scale3D(1,1,1);\n}\n35%           {\r\n    -webkit-transform: scale3D(0,0,1);\r\n            transform: scale3D(0,0,1);\n}\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -14647,7 +14940,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.pointer{\n  cursor:pointer;\n}\n.fade-enter-active, .fade-leave-active {\n  transition: opacity 0.5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.wrapper {\n  display: block;\n}\n.logo {\n   align-self: center;\n   color: #fff;\n   font-weight: bold;\n   font-family: 'Lato'\n}\n.main-nav {\n   display: flex;\n   justify-content: space-between;\n   padding: 0.5rem 0.8rem;\n}\n.navbar-brand,.navbar-brand:hover{\n   color:#32325d;\n}\n\n", ""]);
+exports.push([module.i, "\n.pointer{\r\n  cursor:pointer;\n}\n.fade-enter-active, .fade-leave-active {\r\n  transition: opacity 0.5s;\n}\n.fade-enter, .fade-leave-to {\r\n  opacity: 0;\n}\n.wrapper {\r\n  display: block;\n}\n.logo {\r\n   align-self: center;\r\n   color: #fff;\r\n   font-weight: bold;\r\n   font-family: 'Lato'\n}\n.main-nav {\r\n   display: flex;\r\n   justify-content: space-between;\r\n   padding: 0.5rem 0.8rem;\n}\n.navbar-brand,.navbar-brand:hover{\r\n   color:#32325d;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -14666,7 +14959,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-4ff44dc0] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-4ff44dc0] {\n  display: table-cell;\n  vertical-align: middle;\n}\n\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-4ff44dc0] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, .5);\r\n  display: table;\r\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-4ff44dc0] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -14704,7 +14997,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.reglament_badge{\n\tfont-size: 100%;\n\tfont-weight: bold;\n\tcolor: #333;\n}\n.mx-calendar{\n\tbackground-color: white;\n\tborder: 1px solid #73879c;\n}\n.mx-calendar-content{\n\twidth:100%;\n}\n", ""]);
+exports.push([module.i, "\n.reglament_badge{\r\n\tfont-size: 100%;\r\n\tfont-weight: bold;\r\n\tcolor: #333;\n}\n.mx-calendar{\r\n\tbackground-color: white;\r\n\tborder: 1px solid #73879c;\n}\n.mx-calendar-content{\r\n\twidth:100%;\n}\r\n", ""]);
 
 // exports
 
@@ -14723,7 +15016,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-30364831] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\r\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
 
 // exports
 
@@ -64485,6 +64778,360 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/apsParams.vue?vue&type=template&id=05575185&scoped=true&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/editForms/apsParams.vue?vue&type=template&id=05575185&scoped=true& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "modal",
+    { attrs: { name: "aps-params", transition: "pop-out", height: "auto" } },
+    [
+      _c("div", { staticClass: "mb-4" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("div", { staticClass: "p-0" }, [
+            _c("div", { staticClass: "card bg-secondary shadow border-0" }, [
+              _c("div", { staticClass: "card-header bg-transparent" }, [
+                _c("div", { staticClass: "text-muted text-center" }, [
+                  _c("small", [_vm._v("Свойства системы передачи извещений")])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c(
+                  "form",
+                  {
+                    on: {
+                      keyup: function($event) {
+                        if (
+                          !$event.type.indexOf("key") &&
+                          _vm._k(
+                            $event.keyCode,
+                            "enter",
+                            13,
+                            $event.key,
+                            "Enter"
+                          )
+                        ) {
+                          return null
+                        }
+                        return _vm.save($event)
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "form-group col custom-control custom-checkbox"
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.deviceData.accumulator_isset,
+                              expression: "deviceData.accumulator_isset"
+                            }
+                          ],
+                          staticClass: "custom-control-input",
+                          attrs: {
+                            id: "accumulator-isset",
+                            name: "accumulator-isset",
+                            type: "checkbox"
+                          },
+                          domProps: {
+                            checked: Array.isArray(
+                              _vm.deviceData.accumulator_isset
+                            )
+                              ? _vm._i(_vm.deviceData.accumulator_isset, null) >
+                                -1
+                              : _vm.deviceData.accumulator_isset
+                          },
+                          on: {
+                            change: function($event) {
+                              var $$a = _vm.deviceData.accumulator_isset,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(
+                                      _vm.deviceData,
+                                      "accumulator_isset",
+                                      $$a.concat([$$v])
+                                    )
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      _vm.deviceData,
+                                      "accumulator_isset",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
+                              } else {
+                                _vm.$set(
+                                  _vm.deviceData,
+                                  "accumulator_isset",
+                                  $$c
+                                )
+                              }
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "custom-control-label",
+                            attrs: { for: "accumulator-isset" }
+                          },
+                          [
+                            _vm._v(
+                              "\n\t\t\t\t\t\t\t\t\t\tНаличие АКБ\n\t\t\t\t\t\t\t\t\t"
+                            )
+                          ]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.deviceData.accumulator_isset == 1,
+                            expression: "deviceData.accumulator_isset == 1"
+                          }
+                        ]
+                      },
+                      [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "form-group custom-control custom-checkbox"
+                          },
+                          [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model.number",
+                                  value: _vm.deviceData.accumulator_count,
+                                  expression: "deviceData.accumulator_count",
+                                  modifiers: { number: true }
+                                }
+                              ],
+                              staticClass: "custom-control-input",
+                              attrs: {
+                                id: "accumulator_count",
+                                name: "accumulator_count",
+                                type: "checkbox"
+                              },
+                              domProps: {
+                                checked: Array.isArray(
+                                  _vm.deviceData.accumulator_count
+                                )
+                                  ? _vm._i(
+                                      _vm.deviceData.accumulator_count,
+                                      null
+                                    ) > -1
+                                  : _vm.deviceData.accumulator_count
+                              },
+                              on: {
+                                change: function($event) {
+                                  var $$a = _vm.deviceData.accumulator_count,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = _vm._n(null),
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        _vm.$set(
+                                          _vm.deviceData,
+                                          "accumulator_count",
+                                          $$a.concat([$$v])
+                                        )
+                                    } else {
+                                      $$i > -1 &&
+                                        _vm.$set(
+                                          _vm.deviceData,
+                                          "accumulator_count",
+                                          $$a
+                                            .slice(0, $$i)
+                                            .concat($$a.slice($$i + 1))
+                                        )
+                                    }
+                                  } else {
+                                    _vm.$set(
+                                      _vm.deviceData,
+                                      "accumulator_count",
+                                      $$c
+                                    )
+                                  }
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "custom-control-label",
+                                attrs: { for: "accumulator_count" }
+                              },
+                              [
+                                _vm._v(
+                                  "\n\t\t\t\t\t\t\t\t\t\t\tКоличество блоков питания\n\t\t\t\t\t\t\t\t\t\t"
+                                )
+                              ]
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group col" }, [
+                          _c("label", { attrs: { for: "battery_capacity" } }, [
+                            _vm._v("Емкость, Ач")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model.number",
+                                value: _vm.deviceData.battery_capacity,
+                                expression: "deviceData.battery_capacity",
+                                modifiers: { number: true }
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              id: "battery_capacity",
+                              name: "battery_capacity",
+                              type: "number"
+                            },
+                            domProps: {
+                              value: _vm.deviceData.battery_capacity
+                            },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.deviceData,
+                                  "battery_capacity",
+                                  _vm._n($event.target.value)
+                                )
+                              },
+                              blur: function($event) {
+                                return _vm.$forceUpdate()
+                              }
+                            }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group col" }, [
+                          _c("label", { attrs: { for: "output_voltage" } }, [
+                            _vm._v("Выходное напряжение, В")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model.number",
+                                value: _vm.deviceData.output_voltage,
+                                expression: "deviceData.output_voltage",
+                                modifiers: { number: true }
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              id: "output_voltage",
+                              name: "output_voltage",
+                              type: "number"
+                            },
+                            domProps: { value: _vm.deviceData.output_voltage },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.deviceData,
+                                  "output_voltage",
+                                  _vm._n($event.target.value)
+                                )
+                              },
+                              blur: function($event) {
+                                return _vm.$forceUpdate()
+                              }
+                            }
+                          })
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", {}, [
+                      _c("div", { staticClass: "form-group col btn-group" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button" },
+                            on: { click: _vm.cancel }
+                          },
+                          [_vm._v("Отмена")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-success",
+                            attrs: { type: "button" },
+                            on: { click: _vm.save }
+                          },
+                          [_vm._v("Сохранить")]
+                        )
+                      ])
+                    ])
+                  ]
+                )
+              ])
+            ])
+          ])
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/fileupload.vue?vue&type=template&id=3c0827d2&scoped=true&":
 /*!***********************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/editForms/fileupload.vue?vue&type=template&id=3c0827d2&scoped=true& ***!
@@ -64929,9 +65576,10 @@ var render = function() {
                             directives: [
                               {
                                 name: "model",
-                                rawName: "v-model",
+                                rawName: "v-model.number",
                                 value: _vm.deviceData.capacity,
-                                expression: "deviceData.capacity"
+                                expression: "deviceData.capacity",
+                                modifiers: { number: true }
                               }
                             ],
                             staticClass: "form-control",
@@ -64949,8 +65597,11 @@ var render = function() {
                                 _vm.$set(
                                   _vm.deviceData,
                                   "capacity",
-                                  $event.target.value
+                                  _vm._n($event.target.value)
                                 )
+                              },
+                              blur: function($event) {
+                                return _vm.$forceUpdate()
                               }
                             }
                           })
@@ -65121,6 +65772,360 @@ var render = function() {
       2
     )
   ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/svaParams.vue?vue&type=template&id=feb9d582&scoped=true&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/editForms/svaParams.vue?vue&type=template&id=feb9d582&scoped=true& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "modal",
+    { attrs: { name: "sva-params", transition: "pop-out", height: "auto" } },
+    [
+      _c("div", { staticClass: "mb-4" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("div", { staticClass: "p-0" }, [
+            _c("div", { staticClass: "card bg-secondary shadow border-0" }, [
+              _c("div", { staticClass: "card-header bg-transparent" }, [
+                _c("div", { staticClass: "text-muted text-center" }, [
+                  _c("small", [_vm._v("Свойства системы передачи извещений")])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c(
+                  "form",
+                  {
+                    on: {
+                      keyup: function($event) {
+                        if (
+                          !$event.type.indexOf("key") &&
+                          _vm._k(
+                            $event.keyCode,
+                            "enter",
+                            13,
+                            $event.key,
+                            "Enter"
+                          )
+                        ) {
+                          return null
+                        }
+                        return _vm.save($event)
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "form-group col custom-control custom-checkbox"
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.deviceData.accumulator_isset,
+                              expression: "deviceData.accumulator_isset"
+                            }
+                          ],
+                          staticClass: "custom-control-input",
+                          attrs: {
+                            id: "accumulator-isset",
+                            name: "accumulator-isset",
+                            type: "checkbox"
+                          },
+                          domProps: {
+                            checked: Array.isArray(
+                              _vm.deviceData.accumulator_isset
+                            )
+                              ? _vm._i(_vm.deviceData.accumulator_isset, null) >
+                                -1
+                              : _vm.deviceData.accumulator_isset
+                          },
+                          on: {
+                            change: function($event) {
+                              var $$a = _vm.deviceData.accumulator_isset,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(
+                                      _vm.deviceData,
+                                      "accumulator_isset",
+                                      $$a.concat([$$v])
+                                    )
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      _vm.deviceData,
+                                      "accumulator_isset",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
+                              } else {
+                                _vm.$set(
+                                  _vm.deviceData,
+                                  "accumulator_isset",
+                                  $$c
+                                )
+                              }
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "custom-control-label",
+                            attrs: { for: "accumulator-isset" }
+                          },
+                          [
+                            _vm._v(
+                              "\n\t\t\t\t\t\t\t\t\t\tНаличие АКБ\n\t\t\t\t\t\t\t\t\t"
+                            )
+                          ]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.deviceData.accumulator_isset == 1,
+                            expression: "deviceData.accumulator_isset == 1"
+                          }
+                        ]
+                      },
+                      [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "form-group custom-control custom-checkbox"
+                          },
+                          [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model.number",
+                                  value: _vm.deviceData.accumulator_count,
+                                  expression: "deviceData.accumulator_count",
+                                  modifiers: { number: true }
+                                }
+                              ],
+                              staticClass: "custom-control-input",
+                              attrs: {
+                                id: "accumulator_count",
+                                name: "accumulator_count",
+                                type: "checkbox"
+                              },
+                              domProps: {
+                                checked: Array.isArray(
+                                  _vm.deviceData.accumulator_count
+                                )
+                                  ? _vm._i(
+                                      _vm.deviceData.accumulator_count,
+                                      null
+                                    ) > -1
+                                  : _vm.deviceData.accumulator_count
+                              },
+                              on: {
+                                change: function($event) {
+                                  var $$a = _vm.deviceData.accumulator_count,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = _vm._n(null),
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        _vm.$set(
+                                          _vm.deviceData,
+                                          "accumulator_count",
+                                          $$a.concat([$$v])
+                                        )
+                                    } else {
+                                      $$i > -1 &&
+                                        _vm.$set(
+                                          _vm.deviceData,
+                                          "accumulator_count",
+                                          $$a
+                                            .slice(0, $$i)
+                                            .concat($$a.slice($$i + 1))
+                                        )
+                                    }
+                                  } else {
+                                    _vm.$set(
+                                      _vm.deviceData,
+                                      "accumulator_count",
+                                      $$c
+                                    )
+                                  }
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "custom-control-label",
+                                attrs: { for: "accumulator_count" }
+                              },
+                              [
+                                _vm._v(
+                                  "\n\t\t\t\t\t\t\t\t\t\t\tКоличество блоков питания\n\t\t\t\t\t\t\t\t\t\t"
+                                )
+                              ]
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group col" }, [
+                          _c("label", { attrs: { for: "battery_capacity" } }, [
+                            _vm._v("Емкость, Ач")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model.number",
+                                value: _vm.deviceData.battery_capacity,
+                                expression: "deviceData.battery_capacity",
+                                modifiers: { number: true }
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              id: "battery_capacity",
+                              name: "battery_capacity",
+                              type: "number"
+                            },
+                            domProps: {
+                              value: _vm.deviceData.battery_capacity
+                            },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.deviceData,
+                                  "battery_capacity",
+                                  _vm._n($event.target.value)
+                                )
+                              },
+                              blur: function($event) {
+                                return _vm.$forceUpdate()
+                              }
+                            }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group col" }, [
+                          _c("label", { attrs: { for: "output_voltage" } }, [
+                            _vm._v("Выходное напряжение, В")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model.number",
+                                value: _vm.deviceData.output_voltage,
+                                expression: "deviceData.output_voltage",
+                                modifiers: { number: true }
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              id: "output_voltage",
+                              name: "output_voltage",
+                              type: "number"
+                            },
+                            domProps: { value: _vm.deviceData.output_voltage },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.deviceData,
+                                  "output_voltage",
+                                  _vm._n($event.target.value)
+                                )
+                              },
+                              blur: function($event) {
+                                return _vm.$forceUpdate()
+                              }
+                            }
+                          })
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", {}, [
+                      _c("div", { staticClass: "form-group col btn-group" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button" },
+                            on: { click: _vm.cancel }
+                          },
+                          [_vm._v("Отмена")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-success",
+                            attrs: { type: "button" },
+                            on: { click: _vm.save }
+                          },
+                          [_vm._v("Сохранить")]
+                        )
+                      ])
+                    ])
+                  ]
+                )
+              ])
+            ])
+          ])
+        ])
+      ])
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -66248,7 +67253,8 @@ var render = function() {
                               },
                               [
                                 _c("i", {
-                                  staticClass: "fas fa-bullhorn text-primary"
+                                  staticClass:
+                                    "fas fa-battery-full text-primary"
                                 }),
                                 _vm._v(" Блоки питания\n\t\t\t\t\t\t\t\t\t")
                               ]
@@ -67428,6 +68434,67 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "form-inline" },
+        [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model.trim",
+                value: _vm.object.contract_id,
+                expression: "object.contract_id",
+                modifiers: { trim: true }
+              }
+            ],
+            staticClass: "form-control mb-2 mr-sm-2",
+            attrs: {
+              type: "text",
+              id: "contractId",
+              placeholder: "Номер договора"
+            },
+            domProps: { value: _vm.object.contract_id },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.object, "contract_id", $event.target.value.trim())
+              },
+              blur: function($event) {
+                return _vm.$forceUpdate()
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("date-picker", {
+            attrs: { placeholder: "Дата подписания", lang: "ru" },
+            model: {
+              value: _vm.object.contract_created_at,
+              callback: function($$v) {
+                _vm.$set(_vm.object, "contract_created_at", $$v)
+              },
+              expression: "object.contract_created_at"
+            }
+          }),
+          _vm._v(" "),
+          _c("date-picker", {
+            attrs: { placeholder: "Дата окончания", lang: "ru" },
+            model: {
+              value: _vm.object.contract_ends_at,
+              callback: function($$v) {
+                _vm.$set(_vm.object, "contract_ends_at", $$v)
+              },
+              expression: "object.contract_ends_at"
+            }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
       _c("div", { staticClass: "form-row" }, [
         _c("div", { staticClass: "form-group col" }, [
           _c(
@@ -67796,7 +68863,7 @@ var render = function() {
       ),
       _vm._v(" "),
       _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "table-responsive" }, [
+        _c("div", { staticClass: "table-responsive-xl" }, [
           _c("table", { staticClass: "table align-items-center" }, [
             _vm._m(0),
             _vm._v(" "),
@@ -67831,6 +68898,20 @@ var render = function() {
                       _vm._s(object.contact_name) +
                         ", " +
                         _vm._s(object.contact_phone)
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _vm._v(
+                      _vm._s(object.contract_id ? "№" + object.contract_id : "")
+                    ),
+                    _c("br"),
+                    _vm._v(
+                      _vm._s(
+                        object.contract_ends_at
+                          ? "до " + object.contract_ends_at
+                          : ""
+                      )
                     )
                   ]),
                   _vm._v(" "),
@@ -67982,6 +69063,10 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { staticClass: "border-0", attrs: { scope: "col" } }, [
           _vm._v("Контактное лицо")
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-0", attrs: { scope: "col" } }, [
+          _vm._v("Договор")
         ]),
         _vm._v(" "),
         _c("th", { staticClass: "border-0", attrs: { scope: "col" } })
@@ -90671,6 +91756,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/editForms/apsParams.vue":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/editForms/apsParams.vue ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _apsParams_vue_vue_type_template_id_05575185_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./apsParams.vue?vue&type=template&id=05575185&scoped=true& */ "./resources/js/components/editForms/apsParams.vue?vue&type=template&id=05575185&scoped=true&");
+/* harmony import */ var _apsParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./apsParams.vue?vue&type=script&lang=js& */ "./resources/js/components/editForms/apsParams.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _apsParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _apsParams_vue_vue_type_template_id_05575185_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _apsParams_vue_vue_type_template_id_05575185_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "05575185",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/editForms/apsParams.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/editForms/apsParams.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/editForms/apsParams.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_apsParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./apsParams.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/apsParams.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_apsParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/editForms/apsParams.vue?vue&type=template&id=05575185&scoped=true&":
+/*!****************************************************************************************************!*\
+  !*** ./resources/js/components/editForms/apsParams.vue?vue&type=template&id=05575185&scoped=true& ***!
+  \****************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_apsParams_vue_vue_type_template_id_05575185_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./apsParams.vue?vue&type=template&id=05575185&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/apsParams.vue?vue&type=template&id=05575185&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_apsParams_vue_vue_type_template_id_05575185_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_apsParams_vue_vue_type_template_id_05575185_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/editForms/fileupload.vue":
 /*!**********************************************************!*\
   !*** ./resources/js/components/editForms/fileupload.vue ***!
@@ -90942,6 +92096,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_select_vue_vue_type_template_id_4a2f3551_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_select_vue_vue_type_template_id_4a2f3551_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/editForms/svaParams.vue":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/editForms/svaParams.vue ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _svaParams_vue_vue_type_template_id_feb9d582_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./svaParams.vue?vue&type=template&id=feb9d582&scoped=true& */ "./resources/js/components/editForms/svaParams.vue?vue&type=template&id=feb9d582&scoped=true&");
+/* harmony import */ var _svaParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./svaParams.vue?vue&type=script&lang=js& */ "./resources/js/components/editForms/svaParams.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _svaParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _svaParams_vue_vue_type_template_id_feb9d582_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _svaParams_vue_vue_type_template_id_feb9d582_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "feb9d582",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/editForms/svaParams.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/editForms/svaParams.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/editForms/svaParams.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_svaParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./svaParams.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/svaParams.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_svaParams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/editForms/svaParams.vue?vue&type=template&id=feb9d582&scoped=true&":
+/*!****************************************************************************************************!*\
+  !*** ./resources/js/components/editForms/svaParams.vue?vue&type=template&id=feb9d582&scoped=true& ***!
+  \****************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_svaParams_vue_vue_type_template_id_feb9d582_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./svaParams.vue?vue&type=template&id=feb9d582&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/editForms/svaParams.vue?vue&type=template&id=feb9d582&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_svaParams_vue_vue_type_template_id_feb9d582_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_svaParams_vue_vue_type_template_id_feb9d582_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -96991,14 +98214,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     fd.append('image', payload.image);
     fd.append('description', payload.description);
     var url = '';
-    if (payload.type == 'media') url = '/api/objects/fileUpload';else if (payload.type == 'bti_files') url = '/api/objects/btiUpload';
+    if (payload.type == 'media') url = '/api/objects/fileUpload';else if (payload.type == 'bti_files') url = '/api/objects/btiUpload';else if (payload.type == 'contract') url = '/api/objects/btiUpload';
     var config = {
       headers: {
         'content-type': 'multipart/form-data'
       }
     };
     axios.post(url, fd, config).then(function (response) {
-      if (payload.type == 'media') state.current_object.mediafiles.push(response.data);else if (payload.type == 'bti_files') state.current_object.btifiles.push(response.data);
+      if (payload.type == 'media') state.current_object.mediafiles.push(response.data);else if (payload.type == 'bti_files') state.current_object.btifiles.push(response.data);else if (payload.type == 'contract') state.current_object.contract_path = response.data;
     });
   },
   MEDIAFILE_DELETE: function MEDIAFILE_DELETE(state, payload) {
@@ -97557,8 +98780,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! E:\XAMPP\htdocs\firemonitoring\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! E:\XAMPP\htdocs\firemonitoring\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

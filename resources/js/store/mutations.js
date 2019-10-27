@@ -73,6 +73,8 @@ export default{
         url = '/api/objects/fileUpload';
       else if(payload.type == 'bti_files')
         url = '/api/objects/btiUpload';
+      else if(payload.type == 'contract')
+        url = '/api/objects/btiUpload';
       const config = {
         headers: { 'content-type': 'multipart/form-data' }
       }
@@ -81,6 +83,8 @@ export default{
           state.current_object.mediafiles.push(response.data);
         else if(payload.type == 'bti_files')
           state.current_object.btifiles.push(response.data);
+        else if(payload.type == 'contract')
+          state.current_object.contract_path = response.data;
       });
     },
 

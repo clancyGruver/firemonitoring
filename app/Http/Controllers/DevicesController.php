@@ -123,7 +123,7 @@ class DevicesController extends Controller
             'name' => 'required',
         ]);
         $data = $request->all();
-        $data['created_user_id'] = $request->header('x-user');
+        $data['created_user_id'] = Auth::user()->id;
         $obj = null;
         switch($type){
             case 'antennas':
@@ -183,6 +183,9 @@ class DevicesController extends Controller
                 break;
             case 'sensors':
                 $obj = Sensor::find($id);
+                break;
+            case 'power_supply':
+                $obj = device_power_supply::find($id);
                 break;
             default: break;
         }

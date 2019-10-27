@@ -52,6 +52,7 @@ class Object_Device extends Model
             'App\device_alert'              => 'Оповещатели',
             'App\device_system_voice_alert' => 'Система речевого оповещения',
             'App\Sensor'                    => 'Извещатель',
+            'App\device_power_supply'       => 'Блок питания',
         ];
         return $types[$this->tbl_name];
     }

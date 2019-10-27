@@ -145,6 +145,22 @@
                     >
                 </div>
             </div>
+            <hr />
+            <div class="form-inline">
+                <input type="text" class="form-control mb-2 mr-sm-2" id="contractId" v-model.trim="object.contract_id" placeholder="Номер договора">
+
+                <date-picker
+                    v-model="object.contract_created_at"
+                    placeholder="Дата подписания"
+                    lang="ru"
+                />
+
+                <date-picker
+                    v-model="object.contract_ends_at"
+                    placeholder="Дата окончания"
+                    lang="ru"
+                />
+            </div>
             <div class="form-row">
                 <div class="form-group col">
                     <button class="btn btn-icon btn-3 btn-success" type="button" @click.prevent="updateObject">
@@ -159,13 +175,14 @@
 
 <script>
 import suggestions from '../../leaflet/suggetion';
+import DatePicker from 'vue2-datepicker';
 
 export default {
 	data() {
 		return {
 		}
 	},
-	components:{suggestions},
+	components:{suggestions, DatePicker},
 	methods:{
         updateAdressHandler(obj){
             this.object.address = obj.address;
@@ -173,6 +190,16 @@ export default {
             this.object.lng = obj.lng;
         },
         updateObject() {
+            const createdDate = this.object.contract_created_at ? this.object.contract_created_at : null;
+            const endsDate = this.object.contract_ends_at ? this.object.contract_ends_at : null;
+
+            if(createdDate){
+                this.object.contract_created_at = `${createdDate.getFullYear()}-${createdDate.getMonth() +1 }-${createdDate.getDate()}`;
+            }
+            if(endsDate){
+                this.object.contract_ends_at = `${endsDate.getFullYear()}-${endsDate.getMonth() +1 }-${endsDate.getDate()}`;
+            }
+
             this.$store.dispatch('OBJECT_UPDATE')
                 .then( success => this.$awn.success('Данные объекта сохранены'))
                 .catch( error => this.$awn.alert('При обновлении данных возникла ошибка'));

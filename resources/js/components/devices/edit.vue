@@ -154,9 +154,15 @@ export default{
             if(this.device.wires_count)
             	fd.append('wires_count', this.device.wires_count*1);
             if(this.device.power)
-            	fd.append('power', this.device.power*1);
+            	fd.append('power', this.device.power.replace(',','.')*1);
             if(this.device.type)
-            	fd.append('type', this.device.type);
+				fd.append('type', this.device.type);
+            if(this.device.accumulator_count)
+				fd.append('accumulator_count', this.device.accumulator_count.replace(',','.') * 1);
+            if(this.device.battery_capacity)
+				fd.append('battery_capacity', this.device.battery_capacity.replace(',','.') * 1);
+            if(this.device.output_voltage)
+				fd.append('output_voltage', this.device.output_voltage.replace(',','.') * 1);
 
 			return this.$store.dispatch('UPDATE_DEVICE',{
 				fd,

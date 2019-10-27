@@ -10,6 +10,7 @@ use App\Raion;
 use App\Object_Device as OD;
 use App\ObjectMediafile as OMedia;
 use App\bti_files as BTI;
+use App\ObjectContractFile as contractFile;
 use App\DistrictUser;
 
 class ObjectsController extends Controller
@@ -135,6 +136,21 @@ class ObjectsController extends Controller
             $params['created_user_id'] = $request->header('x-user');
             $request->image->storeAs('bti/'.$request->object_id, $request->image->getClientOriginalName());
             $obj = new BTI($params);
+            $obj->save();
+            return response()->json($obj);
+        }
+        return response(403);
+    }
+
+    public function contractUpload( Request $request){
+        if($request->image){
+            $params = [];
+            $params['filename'] = $request->image->getClientOriginalName();
+            $params['description'] = $params['filename'];
+            $params['object_id'] = $request->object_id;
+            $params['created_user_id'] = Auth::user()->id;
+            $request->image->storeAs('contracts/'.$request->object_id, $request->image->getClientOriginalName());
+            $obj = new contractFile($params);
             $obj->save();
             return response()->json($obj);
         }

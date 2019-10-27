@@ -15,7 +15,7 @@ export default {
 	props:['type', 'name', 'val'],
 	data() {
 		return {
-            localVal: this.val,
+                        localVal: this.val,
 		}
 	},
 
@@ -26,7 +26,9 @@ export default {
 
 	methods:{
         changeHandler(){
-            this.$emit('changed', this.localVal)
+                if(this.type == 'number')
+                this.localVal = this.localVal.replace(',','.');
+                this.$emit('changed', this.localVal);
         }
 	},
 

@@ -63,7 +63,7 @@
 											name="capacity"
 											type="number"
 											class="form-control"
-											v-model="deviceData.capacity"
+											v-model.number="deviceData.capacity"
 										>
 									</div>
 								</div>

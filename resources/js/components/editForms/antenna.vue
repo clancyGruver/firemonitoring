@@ -110,7 +110,8 @@ export default {
       return result;
     },
     save() {
-      if (!this.check()) return false;
+	  if (!this.check()) return false;
+	  this.deviceData.mast_height = this.deviceData.mast_height.replace(',','.');
       this.$store.dispatch("UPDATE_OBJECT_DEVICE_PARAMS", {
         type: "antenna",
         data: this.deviceData

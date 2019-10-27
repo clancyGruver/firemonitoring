@@ -64,7 +64,7 @@
 						bounds = new L.LatLngBounds(southWest, northEast);
 					if(this.map.hasLayer(this.imageOverlay))
 						this.map.removeLayer(this.imageOverlay);
-					this.imageOverlay = L.imageOverlay(this.imgUrl, bounds);
+					this.imageOverlay = L.imageOverlay(img.src, bounds);
 					this.imageOverlay.addTo(this.map);
 					this.map.fitBounds(bounds);
 					this.map.invalidateSize(bounds);
@@ -88,6 +88,8 @@
 								icon = marker.icon.bad;
 							} else if(marker.sp5 == 0) {
 								icon = marker.icon.sp5;
+							} else {
+								icon = marker.icon.good;
 							}
 						}
 						else{

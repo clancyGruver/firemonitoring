@@ -40,18 +40,21 @@ class Sensor extends Model
         $url = 'icons/sensors/';
         return [
             'good' => Storage::url(  $url . 'auto_fire.png' ),
-            'bad' => Storage::url(  $url . 'auto_fire_red.png' )
+            'bad' => Storage::url(  $url . 'auto_fire_red.png' ),
+            'sp5' => Storage::url(  $url . 'auto_fire_orange.png' ),
         ];
         if(!$this->is_automate)
             return [
                 'good' => Storage::url($url . 'manual.png'),
-                'bad' => Storage::url($url . 'manual_red.png')
+                'bad' => Storage::url($url . 'manual_red.png'),
+                'sp5' => Storage::url(  $url . 'manual_orange.png' ),
             ];
         else{
             $url .= 'auto_';
             return [
                 'good' => Storage::url( $url . $this->automate_attribute . '.png'),
                 'bad' => Storage::url( $url . $this->automate_attribute . '_red.png'),
+                'sp5' => Storage::url(  $url . $this->automate_attribute . '_orange.png' ),
             ];
         }
     }

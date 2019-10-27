@@ -30,6 +30,10 @@ class MonitoringObject extends Model
         'project_cipher',
         'project_year',
         'soue_type',
+        'contract_id',
+        'contract_created_at',
+        'contract_ends_at',
+        'contract_path',
     ];
 
     public function district(){

@@ -168,7 +168,7 @@
 											}
 										}"
 									>
-										<i class="fas fa-bullhorn text-primary"></i> Блоки питания
+										<i class="fas fa-battery-full text-primary"></i> Блоки питания
 									</router-link>
 		                        </li>
 		                    </ul>
