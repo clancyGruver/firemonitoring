@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\device_system_voice_alert as SVA;
+use App\device_system_voice_alert_params as SVAP;
 use Illuminate\Support\Facades\Auth;
 
 class DeviceSystemVoiceAlertController extends Controller
@@ -64,5 +65,18 @@ class DeviceSystemVoiceAlertController extends Controller
         }
         $obj->save();
         return redirect('admin/sys_alert');
+    }
+
+    public function storeParams(Request $request){
+        $params = $request->all();
+        $params['created_user_id'] = Auth::user()->id;
+        if(isset($params['id'])){
+            $item = SVAP::find($params['id']);
+            $item->update($params);
+        }
+        else{
+            $item = new SVAP($params);
+            $item->save();
+        }
     }
 }

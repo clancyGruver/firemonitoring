@@ -22,6 +22,12 @@
 		<rspi-params
 			:deviceData="deviceData"
 		/>
+		<aps-params
+			:deviceData="deviceData"
+		/>
+		<sva-params
+			:deviceData="deviceData"
+		/>
 		<hr class="mt-2">
 
 		<ul class="list-unstyled" v-for="(type, typeIdx) in tree" :key="typeIdx">

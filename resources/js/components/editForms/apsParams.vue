@@ -25,17 +25,15 @@
                 </div>
 
 								<div v-show="deviceData.accumulator_isset == 1">
-									<div class="form-group custom-control custom-checkbox">
+									<div class="form-group col">
+										<label for="accumulator_count">Количество блоков питания</label>
 										<input
 											id="accumulator_count"
 											name="accumulator_count"
-											type="checkbox"
-											class="custom-control-input"
+											type="number"
+											class="form-control"
 											v-model.number="deviceData.accumulator_count"
 										>
-										<label for="accumulator_count" class="custom-control-label">
-											Количество блоков питания
-										</label>
 									</div>
 									<div class="form-group col">
 										<label for="battery_capacity">Емкость, Ач</label>
@@ -77,7 +75,7 @@
 
 <script>
 	export default{
-  	name: "apsParams",
+  	name: "aps-params",
 		props: {
 			deviceData: {
 				type: Object,
@@ -85,6 +83,9 @@
 			}
 		},
 		data: function () {
+			return{
+				
+			}
 		},
 		methods: {
 			save(){

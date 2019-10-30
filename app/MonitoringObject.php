@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Raion;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Object_Device;
 
 class MonitoringObject extends Model
 {
@@ -81,5 +82,10 @@ class MonitoringObject extends Model
         $coord = $data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'];
         $coord = explode(' ', $coord);
         return ['lng'=>$coord[0],'lat'=>$coord[1]];
+    }
+
+    public function devices(){
+        $devices = $this->hasMany(Object_Device::class, 'object_id', 'id');
+        dd($devices);
     }
 }

@@ -1,6 +1,6 @@
 <template>
 	<transition name="dropdown" tag="section" class="dropdown">
-		<div class="mb-4 mt-4" v-show="creating" @click.self="cancel">
+		<div class="mb-4 mt-4" v-if="creating" @click.self="cancel">
 			<div class="nav-wrapper">
 				<ul class="nav nav-pills nav-justified flex-column flex-md-row">
 					<li class="nav-item" v-for="(devClass,index) in availDevs" v-if="!['sensors','antennas'].includes(index)" :key="index">

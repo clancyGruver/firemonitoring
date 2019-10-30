@@ -29,7 +29,13 @@ class Object_Device extends Model
     protected $appends = ['type','params'];
 
     public function getParamsAttribute(){
-        if($this->tbl_name == 'App\device_antenna' || $this->tbl_name == 'App\device_rspi'){
+        $paramsTables = [
+            'App\device_antenna',
+            'App\device_rspi',
+            'App\device_aps',
+            'App\device_system_voice_alert',
+        ];
+        if( in_array($this->tbl_name, $paramsTables) ){
             $type = $this->tbl_name.'_params'::class;
             if(class_exists($type))
                 return $this->hasOne($type, 'device_id', 'id')->first();

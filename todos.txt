@@ -5,5 +5,8 @@ TODOS:
 - ALTER TABLE `device_rspi_params` CHANGE `coupling` `coupling` SET('fire','fault','fire/fault') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;
 - ALTER TABLE `objects` CHANGE `contact_name` `contact_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
 - ALTER TABLE `objects` CHANGE `contact_phone` `contact_phone` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
-- districts.id => primary autoincrement 
+- districts.id => primary autoincrement
 - device_power_supplies
+- device_aps_params
+- objects.contract_id, objects.contract_created_at, objects.contract_ends_at, objects.contract_path
+- device_system_voice_alerts_params
