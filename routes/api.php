@@ -19,7 +19,7 @@ Route::middleware('auth:api')->group(function(){
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    
+
 	Route::post('/raions', 'RaionController@indexJson');
 	Route::post('/raions/{id}', 'RaionController@update');
 
@@ -126,4 +126,11 @@ Route::middleware('auth:api')->group(function(){
 	Route::post('/power_supply/store', 'DevicePowerSupplyController@store');
 	Route::post('/power_supply/update/{id}', 'DevicePowerSupplyController@update');
 	Route::post('/power_supply/delete/{id}', 'DevicePowerSupplyController@delete');
+
 });
+
+	Route::prefix('plans')->group(function(){
+		Route::prefix('reglament')->group(function(){
+			Route::post('sensors', 'PlanController@sensorsReglament');
+		});
+	});

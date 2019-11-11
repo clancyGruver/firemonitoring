@@ -13,6 +13,14 @@ class reglament_works extends Model
         'planned_reglament_at',
     ];
 
+    public function sensor() {
+        return $this->hasOne('App\WireSensor','id','device_id')->with('wire');
+    }
+
+    public function reglament(){
+        return $this->hasOne('App\device_reglament','id','reglament_id');
+    }
+
     public function object() {
         return $this->hasOne('App\Object_Device','id','device_id');
     }

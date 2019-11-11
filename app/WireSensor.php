@@ -32,7 +32,7 @@ class WireSensor extends Model
     protected $appends = ['icon'];
 
 	public function getIconAttribute(){
-		return Sensor::find($this->sensor_id)->icon;
+		return Sensor::withTrashed()->find($this->sensor_id)->icon;
 	}
 
 	public function wire(){
