@@ -32,6 +32,7 @@ import sensorReglaments from './components/monitoringObjects/reglament/index';
 import sensorReglament from './components/monitoringObjects/reglament/distinct';
 import districts from './components/districts/index';
 import districtEdit from './components/districts/edit';
+import planReglamentIndex from './components/plans/reglament/index';
 
 export const router = new VueRouter({
 	mode: 'history',
@@ -213,6 +214,24 @@ export const router = new VueRouter({
 					},
 				},
 			]
+		},
+		{
+			path: '/plans',
+			name: 'planReglamentIndex',
+			component: planReglamentIndex,
+			meta: {
+				title: 'Планы проведения регламентных работ'
+			},
+			/*children:[
+				{
+					path: '/plans/',
+					name: 'planReglamentIndex',
+					component: planReglamentIndex,
+					meta: {
+						title: 'Планы проведения регламентных работ'
+					},
+				},
+			]*/
 		},
 		{
 			path: '/users',

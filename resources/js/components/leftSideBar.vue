@@ -49,6 +49,29 @@
 						</router-link>
 		            </li>
 		            <li class="nav-item">
+		                <a class="nav-link pointer" role="button" @click.prevent="plansCollapsed = !plansCollapsed">
+		                    <i class="fas fa-calendar" style="color: #f4645f;"></i>
+		                    <span class="nav-link-text" style="color: #f4645f;">Планы</span>
+		                </a>
+
+		                <div
+		                	class="collapse"
+							:class="[
+								plansCollapsed ? 'show' : '',
+							]"
+		                	id="devices"
+		                >
+		                    <ul class="nav nav-sm flex-column">
+				                <li class="nav-item">
+									<router-link :active-class="active" class="nav-link" :to="{ name: 'planReglamentIndex' }">
+										  <i class="fas fa-cog text-primary"></i>
+										  Регламентные работы
+									</router-link>
+				                </li>
+		                    </ul>
+		                </div>
+		            </li>
+		            <li class="nav-item">
 		                <a class="nav-link pointer" role="button" @click.prevent="deviceCollapsed = !deviceCollapsed">
 		                    <i class="fas fa-cogs" style="color: #f4645f;"></i>
 		                    <span class="nav-link-text" style="color: #f4645f;">Оборудование</span>
@@ -189,7 +212,8 @@ export default {
       return {
       	active: 'active',
       	deviceCollapsed: false,
-      	collapseShow: false
+      	collapseShow: false,
+      	plansCollapsed: false,
       }
     },
 

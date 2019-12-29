@@ -131,6 +131,7 @@ Route::middleware('auth:api')->group(function(){
 
 	Route::prefix('plans')->group(function(){
 		Route::prefix('reglament')->group(function(){
+			Route::post('/', 'PlanController@index');
 			Route::post('sensors', 'PlanController@sensorsReglament');
 		});
 	});

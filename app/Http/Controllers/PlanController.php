@@ -38,4 +38,19 @@ class PlanController extends Controller
     	}
     	return response()->json($objects);
     }
+
+    public function index(Request $request){
+    	$reglament_works = reglament_works::all();
+    	$events = [];
+    	foreach ($reglament_works as $reglament) {
+    		$events[] = \Calendar::event(
+			    $reglament->reglament->name, //event title
+			    false, //full day event?
+			    new \DateTime($reglament->planned_reglament_at), //start time (you can also use Carbon instead of DateTime)
+			    new \DateTime($reglament->planned_reglament_at) //end time (you can also use Carbon instead of DateTime)
+			);
+    	}
+    	//$calendar_details = \Calendar::addEvents($events);
+    	return response()->json($events);
+    }
 }
