@@ -87,6 +87,7 @@
 	                    <td>{{ object.contract_id ? `№${object.contract_id}`:'' }}<br />{{ object.contract_ends_at ? `до ${object.contract_ends_at}`:'' }}</td>
 	                    <td>
 	                        <a
+														v-if="$store.getters.CURRENT_USER.is_admin"
 	                        	href="#"
 	                        	class="btn"
 	                        	data-placement="top"
@@ -96,15 +97,6 @@
 	                        >
 	                        	<i class="fas fa-cog text-primary"></i>
 	                       	</a>
-	                        <!--a
-	                        	:href="`./admin/objects/detail/${object.id}`"
-	                        	class="btn"
-	                        	data-toggle="tooltip"
-	                        	data-placement="top"
-	                        	title="Карточка объекта"
-	                        >
-	                        	<i class="fas fa-search text-primary"></i>
-	                       	</a-->
 	                       	<router-link
 	                       		class="btn"
 	                        	data-toggle="tooltip"
@@ -115,6 +107,7 @@
 	                       		<i class="fas fa-edit text-warning"></i>
 	                       	</router-link>
 	                        <a
+														v-if="$store.getters.CURRENT_USER.is_admin"
 	                        	href="#"
 	                        	class="btn delete-btn"
 	                        	data-toggle="tooltip"

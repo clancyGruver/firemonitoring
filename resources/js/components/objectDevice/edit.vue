@@ -10,12 +10,18 @@
 			</li>
 			<h4>Дополнительные недостатки</h4>
 			<li>
-				<textarea class="form-control" rows="3" v-model="additionalLimit">
-				</textarea>
-				<div class="custom-control custom-control-alternative custom-checkbox mb-3">
-				<input class="custom-control-input" id="customCheck6" type="checkbox" v-model="isCritical">
-				<label class="custom-control-label" for="customCheck6">Критично</label>
-				</div>
+				<AdditionalLimit
+					v-for="limit in additionalLimits"
+					:key="limit.id"
+					:id="limit.id"
+					:text="limit.additional_limitation"
+					:critical="limit.additional_limitation_critical"
+					:deleteLimit="deleteLimit"
+					:updateLimit="updateLimit"
+				></AdditionalLimit>
+				<button class="btn btn-icon btn-2 btn-success" type="button" @click="addElement">
+					<span class="btn-inner--icon"><i class="fas fa-plus"></i> Добавить недостаток</span>
+				</button>
 			</li>
 		</ul>
 		<button type="button" class="btn btn-success mt-4" @click.prevent="saveLimit">Сохранить</button>
@@ -24,21 +30,20 @@
 </template>
 
 <script>
+import AdditionalLimit from './additionalLimit';
 
 export default {
 	props:{},
-
 	data() {
 		return {
 			allLimits: {},
 			currentLimits: {},
 			device: {},
-			additionalLimit: '',
-			isCritical: false,
+			additionalLimits: '',
 		}
 	},
 
-	components:{},
+	components:{AdditionalLimit},
 
 	beforeCreate: function(){
 		const self = this;
@@ -46,9 +51,7 @@ export default {
 		.then( response => {
 			self.allLimits = response.data.allLimits;
 			self.currentLimits = response.data.currentLimits;
-			const AL = self.currentLimits.find( obj => obj.additional_limitation && obj.additional_limitation.trim() != '' );
-			self.additionalLimit = AL ? AL.additional_limitation : '';
-			self.isCritical = AL ? AL.additional_limitation_critical : false;
+			self.additionalLimits = self.currentLimits.filter( obj => obj.additional_limitation && obj.additional_limitation.trim() != '' );
 			const cl = self.currentLimits.map( obj => obj.DL_id)
 			self.allLimits.forEach(
 				(val, index) => {
@@ -63,13 +66,29 @@ export default {
 	},
 
 	methods:{
+		deleteLimit(){
+			console.log('deleted');
+      /*this.$store.dispatch('DELETE_ADDITIONAL_LIMIT',this.id)
+            .then( success => {
+            	this.$awn.success('Недостаток устранен');
+						});*/
+		},
+		updateLimit(obj){
+			const idx = this.additionalLimits.findIndex(limit => limit.id == obj.id);
+			this.additionalLimits[idx] = obj;
+		},
+		addElement(){
+			this.additionalLimits.push({
+				additional_limitation: "",
+				additional_limitation_critical: false,
+			});
+		},
 		saveLimit(){
 			this.$store.dispatch('TOGGLE_DEVICE_ISGOOD',{
 				typeIdx: this.$route.params.typeIdx,
 				deviceId: this.device.id,
 				allLimits: this.allLimits,
-				additionalLimit: this.additionalLimit,
-				isCritical: this.isCritical,
+				additionalLimits: this.additionalLimits,
 				odid: this.$route.params.objectDeviceId,
 			})
             .then( success => {

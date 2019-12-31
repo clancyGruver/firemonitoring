@@ -114,7 +114,7 @@ class DeviceLimitationsController extends Controller
 				'additional_limitation' => $additionalLimit,
 				'additional_limitation_critical' => $request->input('isCritical'),
 			];
-			if(count($obj) > 0){
+			if(!empty($obj)){
 				$obj->update($data);
 				$obj->restore();
 			}
@@ -124,7 +124,7 @@ class DeviceLimitationsController extends Controller
 			}
 		}
 		else{
-			if(count($obj) > 0){
+			if(!empty($obj)){
 				$obj->delete();
 			}
 		}

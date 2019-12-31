@@ -15,8 +15,8 @@ class WireSensorPreviousState extends Migration
     {
         Schema::create('wire_sensor_previous_state', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('wire_sensor_id');            
-            $table->unsignedBigInteger('wire_sensor_reglament_id');            
+            $table->unsignedBigInteger('wire_sensor_id');
+            $table->unsignedBigInteger('wire_sensor_reglament_id');
             $table->unsignedBigInteger('created_user_id');
             $table->string('name');
             $table->tinyInteger('floor');

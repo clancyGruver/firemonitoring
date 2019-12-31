@@ -5,7 +5,8 @@
 			class="btn btn-outline-success mt-4"
 			@click="addDeviceShow = !addDeviceShow"
 		>
-			Добавить оборудование
+			<template v-if="$store.getters.CURRENT_USER.is_admin">Добавить оборудование</template>
+			<template v-else>Установить оборудование</template>
 		</button>
 		<add-device
 			:creating="addDeviceShow"

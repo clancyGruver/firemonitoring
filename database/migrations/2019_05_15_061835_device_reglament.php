@@ -18,12 +18,12 @@ class DeviceReglament extends Migration
             $table->string('name');
             $table->tinyInteger('period');
             $table->unsignedBigInteger('created_user_id');
-            $table->unsignedBigInteger('dvice_id');
+            $table->unsignedBigInteger('device_id');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
 
             $table->foreign('created_user_id')->references('id')->on('users');
-            $table->foreign('dvice_id')->references('id')->on('devices');
+            $table->foreign('device_id')->references('id')->on('devices');
         });
     }
 
