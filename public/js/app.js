@@ -18489,6 +18489,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['id', 'text', 'critical'],
   data: function data() {
@@ -18506,8 +18509,13 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    isNew: function isNew() {
+      console.log(this.id);
+      console.log(this.id.startsWith('tempid'));
+      return this.id.startsWith('tempid');
+    },
     delLimit: function delLimit() {
-      this.$emit('deleteLimit', obj);
+      this.$emit('deleteLimit', this.id);
     },
     updateLimit: function updateLimit() {
       var obj = {
@@ -18598,9 +18606,9 @@ __webpack_require__.r(__webpack_exports__);
     deleteLimit: function deleteLimit() {
       console.log('deleted');
       /*this.$store.dispatch('DELETE_ADDITIONAL_LIMIT',this.id)
-            .then( success => {
-            	this.$awn.success('Недостаток устранен');
-      });*/
+      		.then( success => {
+      			this.$awn.success('Недостаток устранен');
+      					});*/
     },
     updateLimit: function updateLimit(obj) {
       var idx = this.additionalLimits.findIndex(function (limit) {
@@ -81247,7 +81255,11 @@ var render = function() {
           }
         }
       },
-      [_vm._v("Устранено")]
+      [
+        _vm.isNew
+          ? _c("span", [_vm._v("Удалить")])
+          : _c("span", [_vm._v("Устранено")])
+      ]
     )
   ])
 }
@@ -81347,10 +81359,12 @@ var render = function() {
                 attrs: {
                   id: limit.id,
                   text: limit.additional_limitation,
-                  critical: limit.additional_limitation_critical,
-                  deleteLimit: _vm.deleteLimit
+                  critical: limit.additional_limitation_critical
                 },
-                on: { updateLimit: _vm.updateLimit }
+                on: {
+                  deleteLimit: _vm.deleteLimit,
+                  updateLimit: _vm.updateLimit
+                }
               })
             }),
             _vm._v(" "),

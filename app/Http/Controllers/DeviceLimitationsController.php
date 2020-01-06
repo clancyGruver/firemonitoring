@@ -8,6 +8,8 @@ use App\device_limitations as limits;
 use App\Object_Device as OD;
 use App\object_device_reglament_limitations as ODRL;
 use Illuminate\Support\Facades\Log;
+use App\completed_works;
+use Illuminate\Support\Facades\Auth;
 
 class DeviceLimitationsController extends Controller
 {
@@ -111,6 +113,10 @@ class DeviceLimitationsController extends Controller
 		//additional limitation
 		if ($additionalLimits && count($additionalLimits) > 0) {
 			foreach ($additionalLimits as $addLimit) {
+				if( !isset($addLimit['additionalLimit']) or empty($addLimit['additionalLimit']) ){
+					continue;
+				}
+
 				$data = [
 					'created_user_id' => $created_user_id,
 					'object_device_id' => $id,
@@ -131,5 +137,21 @@ class DeviceLimitationsController extends Controller
 		}
 
 		return response($is_good ? 1 : 0, 200);
+	}
+
+	public function deleteAdditioanal($id, Request $request){
+		$odrl = ODRL::find($id);
+		$od = OD::find($odrl['object_device_id']);
+		
+		$data = [
+			'object_id'=>$od['object_id'],
+			'object_device_id'=>$odrl['object_device_id'],
+			'user_id' => Auth::user()->id,
+			'work_type'=> completed_works::$work_types['repair'],
+		];
+		$obj = new completed_works($data);
+		$obj->save();
+		$odrl->delete();
+		return response(200);
 	}
 }

@@ -1,6 +1,6 @@
 <template>
 	<div class="container-fluid mt-3">
-		<h1>{{ object.name }}</h1>
+		<h1><!--i class="fas fa-angle-left" v-on:click="$router.push('/objects')"></i-->{{ object.name }}</h1>
 		<ul class="nav nav-pills mb-4">
 			<li class="nav-item">
 				<router-link :active-class="'active'" class="nav-link" :to="{ name: 'MonitoringObjectEdit' }">

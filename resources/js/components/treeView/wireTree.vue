@@ -11,7 +11,7 @@
 			<li v-if="wires.length < wires_count" class="mt-2 mb-2">
 				<button type="button" class="btn btn-outline-success" @click="addWire()">Добавить шлейф</button>
 			</li>
-			<li v-for="(wire, wireIndex) in wires" :key="wireIndex">
+			<li v-for="(wire, wireIndex) in wires" :key="wireIndex" class="hovered">
 				<h3 class="pl-4 pointer">
 					<span @click="toggleWire(wireIndex,wire)">
 						<span v-if="wire.isShow">-</span>
@@ -78,6 +78,9 @@
 </script>
 
 <style scoped>
+	.hovered:hover{
+		background-color: lightgray;
+	}
 	.underline{
 		text-decoration: underline;
 	}

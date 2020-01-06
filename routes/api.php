@@ -80,13 +80,6 @@ Route::middleware('auth:api')->group(function(){
 	Route::post('/wire/update/{id}', 'WiresController@updateJson');
 	Route::post('/wire/delete/{id}', 'WiresController@deleteJson');
 
-	Route::post('/limitations/update/{id}', 'DeviceLimitationsController@update');
-	Route::post('/limitations/insert', 'DeviceLimitationsController@insert');
-	Route::post('/limitations/delete/{id}', 'DeviceLimitationsController@delete');
-	Route::post('/limitations/get', 'DeviceLimitationsController@get');
-	Route::post('/limitations/get/{id}', 'DeviceLimitationsController@getById');
-	Route::post('/limitations/set/{id}', 'DeviceLimitationsController@setById');
-
 	Route::post('/reglamentElement/delete/{id}', 'ReglamentsController@deleteElement');
 	Route::post('/reglamentElement/update/{id}', 'ReglamentsController@updateElement');
 	Route::post('/reglamentElement/add', 'ReglamentsController@addElement');
@@ -127,11 +120,21 @@ Route::middleware('auth:api')->group(function(){
 	Route::post('/power_supply/update/{id}', 'DevicePowerSupplyController@update');
 	Route::post('/power_supply/delete/{id}', 'DevicePowerSupplyController@delete');
 
-});
-
 	Route::prefix('plans')->group(function(){
 		Route::prefix('reglament')->group(function(){
 			Route::post('/', 'PlanController@index');
 			Route::post('sensors', 'PlanController@sensorsReglament');
 		});
 	});
+
+	Route::prefix('limitations')->group(function(){
+		Route::post('/update/{id}', 'DeviceLimitationsController@update');
+		Route::post('/insert', 'DeviceLimitationsController@insert');
+		Route::post('/delete/{id}', 'DeviceLimitationsController@delete');
+		Route::post('/get', 'DeviceLimitationsController@get');
+		Route::post('/get/{id}', 'DeviceLimitationsController@getById');
+		Route::post('/set/{id}', 'DeviceLimitationsController@setById');
+		Route::post('/deleteAdditional/{id}', 'DeviceLimitationsController@deleteAdditioanal');
+	});
+
+});

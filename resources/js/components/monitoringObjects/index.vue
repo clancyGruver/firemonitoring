@@ -61,7 +61,7 @@
 	    </div>
 	    <div class="row">
 	        <div class="table-responsive-xl">
-	            <table class="table align-items-center">
+	            <table class="table align-items-center table-hover">
 	            <thead class="thead-light">
 	                <tr>
 	                  <th scope="col" class="border-0">#</th>
@@ -75,7 +75,7 @@
 	                </tr>
 	            </thead>
 	            <tbody>
-	                <tr v-for="(object,index) in objects" :key="object.id">
+	                <tr v-for="(object,index) in objects" :key="object.id" v-on:dblclick="$router.push(`objects/${object.id}/main`)">
 	                    <th scope="row">
 	                        {{index}}
 	                    </th>

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h2>Недостатки {{ device.name }}</h2>
+		<h2>Недостатки {{ device.name }}!!!</h2>
 		<ul class="list-unstyled">
 			<li v-for="limit in allLimits" :key="limit.id">
 				<div class="custom-control custom-checkbox mb-3">
@@ -16,7 +16,7 @@
 					:id="limit.id"
 					:text="limit.additional_limitation"
 					:critical="limit.additional_limitation_critical"
-					:deleteLimit="deleteLimit"
+					v-on:deleteLimit="deleteLimit"
 					v-on:updateLimit="updateLimit"
 				></AdditionalLimit>
 				<button class="btn btn-icon btn-2 btn-success" type="button" @click="addElement">
@@ -66,12 +66,18 @@ export default {
 	},
 
 	methods:{
-		deleteLimit(){
-			console.log('deleted');
-      /*this.$store.dispatch('DELETE_ADDITIONAL_LIMIT',this.id)
-            .then( success => {
-            	this.$awn.success('Недостаток устранен');
-						});*/
+		deleteLimit(id){
+			const isNew = `${id}`.startsWith('tempid');
+			const idx = this.additionalLimits.findIndex(limit => limit.id == id);
+			if(isNew){
+				this.additionalLimits.splice(idx,1);
+			} else {
+			this.$store.dispatch('DELETE_ADDITIONAL_LIMIT',id)
+						.then( success => {
+							this.additionalLimits.splice(idx,1);
+							this.$awn.success('Недостаток устранен');
+						});
+			}
 		},
 		updateLimit(obj){
 			const idx = this.additionalLimits.findIndex(limit => limit.id == obj.id);

@@ -20,5 +20,6 @@
       <strong>We're sorry but Shards Dashboard Lite Vue doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
+
 </body>
 </html>

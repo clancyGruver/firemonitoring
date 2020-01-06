@@ -3,7 +3,7 @@
 		<div class="mb-4 mt-4" v-if="creating" @click.self="cancel">
 			<div class="nav-wrapper">
 				<ul class="nav nav-pills nav-justified flex-column flex-md-row">
-					<li class="nav-item" v-for="(devClass,index) in availDevs" v-if="!['sensors','antennas'].includes(index)" :key="index">
+					<li class="nav-item" v-for="(devClass,index) in availDevs" v-if="!['alerts','sensors','antennas'].includes(index)" :key="index">
 						<a class="nav-link mb-sm-3 mb-md-0" :class="index == selectedCategory ? 'active' : ''" @click.prevent="selectedCategory = index">{{devClass.name}}</a>
 					</li>
 				</ul>

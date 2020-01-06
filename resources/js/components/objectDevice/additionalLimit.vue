@@ -6,7 +6,10 @@
       <input class="custom-control-input" id="customCheck6" type="checkbox" v-model="isCritical">
       <label class="custom-control-label" for="customCheck6">Критично</label>
     </div>
-		<button type="button" class="btn btn-alert mt-4" @click.prevent="delLimit">Устранено</button>
+		<button type="button" class="btn btn-outline-danger ml-1 mb-3" @click.prevent="delLimit">
+      <span v-if="isNew()">Удалить</span>
+      <span v-else>Устранено</span>
+    </button>
   </form>
 </template>
 
@@ -28,8 +31,11 @@ export default{
     isCritical: function(){this.updateLimit();},
   },
   methods:{
+    isNew(){
+      return `${this.id}`.startsWith('tempid');
+    },
     delLimit(){
-      this.$emit('deleteLimit',obj)
+      this.$emit('deleteLimit',this.id);
     },
     updateLimit(){
       const obj = {

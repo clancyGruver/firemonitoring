@@ -17,10 +17,9 @@ class CreateCompletedWorksTable extends Migration
             $table->softDeletes();
             $table->bigIncrements('id');
             $table->integer('object_id');
-            $table->integer('device_id');
+            $table->integer('object_device_id');
             $table->integer('user_id');
             $table->integer('work_type');
-            $table->string('tbl_name');
             $table->timestamps();
         });
     }

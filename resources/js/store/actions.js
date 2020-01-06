@@ -403,8 +403,8 @@ export default{
         return resp.data.id;
       }
     },
-    async DELETE_ADDITIONAL_LIMIT(payload){
-      axios.post(`/api/limitations/delete/${payload}`);
+    async DELETE_ADDITIONAL_LIMIT(_,payload){
+      return axios.post(`/api/limitations/deleteAdditional/${payload}`);
     },
     async ADD_ANTENNA({commit, getters, state},payload){
       //check if cable type isset and set id
