@@ -24,10 +24,8 @@ export default{
     }
   },
   watch:{
-    additionalLimit: function(val){
-      this
-    },
-    isCritical
+    additionalLimit: function(){this.updateLimit();},
+    isCritical: function(){this.updateLimit();},
   },
   methods:{
     delLimit(){
@@ -40,7 +38,7 @@ export default{
         isCritical: this.isCritical,
 
       };
-      this.$emit('updateLimit',obj)
+      this.$emit('updateLimit',obj);
     },
   }
 

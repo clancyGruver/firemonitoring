@@ -17,7 +17,7 @@
 					:text="limit.additional_limitation"
 					:critical="limit.additional_limitation_critical"
 					:deleteLimit="deleteLimit"
-					:updateLimit="updateLimit"
+					v-on:updateLimit="updateLimit"
 				></AdditionalLimit>
 				<button class="btn btn-icon btn-2 btn-success" type="button" @click="addElement">
 					<span class="btn-inner--icon"><i class="fas fa-plus"></i> Добавить недостаток</span>
@@ -79,6 +79,7 @@ export default {
 		},
 		addElement(){
 			this.additionalLimits.push({
+				id:`tempid:${(+new Date).toString(16)}`,
 				additional_limitation: "",
 				additional_limitation_critical: false,
 			});

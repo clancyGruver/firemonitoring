@@ -7,11 +7,11 @@ export default{
       axios
         .post(`/api/objectdevice/get/${payload}`)
         .then( response => {
-          commit('SET_CURRENT_OBJECT_DEVICES', {payload: response.data, getters})
+          commit('SET_CURRENT_OBJECT_DEVICES', {payload: response.data, getters});
           //this.$store.commit('CHANGE_PRELOADER',false);
         } );
     },
-    async LOAD_CABLE_TYPES({commit},payload){
+    async LOAD_CABLE_TYPES({commit}){
       axios.post(`/api/cableTypes/getAll`)
           .then(response => commit('SET_CABLE_TYPES', response.data));
     },
@@ -116,7 +116,7 @@ export default{
 
       //store object_device_reglament_limitations
       axios.post(`/api/limitations/set/${p.odid}`,{
-        additionalLimit: p.additionalLimit,
+        additionalLimits: p.additionalLimits,
         isCritical: p.isCritical,
         allLimits: p.allLimits,
       }).then( response => {

@@ -18488,13 +18488,35 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['text', 'critical'],
+  props: ['id', 'text', 'critical'],
   data: function data() {
     return {
       additionalLimit: this.text,
       isCritical: Boolean(this.critical) || false
     };
+  },
+  watch: {
+    additionalLimit: function additionalLimit() {
+      this.updateLimit();
+    },
+    isCritical: function isCritical() {
+      this.updateLimit();
+    }
+  },
+  methods: {
+    delLimit: function delLimit() {
+      this.$emit('deleteLimit', obj);
+    },
+    updateLimit: function updateLimit() {
+      var obj = {
+        id: this.id,
+        additionalLimit: this.additionalLimit,
+        isCritical: this.isCritical
+      };
+      this.$emit('updateLimit', obj);
+    }
   }
 });
 
@@ -18510,6 +18532,14 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _additionalLimit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./additionalLimit */ "./resources/js/components/objectDevice/additionalLimit.vue");
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -18565,8 +18595,22 @@ __webpack_require__.r(__webpack_exports__);
     });
   },
   methods: {
+    deleteLimit: function deleteLimit() {
+      console.log('deleted');
+      /*this.$store.dispatch('DELETE_ADDITIONAL_LIMIT',this.id)
+            .then( success => {
+            	this.$awn.success('Недостаток устранен');
+      });*/
+    },
+    updateLimit: function updateLimit(obj) {
+      var idx = this.additionalLimits.findIndex(function (limit) {
+        return limit.id == obj.id;
+      });
+      this.additionalLimits[idx] = obj;
+    },
     addElement: function addElement() {
       this.additionalLimits.push({
+        id: "tempid:".concat((+new Date()).toString(16)),
         additional_limitation: "",
         additional_limitation_critical: false
       });
@@ -25787,7 +25831,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\r\n  border-radius: 2px;\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\r\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-end;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\r\n  border: 1px solid rgba(0, 0, 0, 0.5);\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  margin: 1em 0;\r\n  padding: 0.2em 0.5em;\r\n  height: 30px;\r\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\r\n  background: none;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  height: 30px;\r\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\r\n  border: 3px solid #3498db;\r\n  color: #3498db;\r\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\r\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\r\n  border: 3px solid #f39c12;\r\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\r\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\r\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-651ad6fc] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-651ad6fc] {\n  border-radius: 2px;\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-651ad6fc] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n}\n.modal-mask .modal-container .modal-content h1[data-v-651ad6fc] {\n  margin: 0;\n}\n.modal-mask .modal-container .modal-content form[data-v-651ad6fc] {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form input[data-v-651ad6fc] {\n  border: 1px solid rgba(0, 0, 0, 0.5);\n  border-radius: 5px;\n  font-size: 16px;\n  font-weight: bold;\n  margin: 1em 0;\n  padding: 0.2em 0.5em;\n  height: 30px;\n  width: 100%;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc] {\n  background: none;\n  border-radius: 5px;\n  cursor: pointer;\n  font-size: 16px;\n  font-weight: bold;\n  height: 30px;\n  transition: all 0.3s ease-in-out;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc] {\n  border: 3px solid #3498db;\n  color: #3498db;\n  margin-left: 1em;\n}\n.modal-mask .modal-container .modal-content form button.save[data-v-651ad6fc]:hover {\n  background-color: #3498db;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc] {\n  border: 3px solid #f39c12;\n  color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button.cancel[data-v-651ad6fc]:hover {\n  background-color: #f39c12;\n}\n.modal-mask .modal-container .modal-content form button[data-v-651ad6fc]:hover {\n  color: white;\n}\n.modal-enter[data-v-651ad6fc], .modal-leave-active[data-v-651ad6fc] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-651ad6fc], .modal-leave-active .modal-container[data-v-651ad6fc] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -25825,7 +25869,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.preloader[data-v-192877e2] {\r\n\twidth: inherit;\r\n\theight: 100%;\r\n\tdisplay: flex;\r\n\tbackground-color: #e3e3e3;\n}\n.sk-cube-grid[data-v-192877e2] {\r\n  width: 4em;\r\n  height: 4em;\r\n  margin: auto;\n}\n.sk-cube[data-v-192877e2] {\r\n    width: 33%;\r\n    height: 33%;\r\n    background-color: #337ab7;\r\n    float: left;\r\n    -webkit-animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\r\n            animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n}\n.sk-cube-1[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n.sk-cube-2[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.3s;\r\n\t        animation-delay: 0.3s;\n}\n.sk-cube-3[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.4s;\r\n\t        animation-delay: 0.4s;\n}\n.sk-cube-4[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.1s;\r\n\t        animation-delay: 0.1s;\n}\n.sk-cube-5[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n.sk-cube-6[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.3s;\r\n\t        animation-delay: 0.3s;\n}\n.sk-cube-7[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0s;\r\n\t        animation-delay: 0s;\n}\n.sk-cube-8[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.1s;\r\n\t        animation-delay: 0.1s;\n}\n.sk-cube-9[data-v-192877e2] {\r\n\t-webkit-animation-delay: 0.2s;\r\n\t        animation-delay: 0.2s;\n}\n@-webkit-keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\r\n    -webkit-transform: scale3D(1,1,1);\r\n            transform: scale3D(1,1,1);\n}\n35%           {\r\n    -webkit-transform: scale3D(0,0,1);\r\n            transform: scale3D(0,0,1);\n}\n}\n@keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\r\n    -webkit-transform: scale3D(1,1,1);\r\n            transform: scale3D(1,1,1);\n}\n35%           {\r\n    -webkit-transform: scale3D(0,0,1);\r\n            transform: scale3D(0,0,1);\n}\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.preloader[data-v-192877e2] {\n\twidth: inherit;\n\theight: 100%;\n\tdisplay: flex;\n\tbackground-color: #e3e3e3;\n}\n.sk-cube-grid[data-v-192877e2] {\n  width: 4em;\n  height: 4em;\n  margin: auto;\n}\n.sk-cube[data-v-192877e2] {\n    width: 33%;\n    height: 33%;\n    background-color: #337ab7;\n    float: left;\n    -webkit-animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n            animation: sk-cube-grid-scale-delay-data-v-192877e2 1.3s infinite ease-in-out;\n}\n.sk-cube-1[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n.sk-cube-2[data-v-192877e2] {\n\t-webkit-animation-delay: 0.3s;\n\t        animation-delay: 0.3s;\n}\n.sk-cube-3[data-v-192877e2] {\n\t-webkit-animation-delay: 0.4s;\n\t        animation-delay: 0.4s;\n}\n.sk-cube-4[data-v-192877e2] {\n\t-webkit-animation-delay: 0.1s;\n\t        animation-delay: 0.1s;\n}\n.sk-cube-5[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n.sk-cube-6[data-v-192877e2] {\n\t-webkit-animation-delay: 0.3s;\n\t        animation-delay: 0.3s;\n}\n.sk-cube-7[data-v-192877e2] {\n\t-webkit-animation-delay: 0s;\n\t        animation-delay: 0s;\n}\n.sk-cube-8[data-v-192877e2] {\n\t-webkit-animation-delay: 0.1s;\n\t        animation-delay: 0.1s;\n}\n.sk-cube-9[data-v-192877e2] {\n\t-webkit-animation-delay: 0.2s;\n\t        animation-delay: 0.2s;\n}\n@-webkit-keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\n    -webkit-transform: scale3D(1,1,1);\n            transform: scale3D(1,1,1);\n}\n35%           {\n    -webkit-transform: scale3D(0,0,1);\n            transform: scale3D(0,0,1);\n}\n}\n@keyframes sk-cube-grid-scale-delay-data-v-192877e2 {\n0%, 70%, 100% {\n    -webkit-transform: scale3D(1,1,1);\n            transform: scale3D(1,1,1);\n}\n35%           {\n    -webkit-transform: scale3D(0,0,1);\n            transform: scale3D(0,0,1);\n}\n}\n\n", ""]);
 
 // exports
 
@@ -25958,7 +26002,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.pointer{\r\n  cursor:pointer;\n}\n.fade-enter-active, .fade-leave-active {\r\n  transition: opacity 0.5s;\n}\n.fade-enter, .fade-leave-to {\r\n  opacity: 0;\n}\n.wrapper {\r\n  display: block;\n}\n.logo {\r\n   align-self: center;\r\n   color: #fff;\r\n   font-weight: bold;\r\n   font-family: 'Lato'\n}\n.main-nav {\r\n   display: flex;\r\n   justify-content: space-between;\r\n   padding: 0.5rem 0.8rem;\n}\n.navbar-brand,.navbar-brand:hover{\r\n   color:#32325d;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.pointer{\n  cursor:pointer;\n}\n.fade-enter-active, .fade-leave-active {\n  transition: opacity 0.5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.wrapper {\n  display: block;\n}\n.logo {\n   align-self: center;\n   color: #fff;\n   font-weight: bold;\n   font-family: 'Lato'\n}\n.main-nav {\n   display: flex;\n   justify-content: space-between;\n   padding: 0.5rem 0.8rem;\n}\n.navbar-brand,.navbar-brand:hover{\n   color:#32325d;\n}\n\n", ""]);
 
 // exports
 
@@ -25977,7 +26021,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-4ff44dc0] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, .5);\r\n  display: table;\r\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-4ff44dc0] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-4ff44dc0] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-4ff44dc0] {\n  display: table-cell;\n  vertical-align: middle;\n}\n\n", ""]);
 
 // exports
 
@@ -26015,7 +26059,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.reglament_badge{\r\n\tfont-size: 100%;\r\n\tfont-weight: bold;\r\n\tcolor: #333;\n}\n.mx-calendar{\r\n\tbackground-color: white;\r\n\tborder: 1px solid #73879c;\n}\n.mx-calendar-content{\r\n\twidth:100%;\n}\r\n", ""]);
+exports.push([module.i, "\n.reglament_badge{\n\tfont-size: 100%;\n\tfont-weight: bold;\n\tcolor: #333;\n}\n.mx-calendar{\n\tbackground-color: white;\n\tborder: 1px solid #73879c;\n}\n.mx-calendar-content{\n\twidth:100%;\n}\n", ""]);
 
 // exports
 
@@ -26034,7 +26078,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-30364831] {\r\n  background-color: rgba(0, 0, 0, 0.7);\r\n  cursor: pointer;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  height: 100%;\r\n  width: 100%;\r\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\r\n  background-color: white;\r\n  border-radius: 2px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  cursor: default;\r\n  font-family: Helvetica, Arial, sans-serif;\r\n  margin: 40px auto 0;\r\n  padding: 20px 30px;\r\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\r\n  border-radius: 10px;\r\n  color: black;\r\n  margin: 1em;\r\n  padding: 1em;\r\n  width: 800px;\r\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\r\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\r\n  -webkit-transform: scale(1.1);\r\n          transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-mask[data-v-30364831] {\n  background-color: rgba(0, 0, 0, 0.7);\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n  transition: opacity 0.3s ease;\n}\n.modal-mask .modal-container[data-v-30364831] {\n  background-color: white;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  cursor: default;\n  font-family: Helvetica, Arial, sans-serif;\n  margin: 40px auto 0;\n  padding: 20px 30px;\n  transition: all 0.3s ease;\n}\n.modal-mask .modal-container .modal-content[data-v-30364831] {\n  border-radius: 10px;\n  color: black;\n  margin: 1em;\n  padding: 1em;\n  width: 800px;\n  box-shadow:0 0;\n}\n.modal-enter[data-v-30364831], .modal-leave-active[data-v-30364831] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-30364831], .modal-leave-active .modal-container[data-v-30364831] {\n  -webkit-transform: scale(1.1);\n          transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -81189,6 +81233,21 @@ var render = function() {
           [_vm._v("Критично")]
         )
       ]
+    ),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        staticClass: "btn btn-alert mt-4",
+        attrs: { type: "button" },
+        on: {
+          click: function($event) {
+            $event.preventDefault()
+            return _vm.delLimit($event)
+          }
+        }
+      },
+      [_vm._v("Устранено")]
     )
   ])
 }
@@ -81288,8 +81347,10 @@ var render = function() {
                 attrs: {
                   id: limit.id,
                   text: limit.additional_limitation,
-                  critical: limit.additional_limitation_critical
-                }
+                  critical: limit.additional_limitation_critical,
+                  deleteLimit: _vm.deleteLimit
+                },
+                on: { updateLimit: _vm.updateLimit }
               })
             }),
             _vm._v(" "),
@@ -105352,15 +105413,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************************************!*\
   !*** ./resources/js/components/objectDevice/additionalLimit.vue ***!
   \******************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _additionalLimit_vue_vue_type_template_id_17d25505___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./additionalLimit.vue?vue&type=template&id=17d25505& */ "./resources/js/components/objectDevice/additionalLimit.vue?vue&type=template&id=17d25505&");
 /* harmony import */ var _additionalLimit_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./additionalLimit.vue?vue&type=script&lang=js& */ "./resources/js/components/objectDevice/additionalLimit.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _additionalLimit_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _additionalLimit_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -105390,7 +105450,7 @@ component.options.__file = "resources/js/components/objectDevice/additionalLimit
 /*!*******************************************************************************************!*\
   !*** ./resources/js/components/objectDevice/additionalLimit.vue?vue&type=script&lang=js& ***!
   \*******************************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -107395,7 +107455,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   LOAD_CABLE_TYPES: function () {
     var _LOAD_CABLE_TYPES = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(_ref2, payload) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(_ref2) {
       var commit;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
@@ -107414,7 +107474,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee);
     }));
 
-    function LOAD_CABLE_TYPES(_x, _x2) {
+    function LOAD_CABLE_TYPES(_x) {
       return _LOAD_CABLE_TYPES.apply(this, arguments);
     }
 
@@ -107443,7 +107503,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee2);
     }));
 
-    function LOAD_OBJECTS(_x3) {
+    function LOAD_OBJECTS(_x2) {
       return _LOAD_OBJECTS.apply(this, arguments);
     }
 
@@ -107472,7 +107532,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee3);
     }));
 
-    function LOAD_RAIONS(_x4) {
+    function LOAD_RAIONS(_x3) {
       return _LOAD_RAIONS.apply(this, arguments);
     }
 
@@ -107501,7 +107561,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee4);
     }));
 
-    function LOAD_SENSORS(_x5) {
+    function LOAD_SENSORS(_x4) {
       return _LOAD_SENSORS.apply(this, arguments);
     }
 
@@ -107530,7 +107590,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee5);
     }));
 
-    function LOAD_AVAILABLE_DEVICES(_x6) {
+    function LOAD_AVAILABLE_DEVICES(_x5) {
       return _LOAD_AVAILABLE_DEVICES.apply(this, arguments);
     }
 
@@ -107559,7 +107619,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee6);
     }));
 
-    function LOAD_DISTRICTS(_x7) {
+    function LOAD_DISTRICTS(_x6) {
       return _LOAD_DISTRICTS.apply(this, arguments);
     }
 
@@ -107592,7 +107652,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee7);
     }));
 
-    function CHANGE_OBJECT_LL(_x8, _x9) {
+    function CHANGE_OBJECT_LL(_x7, _x8) {
       return _CHANGE_OBJECT_LL.apply(this, arguments);
     }
 
@@ -107623,7 +107683,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee8);
     }));
 
-    function OBJECT_UPDATE(_x10) {
+    function OBJECT_UPDATE(_x9) {
       return _OBJECT_UPDATE.apply(this, arguments);
     }
 
@@ -107660,7 +107720,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee9);
     }));
 
-    function SET_DEVICE_COORDS(_x11, _x12) {
+    function SET_DEVICE_COORDS(_x10, _x11) {
       return _SET_DEVICE_COORDS.apply(this, arguments);
     }
 
@@ -107694,7 +107754,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee10);
     }));
 
-    function SET_SENSOR_COORDS(_x13, _x14) {
+    function SET_SENSOR_COORDS(_x12, _x13) {
       return _SET_SENSOR_COORDS.apply(this, arguments);
     }
 
@@ -107727,7 +107787,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee11);
     }));
 
-    function SET_ALERT_COORDS(_x15, _x16) {
+    function SET_ALERT_COORDS(_x14, _x15) {
       return _SET_ALERT_COORDS.apply(this, arguments);
     }
 
@@ -107762,7 +107822,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee12);
     }));
 
-    function UPDATE_LIMITATION(_x17, _x18) {
+    function UPDATE_LIMITATION(_x16, _x17) {
       return _UPDATE_LIMITATION.apply(this, arguments);
     }
 
@@ -107799,7 +107859,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee13);
     }));
 
-    function INSERT_LIMITATION(_x19, _x20) {
+    function INSERT_LIMITATION(_x18, _x19) {
       return _INSERT_LIMITATION.apply(this, arguments);
     }
 
@@ -107831,7 +107891,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee14);
     }));
 
-    function DELETE_LIMITATION(_x21, _x22) {
+    function DELETE_LIMITATION(_x20, _x21) {
       return _DELETE_LIMITATION.apply(this, arguments);
     }
 
@@ -107869,7 +107929,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee15);
     }));
 
-    function LOAD_LIMITED_OBJECTS(_x23) {
+    function LOAD_LIMITED_OBJECTS(_x22) {
       return _LOAD_LIMITED_OBJECTS.apply(this, arguments);
     }
 
@@ -107894,7 +107954,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               p = _objectSpread({}, payload); //store object_device_reglament_limitations
 
               axios.post("/api/limitations/set/".concat(p.odid), {
-                additionalLimit: p.additionalLimit,
+                additionalLimits: p.additionalLimits,
                 isCritical: p.isCritical,
                 allLimits: p.allLimits
               }).then(function (response) {
@@ -107920,7 +107980,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee16);
     }));
 
-    function TOGGLE_DEVICE_ISGOOD(_x24, _x25) {
+    function TOGGLE_DEVICE_ISGOOD(_x23, _x24) {
       return _TOGGLE_DEVICE_ISGOOD.apply(this, arguments);
     }
 
@@ -107952,7 +108012,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee17);
     }));
 
-    function DELETE_REGLAMENT_ELEMENT(_x26, _x27) {
+    function DELETE_REGLAMENT_ELEMENT(_x25, _x26) {
       return _DELETE_REGLAMENT_ELEMENT.apply(this, arguments);
     }
 
@@ -107994,7 +108054,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee18);
     }));
 
-    function SAVE_REGLAMENT_ELEMENT(_x28, _x29) {
+    function SAVE_REGLAMENT_ELEMENT(_x27, _x28) {
       return _SAVE_REGLAMENT_ELEMENT.apply(this, arguments);
     }
 
@@ -108041,7 +108101,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             }, _callee19);
           }));
 
-          return function (_x30) {
+          return function (_x29) {
             return _ref21.apply(this, arguments);
           };
         }());
@@ -108073,7 +108133,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             }, _callee20);
           }));
 
-          return function (_x31) {
+          return function (_x30) {
             return _ref22.apply(this, arguments);
           };
         }());
@@ -108115,7 +108175,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee21);
     }));
 
-    function DELETE_REGLAMENT(_x32, _x33) {
+    function DELETE_REGLAMENT(_x31, _x32) {
       return _DELETE_REGLAMENT.apply(this, arguments);
     }
 
@@ -108143,7 +108203,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee22);
     }));
 
-    function LOAD_UNREGLAMENTED_DEVICES(_x34) {
+    function LOAD_UNREGLAMENTED_DEVICES(_x33) {
       return _LOAD_UNREGLAMENTED_DEVICES.apply(this, arguments);
     }
 
@@ -108172,7 +108232,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee23);
     }));
 
-    function SEND_DEVICE_REGLAMENT(_x35, _x36) {
+    function SEND_DEVICE_REGLAMENT(_x34, _x35) {
       return _SEND_DEVICE_REGLAMENT.apply(this, arguments);
     }
 
@@ -108203,7 +108263,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee24);
     }));
 
-    function TOGGLE_DEVICE_REGLAMENT(_x37, _x38) {
+    function TOGGLE_DEVICE_REGLAMENT(_x36, _x37) {
       return _TOGGLE_DEVICE_REGLAMENT.apply(this, arguments);
     }
 
@@ -108232,7 +108292,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee25);
     }));
 
-    function LOAD_USERS(_x39) {
+    function LOAD_USERS(_x38) {
       return _LOAD_USERS.apply(this, arguments);
     }
 
@@ -108261,7 +108321,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee26);
     }));
 
-    function DELETE_USER(_x40, _x41) {
+    function DELETE_USER(_x39, _x40) {
       return _DELETE_USER.apply(this, arguments);
     }
 
@@ -108294,7 +108354,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee27);
     }));
 
-    function UPDATE_USER(_x42, _x43) {
+    function UPDATE_USER(_x41, _x42) {
       return _UPDATE_USER.apply(this, arguments);
     }
 
@@ -108322,7 +108382,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee28);
     }));
 
-    function TOGGLE_RAION(_x44, _x45) {
+    function TOGGLE_RAION(_x43, _x44) {
       return _TOGGLE_RAION.apply(this, arguments);
     }
 
@@ -108350,7 +108410,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee29);
     }));
 
-    function DELETE_DEVICE(_x46, _x47) {
+    function DELETE_DEVICE(_x45, _x46) {
       return _DELETE_DEVICE.apply(this, arguments);
     }
 
@@ -108378,7 +108438,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee30);
     }));
 
-    function DELETE_OBJECT_DEVICE(_x48, _x49) {
+    function DELETE_OBJECT_DEVICE(_x47, _x48) {
       return _DELETE_OBJECT_DEVICE.apply(this, arguments);
     }
 
@@ -108439,7 +108499,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee31);
     }));
 
-    function ADD_OBJECT_DEVICE(_x50, _x51) {
+    function ADD_OBJECT_DEVICE(_x49, _x50) {
       return _ADD_OBJECT_DEVICE.apply(this, arguments);
     }
 
@@ -108468,7 +108528,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee32);
     }));
 
-    function TOGGLE_DEVICE_SHOW(_x52, _x53) {
+    function TOGGLE_DEVICE_SHOW(_x51, _x52) {
       return _TOGGLE_DEVICE_SHOW.apply(this, arguments);
     }
 
@@ -108503,7 +108563,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee33);
     }));
 
-    function ADD_WIRE(_x54, _x55) {
+    function ADD_WIRE(_x53, _x54) {
       return _ADD_WIRE.apply(this, arguments);
     }
 
@@ -108537,7 +108597,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee34);
     }));
 
-    function UPDATE_OBJECT_DEVICE_PARAMS(_x56, _x57) {
+    function UPDATE_OBJECT_DEVICE_PARAMS(_x55, _x56) {
       return _UPDATE_OBJECT_DEVICE_PARAMS.apply(this, arguments);
     }
 
@@ -108566,7 +108626,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee35);
     }));
 
-    function EDIT_WIRE(_x58, _x59) {
+    function EDIT_WIRE(_x57, _x58) {
       return _EDIT_WIRE.apply(this, arguments);
     }
 
@@ -108595,7 +108655,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee36);
     }));
 
-    function DELETE_WIRE(_x60, _x61) {
+    function DELETE_WIRE(_x59, _x60) {
       return _DELETE_WIRE.apply(this, arguments);
     }
 
@@ -108632,7 +108692,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee37);
     }));
 
-    function ADD_SENSOR_TO_WIRE(_x62, _x63) {
+    function ADD_SENSOR_TO_WIRE(_x61, _x62) {
       return _ADD_SENSOR_TO_WIRE.apply(this, arguments);
     }
 
@@ -108660,7 +108720,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee38);
     }));
 
-    function DELETE_SENSOR_ON_WIRE(_x64, _x65) {
+    function DELETE_SENSOR_ON_WIRE(_x63, _x64) {
       return _DELETE_SENSOR_ON_WIRE.apply(this, arguments);
     }
 
@@ -108691,7 +108751,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee39);
     }));
 
-    function UPDATE_SENSOR_TO_WIRE(_x66, _x67) {
+    function UPDATE_SENSOR_TO_WIRE(_x65, _x66) {
       return _UPDATE_SENSOR_TO_WIRE.apply(this, arguments);
     }
 
@@ -108719,7 +108779,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee40);
     }));
 
-    function CALENDAR_ADD_OBJECT(_x68, _x69) {
+    function CALENDAR_ADD_OBJECT(_x67, _x68) {
       return _CALENDAR_ADD_OBJECT.apply(this, arguments);
     }
 
@@ -108752,7 +108812,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee41);
     }));
 
-    function ADD_NEW_OBJECT(_x70, _x71) {
+    function ADD_NEW_OBJECT(_x69, _x70) {
       return _ADD_NEW_OBJECT.apply(this, arguments);
     }
 
@@ -108780,7 +108840,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee42);
     }));
 
-    function SET_DEVICE_SETUP_YEAR(_x72, _x73) {
+    function SET_DEVICE_SETUP_YEAR(_x71, _x72) {
       return _SET_DEVICE_SETUP_YEAR.apply(this, arguments);
     }
 
@@ -108808,7 +108868,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee43);
     }));
 
-    function NEW_DISTRICT(_x74, _x75) {
+    function NEW_DISTRICT(_x73, _x74) {
       return _NEW_DISTRICT.apply(this, arguments);
     }
 
@@ -108838,7 +108898,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee44);
     }));
 
-    function CHANGE_DISTRICT_NAME(_x76, _x77) {
+    function CHANGE_DISTRICT_NAME(_x75, _x76) {
       return _CHANGE_DISTRICT_NAME.apply(this, arguments);
     }
 
@@ -108866,7 +108926,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee45);
     }));
 
-    function DELETE_DISTRICT(_x78, _x79) {
+    function DELETE_DISTRICT(_x77, _x78) {
       return _DELETE_DISTRICT.apply(this, arguments);
     }
 
@@ -108899,7 +108959,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee46);
     }));
 
-    function NEW_USER_DISTRICT(_x80, _x81) {
+    function NEW_USER_DISTRICT(_x79, _x80) {
       return _NEW_USER_DISTRICT.apply(this, arguments);
     }
 
@@ -108927,7 +108987,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee47);
     }));
 
-    function DELETE_DISTRICT_USER(_x82, _x83) {
+    function DELETE_DISTRICT_USER(_x81, _x82) {
       return _DELETE_DISTRICT_USER.apply(this, arguments);
     }
 
@@ -108955,7 +109015,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee48);
     }));
 
-    function DELETE_DISTRICT_OBJECT(_x84, _x85) {
+    function DELETE_DISTRICT_OBJECT(_x83, _x84) {
       return _DELETE_DISTRICT_OBJECT.apply(this, arguments);
     }
 
@@ -108988,7 +109048,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee49);
     }));
 
-    function SET_OBJECT_DISTRICT(_x86, _x87) {
+    function SET_OBJECT_DISTRICT(_x85, _x86) {
       return _SET_OBJECT_DISTRICT.apply(this, arguments);
     }
 
@@ -109038,20 +109098,44 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee50);
     }));
 
-    function CHECK_CABLE_TYPE(_x88, _x89) {
+    function CHECK_CABLE_TYPE(_x87, _x88) {
       return _CHECK_CABLE_TYPE.apply(this, arguments);
     }
 
     return CHECK_CABLE_TYPE;
   }(),
-  ADD_ANTENNA: function () {
-    var _ADD_ANTENNA = _asyncToGenerator(
+  DELETE_ADDITIONAL_LIMIT: function () {
+    var _DELETE_ADDITIONAL_LIMIT = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee51(_ref54, payload) {
-      var commit, getters, state, allCableTypes, currentCableType, ctId, resp, objectDeviceParams;
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee51(payload) {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee51$(_context51) {
         while (1) {
           switch (_context51.prev = _context51.next) {
+            case 0:
+              axios.post("/api/limitations/delete/".concat(payload));
+
+            case 1:
+            case "end":
+              return _context51.stop();
+          }
+        }
+      }, _callee51);
+    }));
+
+    function DELETE_ADDITIONAL_LIMIT(_x89) {
+      return _DELETE_ADDITIONAL_LIMIT.apply(this, arguments);
+    }
+
+    return DELETE_ADDITIONAL_LIMIT;
+  }(),
+  ADD_ANTENNA: function () {
+    var _ADD_ANTENNA = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee52(_ref54, payload) {
+      var commit, getters, state, allCableTypes, currentCableType, ctId, resp, objectDeviceParams;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee52$(_context52) {
+        while (1) {
+          switch (_context52.prev = _context52.next) {
             case 0:
               commit = _ref54.commit, getters = _ref54.getters, state = _ref54.state;
               //check if cable type isset and set id
@@ -109061,7 +109145,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               currentCableType = payload.antennaParams.cable_type;
 
               if (!allCableTypes.includes(currentCableType)) {
-                _context51.next = 8;
+                _context52.next = 8;
                 break;
               }
 
@@ -109069,17 +109153,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return ct.name == currentCableType;
               });
               payload.antennaParams.cable_type = ctId.id;
-              _context51.next = 13;
+              _context52.next = 13;
               break;
 
             case 8:
-              _context51.next = 10;
+              _context52.next = 10;
               return axios.post("/api/cableTypes/add", {
                 name: payload.antennaParams.cable_type
               });
 
             case 10:
-              resp = _context51.sent;
+              resp = _context52.sent;
               commit('ADD_CABLE_TYPE', resp.data);
               payload.antennaParams.cable_type = resp.data.id;
 
@@ -109102,10 +109186,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 15:
             case "end":
-              return _context51.stop();
+              return _context52.stop();
           }
         }
-      }, _callee51);
+      }, _callee52);
     }));
 
     function ADD_ANTENNA(_x90, _x91) {
@@ -110179,8 +110263,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\XAMPP\htdocs\firemonitoring\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\XAMPP\htdocs\firemonitoring\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/gunter/Документы/php/firemonitoring/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
