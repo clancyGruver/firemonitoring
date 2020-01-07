@@ -147,7 +147,7 @@ class DeviceLimitationsController extends Controller
 			'object_id'=>$od['object_id'],
 			'object_device_id'=>$odrl['object_device_id'],
 			'user_id' => Auth::user()->id,
-			'work_type'=> completed_works::$work_types['repair'],
+			'work_type'=> completed_works::work_types['repair'],
 		];
 		$obj = new completed_works($data);
 		$obj->save();

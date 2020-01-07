@@ -16,7 +16,7 @@ class completed_works extends Model
         'user_id',
         'work_type',
     ];
-    public static $work_types = [
+    public const work_types = [
         'repair' => 0,
         'setup' => 1,
         'remove' => 2,

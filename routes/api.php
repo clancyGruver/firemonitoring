@@ -137,4 +137,8 @@ Route::middleware('auth:api')->group(function(){
 		Route::post('/deleteAdditional/{id}', 'DeviceLimitationsController@deleteAdditioanal');
 	});
 
+
+});
+Route::prefix('word')->group(function(){
+	Route::post('/serviceabilityAct', 'WordController@serviceabilityAct');
 });

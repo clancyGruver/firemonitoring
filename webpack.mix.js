@@ -6,7 +6,7 @@ mix.js('resources/js/app.js', 'public/js')
 mix.options({
    hmrOptions: {
          host: 'localhost',  // site's host name
-         port: 5000,
+         port: 8080,
    }
 });
 

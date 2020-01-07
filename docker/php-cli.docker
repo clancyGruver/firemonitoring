@@ -1,6 +1,6 @@
 FROM php:7.1-cli
 
-RUN apt-get update && apt-get install -y apt-utils libmcrypt-dev mysql-client\
-    && docker-php-ext-install mcrypt pdo_mysql 
+RUN apt-get update && apt-get install -y libzip-dev apt-utils libmcrypt-dev mysql-client\
+    && docker-php-ext-install mcrypt pdo_mysql zip
 
 WORKDIR /home/gunter/Документы/php/firemonitoring/
