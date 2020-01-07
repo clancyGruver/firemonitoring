@@ -33,6 +33,7 @@ import sensorReglament from './components/monitoringObjects/reglament/distinct';
 import districts from './components/districts/index';
 import districtEdit from './components/districts/edit';
 import planReglamentIndex from './components/plans/reglament/index';
+import objectReports from './components/reports/object/index';
 
 export const router = new VueRouter({
 	mode: 'history',
@@ -101,6 +102,11 @@ export const router = new VueRouter({
 					beforeEnter: (to, from, next) => {
 						next({ name: 'MonitoringObjectEdit' })
 					},
+				},
+				{
+					path: 'reports',
+					name: 'objectReports',
+					component: objectReports,
 				},
 				{
 				  path: 'devices',

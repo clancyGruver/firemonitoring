@@ -100,10 +100,12 @@ class SensorWireController extends Controller
                 ['device_id','=',$id],
                 ['type','=','sensor'],
             ])->first();
-            $repairQueueObj->update([
-                'repairer_id' => $request->header('x-user'),
-                'done_at' => date('Y-m-d H:i:s'),
-            ]);
+            if($repairQueueObj){
+                $repairQueueObj->update([
+                    'repairer_id' => $request->header('x-user'),
+                    'done_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
         }
         if($obj->is_good == 1 && $params['is_good'] == 0){
             $limitation_id = device_limitations::where([

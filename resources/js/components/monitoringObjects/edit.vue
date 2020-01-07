@@ -22,6 +22,11 @@
 					Карта
 				</router-link>
 			</li>
+			<li class="nav-item">
+				<router-link :active-class="'active'" class="nav-link" :to="{ name: 'objectReports' }">
+					Отчеты
+				</router-link>
+			</li>
 			<!--li class="nav-item">
 				<router-link
 					class="nav-link"
