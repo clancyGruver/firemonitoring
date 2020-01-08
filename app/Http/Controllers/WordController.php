@@ -7,10 +7,12 @@ use PhpOffice\PhpWord\TemplateProcessor;
 use App\MonitoringObject as MO;
 use Illuminate\Support\Facades\Auth;
 use App\Object_Device as OD;
+use App\ObjectMediafile as OMedia;
 
 class WordController extends Controller
 {
     private $break = '</w:t><w:br/><w:t>';
+    
     public function serviceabilityAct($object_id, Request $request){
         /*init*/
 
@@ -93,9 +95,19 @@ class WordController extends Controller
             'defects'        => $defects,
         ]);
 
-        $templateProcessor->saveAs(public_path('Акт исправности.docx'));
+        $resultFileName = 'Акт исправности ' . $date->format('d-m-Y') . '.docx';
 
-        return response(200);
+        $templateProcessor->saveAs(public_path('uploads/objectMedia/'.$object_id . '/' . $resultFileName));
+
+        $params = [];
+        $params['filename'] = $resultFileName;
+        $params['description'] = $resultFileName;
+        $params['created_user_id'] = Auth::user()->id;
+        $params['object_id'] = $object_id;
+        $mediaObj = new OMedia($params);
+        $mediaObj->save();
+
+        return response()->json($mediaObj);
         //return response()->download(public_path('Акт исправности.docx'));
     }
 }

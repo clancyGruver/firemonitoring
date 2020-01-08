@@ -120,12 +120,6 @@ Route::middleware('auth:api')->group(function(){
 	Route::post('/power_supply/update/{id}', 'DevicePowerSupplyController@update');
 	Route::post('/power_supply/delete/{id}', 'DevicePowerSupplyController@delete');
 
-	Route::prefix('plans')->group(function(){
-		Route::prefix('reglament')->group(function(){
-			Route::post('/', 'PlanController@index');
-			Route::post('sensors', 'PlanController@sensorsReglament');
-		});
-	});
 
 	Route::prefix('limitations')->group(function(){
 		Route::post('/update/{id}', 'DeviceLimitationsController@update');
@@ -139,5 +133,13 @@ Route::middleware('auth:api')->group(function(){
 
 	Route::prefix('word')->group(function(){
 		Route::post('/serviceabilityAct/{object_id}', 'WordController@serviceabilityAct');
+	});
+});
+
+Route::prefix('plans')->group(function(){
+	Route::prefix('reglament')->group(function(){
+		Route::post('/', 'PlanController@index');
+		Route::post('sensors', 'PlanController@sensorsReglament');
+		Route::post('year', 'PlanController@createYearPlan');
 	});
 });

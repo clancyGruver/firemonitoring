@@ -85,7 +85,6 @@ class MonitoringObject extends Model
     }
 
     public function devices(){
-        $devices = $this->hasMany(Object_Device::class, 'object_id', 'id');
-        dd($devices);
+        return $this->hasMany(Object_Device::class, 'object_id', 'id');
     }
 }

@@ -82,6 +82,11 @@ class Object_Device extends Model
     public function object(){
         return $this->belongsTo('App\MonitoringObject', 'object_id', 'id');
     }
+
+    public function reglaments(){
+        return $this->hasMany('App\device_reglament','device_id','device_id');
+    }
+
     public static function boot() {
         parent::boot();
 
