@@ -2,7 +2,7 @@
 	<section>
 		<frequency :reglament="currentReglament" />
 		<hr class="mt-2 mb-3">
-		<reglament-element :element="element"  v-for="element in currentReglament.elements" :key="element.id" v-on:deleted="delElement(element)" />
+		<reglament-element :element="element"  v-for="element in elements" :key="element.id" v-on:deleted="delElement(element)" />
 
 		<div class="row mt-2">
 			<button class="btn btn-icon btn-2 btn-primary" type="button" @click="saveReglament">
@@ -86,6 +86,10 @@
 			}
 		},
 		computed:{
+			elements(){
+				const elements = this.currentReglament.elements;
+				return elements.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+			},
 			tbl_name() {
 				const type = this.$route.params.type;
 				return this.$store.getters.AVAILABLE_DEVICE_MODEL(type);

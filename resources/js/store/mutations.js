@@ -361,7 +361,7 @@ export default{
     UPDATE_REGLAMENT(state, {getters, payload}){
       const p = {...payload};
       const dev = getters.AVAILABLE_DEVICE(p.p.type, p.p.device_id);
-      const reglament_idx = getters.REGLAMENT(p.p.type, p.p.device_id, p.p.id);
+      const reglament_idx = dev.reglaments.findIndex( reglament => reglament.id == p.p.id);
       dev.reglaments[reglament_idx] = p.response;
     },
     DELETE_REGLAMENT(state, {getters, payload}){

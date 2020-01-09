@@ -164,7 +164,7 @@ export default{
     	const p = {...payload};
 		const res = {};
     	if(p.id) //Update reglament
-    		axios.post(`/api/reglament/update/${p.id}`,p)
+    		return axios.post(`/api/reglament/update/${p.id}`,p)
     			 .then(response => {
     			 	commit('UPDATE_REGLAMENT', {
 	     			 	getters,
@@ -175,7 +175,7 @@ export default{
 	     			 });
 			    	//save all elements
 			    	p.elements.map(
-			    		async elem => dispatch('SAVE_REGLAMENT_ELEMENT', {
+			    		elem => dispatch('SAVE_REGLAMENT_ELEMENT', {
 			    			...elem,
 			    			type: p.type,
 			    			device_id: p.device_id,
