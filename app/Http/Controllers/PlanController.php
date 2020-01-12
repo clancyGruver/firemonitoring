@@ -12,6 +12,7 @@ use App\District;
 
 class PlanController extends Controller
 {
+
     public function sensorsReglament(Request $request){
     	$sensors = reglament_works::where('tbl_name', 'App/Sensor')->with(['sensor','reglament'])->get()->toArray();
     	$objects = [];
@@ -60,68 +61,21 @@ class PlanController extends Controller
 	}
 	
 	public function createYearPlan(){
-		$districts = District::all();
-		$resDistricts = [];
-		foreach($districts as $district){
-			$resDistricts[] = [
-				'technickCount' => $district->users()->count(),
-				'objects'       => $district->objects()->get(),
-			];
-		}
-		$objects = MO::all();
-
-		$technickWorkTime = 7 * 60; // 7 hours
-
-		$date = new \DateTime();
-		$nextYear = new \DateTime();
-		$nextYear = $nextYear->add(new \DateInterval('P1Y'));
-		$oneDay = new \DateInterval('P1D');
-
-		$vocations = DB::select('select `vocation_date` from vocations where YEAR(vocation_date) = ?', [$date->format('Y')]);
-		$vocations = collect($vocations)->map( function($item, $key) {
-			return $item->vocation_date;
-		});
-
-		$planResult = [];
-
-		while($date->format('Y') != $nextYear->format('Y')){
-			if( !$vocations->contains($date->format('Y-m-d')) ){
-				foreach($resDistricts as $district){
-					$technicksCount = $district['technickCount'];
-					if($technicksCount < 1) continue;
-					$timeLeft = $technicksCount * $technickWorkTime;
-
-					$currentObject = $district['objects']->pop();
-					$object_id = $currentObject->object_id;
-					
-					//remove object from total objects
-					if($objects->contains( 'id', $object_id)){
-						$objects = $objects->reject( function($item, $key) use($object_id) {
-							return $item->id == $object_id;
-						});
-					}
-
-					$devices = $currentObject->object->devices;
-					foreach($devices as $device){
-						foreach($device->reglaments as $reglament){
-							if($timeLeft - $reglament->duration > 0){
-								$timeLeft -= $reglament->duration;
-								$planResult[] = [
-									'date' => $date->format('Y-m-d'),
-									'object_id' => $object_id,
-									'device_id' => $device->device_id,
-									'reglament_id' => $reglament->id,
-								];
-							}
-						}
+		foreach($resDistricts as $district){
+			$devices = $currentObject->object->devices;
+			foreach($devices as $device){
+				foreach($device->reglaments as $reglament){
+					if($timeLeft - $reglament->duration > 0){
+						$timeLeft -= $reglament->duration;
+						$planResult[] = [
+							'date' => $date->format('Y-m-d'),
+							'object_id' => $object_id,
+							'device_id' => $device->device_id,
+							'reglament_id' => $reglament->id,
+						];
 					}
 				}
-				dd($date->format('Y-m-d'));
 			}
-			$date = $date->add($oneDay);
 		}
-
-
-		dd($districts);
 	}
 }
