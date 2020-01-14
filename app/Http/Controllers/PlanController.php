@@ -61,21 +61,6 @@ class PlanController extends Controller
 	}
 	
 	public function createYearPlan(){
-		foreach($resDistricts as $district){
-			$devices = $currentObject->object->devices;
-			foreach($devices as $device){
-				foreach($device->reglaments as $reglament){
-					if($timeLeft - $reglament->duration > 0){
-						$timeLeft -= $reglament->duration;
-						$planResult[] = [
-							'date' => $date->format('Y-m-d'),
-							'object_id' => $object_id,
-							'device_id' => $device->device_id,
-							'reglament_id' => $reglament->id,
-						];
-					}
-				}
-			}
-		}
+		$this->ReglamentPlanService->createYearPlan();
 	}
 }

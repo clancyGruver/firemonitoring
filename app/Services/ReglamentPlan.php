@@ -30,33 +30,36 @@ class ReglamentPlan {
 	}
 
 	public function createYearPlan(){
+		dd('it works!');
 		$nextDay = [];
-		while($this->curDate <= $this->endDate){
-			while(!is_null($this->district)){
-				$timeLeft = $this->district['technickCount'] * $this->technickWorkTime;
-				while($this->object){
-					$devices = $this->object->devices;
-					foreach($devices as $device){
-						foreach($device->reglaments as $reglament){
-							if($timeLeft - $reglament->duration > 0){
-								$timeLeft -= $reglament->duration;
-								$this->planCalendar[] = [
-									'date'         => $this->curDate,
-									'district_id'  => $this->district->id,
-									'object_id'    => $this->object->object_id,
-									'device_id'    => $device->device_id,
-									'reglament_id' => $reglament->id,
-									'tbl_name'     => $device->tbl_name,
-								];
-							} else {
-								$nextDay[] = [
-									'duration'     => $reglament->duration,
-									'district_id'  => $this->district->id,
-									'object_id'    => $this->object->object_id,
-									'device_id'    => $device->device_id,
-									'reglament_id' => $reglament->id,
-									'tbl_name'     => $device->tbl_name,
-								];
+		while(!is_null($this->curDate)){ // пока не закончились даты (не null)
+			while(!is_null($this->district)){ // пока не закончились участки работ
+				for($technick = 0; $technick < $this->district['technickCount']; $technick++){ //Для каждого техника на участке
+					$timeLeft = $this->technickWorkTime; // Оставшееся рабочее время у техника
+					while($this->object){ // пока имеются объекты
+						//TODO: добавить вычитание 30 миинут из оставшегося времени при смене объекта
+						$devices = $this->object->devices; // все оборудование на объекте
+						foreach($devices as $device){ // Проходимся по всему оборудованию
+							foreach($device->reglaments as $reglament){ // Получаем все регламенты на оборудование
+								if($timeLeft - $reglament->duration > 0){ // Если время проведения регламента не превышает оставшееся рабочее время ехника
+									$timeLeft -= $reglament->duration; // Из оставшегося рабочего времени вычесть продолжительность проведения регламента
+									$this->planCalendar[$this->curDate] = [ // внести в план
+										'district_id'  => $this->district->id,
+										'object_id'    => $this->object->object_id,
+										'device_id'    => $device->device_id,
+										'reglament_id' => $reglament->id,
+										'tbl_name'     => $device->tbl_name,
+									];
+								} else {
+									$nextDay[] = [
+										'duration'     => $reglament->duration,
+										'district_id'  => $this->district->id,
+										'object_id'    => $this->object->object_id,
+										'device_id'    => $device->device_id,
+										'reglament_id' => $reglament->id,
+										'tbl_name'     => $device->tbl_name,
+									];
+								}
 							}
 						}
 					}
@@ -81,6 +84,8 @@ class ReglamentPlan {
 		do {
 			$this->curDate->add($oneDay);
 		} while($this->isWorkDay($this->curDate));
+		if($this->curDate <= $this->endDate)
+			$this->curDate = null;
 	}
 
 	private function removeObjectFromObjects(){
