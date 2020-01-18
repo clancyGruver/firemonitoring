@@ -179,6 +179,7 @@ return [
          * My Service Providers
          */
 
+        App\Providers\ReglamentPlanServiceProvider::class,
          
     ],
 
@@ -230,6 +231,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+        'ReglamentPlanFacade' => \App\Facades\ReglamentPlanFacade::class,
 
     ],
 

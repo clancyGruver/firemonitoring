@@ -9,6 +9,7 @@ use DateTime;
 use Illuminate\Support\Facades\DB;
 use App\MonitoringObject as MO;
 use App\District;
+use ReglamentPlanFacade;
 
 class PlanController extends Controller
 {
@@ -61,6 +62,10 @@ class PlanController extends Controller
 	}
 	
 	public function createYearPlan(){
-		$this->ReglamentPlanService->createYearPlan();
+		//$rp = new \App\Services\ReglamentPlanService();
+		dd(ReglamentPlanFacade::createYearPlan());
+
+		//$this->ReglamentPlanService->createYearPlan();
+		return response();
 	}
 }

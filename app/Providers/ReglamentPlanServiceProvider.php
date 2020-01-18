@@ -3,18 +3,18 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Services\ReglamentPlan;
+use \App\Services\ReglamentPlanService;
 
-class AppServiceProvider extends ServiceProvider
+class ReglamentPlanServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      *
      * @return void
      */
-    public function register()
+    public function register():void
     {
-        //$this->app->singleton(ReglamentPlan::class)
+        $this->app->bind('reglamentPlan', \App\Services\ReglamentPlanService::class);
     }
 
     /**

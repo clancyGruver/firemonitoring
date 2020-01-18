@@ -1,5 +1,6 @@
 <?php
 namespace App\Services;
+
 use App\User;
 use DateTime;
 use Illuminate\Support\Facades\DB;
@@ -7,7 +8,7 @@ use App\MonitoringObject as MO;
 use App\District;
 use App\reglament_works;
 
-class ReglamentPlan {
+class ReglamentPlanService {
 	private $vocations = [];
 	private $curDate;
 	private $reglamentDate;
@@ -20,19 +21,19 @@ class ReglamentPlan {
 	private $district;
 	private $object;
 
-	function __construct(string $endYear = null) {
+	function __construct() {
 		$this->setCurDate(new \DateTime());
 		$this->fillDistricts();
 		$this->objects = MO::all();
-		$this->setEndDate($endYear);
 		$this->fillVocations();
 		$this->fillTechnicks();
 	}
 
-	public function createYearPlan(){
-		dd('it works!');
+	public function createYearPlan(string $endYear = null){
+		$this->setEndDate($endYear);
 		$nextDay = [];
 		while(!is_null($this->curDate)){ // пока не закончились даты (не null)
+			dd($this->curDate);
 			while(!is_null($this->district)){ // пока не закончились участки работ
 				for($technick = 0; $technick < $this->district['technickCount']; $technick++){ //Для каждого техника на участке
 					$timeLeft = $this->technickWorkTime; // Оставшееся рабочее время у техника
@@ -134,9 +135,10 @@ class ReglamentPlan {
 
 	private function fillVocations(){
 		$vocations = DB::select('select `vocation_date` from vocations');
-		$this->vocations = collect($vocations)->map( function($item, $key) {
+		$vocationsArray = collect($vocations)->map( function($item, $key) {
 			return $item->vocation_date;
 		});
+		$this->vocations = collect($vocationsArray);
 	}
 
 	private function fillDistricts(){
@@ -190,6 +192,6 @@ class ReglamentPlan {
 	 * @return bool
 	 */
 	private function isVocation(DateTime $date):bool {
-		return $this->vocations->contains($date->format('Y-m-d'));
+		return collect($this->vocations)->contains($date->format('Y-m-d'));
 	}
 }
