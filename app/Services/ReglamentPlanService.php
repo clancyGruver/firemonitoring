@@ -20,52 +20,84 @@ class ReglamentPlanService {
 	private $technicks = [];
 	private $district;
 	private $object;
+	private $startDate;
+	private $remains = [];
 
 	function __construct() {
-		$this->setCurDate(new \DateTime());
 		$this->fillDistricts();
 		$this->objects = MO::all();
 		$this->fillVocations();
 		$this->fillTechnicks();
 	}
 
-	public function createYearPlan(string $endYear = null){
+	public function createYearPlan(string $startDate = null, string $endYear = null){
+		$this->setStartDate($startDate);
+		$this->setCurDate($this->startDate);
 		$this->setEndDate($endYear);
-		$nextDay = [];
-		while(!is_null($this->curDate)){ // пока не закончились даты (не null)
-			dd($this->curDate);
-			while(!is_null($this->district)){ // пока не закончились участки работ
-				for($technick = 0; $technick < $this->district['technickCount']; $technick++){ //Для каждого техника на участке
-					$timeLeft = $this->technickWorkTime; // Оставшееся рабочее время у техника
-					while($this->object){ // пока имеются объекты
-						//TODO: добавить вычитание 30 миинут из оставшегося времени при смене объекта
-						$devices = $this->object->devices; // все оборудование на объекте
-						foreach($devices as $device){ // Проходимся по всему оборудованию
-							foreach($device->reglaments as $reglament){ // Получаем все регламенты на оборудование
-								if($timeLeft - $reglament->duration > 0){ // Если время проведения регламента не превышает оставшееся рабочее время ехника
-									$timeLeft -= $reglament->duration; // Из оставшегося рабочего времени вычесть продолжительность проведения регламента
-									$this->planCalendar[$this->curDate] = [ // внести в план
-										'district_id'  => $this->district->id,
-										'object_id'    => $this->object->object_id,
-										'device_id'    => $device->device_id,
-										'reglament_id' => $reglament->id,
-										'tbl_name'     => $device->tbl_name,
-									];
-								} else {
-									$nextDay[] = [
-										'duration'     => $reglament->duration,
-										'district_id'  => $this->district->id,
-										'object_id'    => $this->object->object_id,
-										'device_id'    => $device->device_id,
-										'reglament_id' => $reglament->id,
-										'tbl_name'     => $device->tbl_name,
-									];
-								}
+		$this->nextDistrict();
+		while(!is_null($this->district)){ // пока не закончились участки работ
+			$technickCounter = 0;
+			$technickLoopFlag = true;
+			while($technickLoopFlag){
+				$timeLeft = $this->technickWorkTime; // Оставшееся рабочее время у техника
+
+				$this->nextObjectInDistrict();
+				while(!is_null($this->object)){ // пока имеются объекты
+					$devices = $this->object->devices; // все оборудование на объекте
+					
+					foreach($devices as $device){ // Проходимся по всему оборудованию
+						foreach($device->reglaments as $reglament){ // Получаем все регламенты на оборудование
+							if($timeLeft - $reglament->duration > 0){ // Если время проведения регламента не превышает оставшееся рабочее время ехника
+								$timeLeft -= $reglament->duration; // Из оставшегося рабочего времени вычесть продолжительность проведения регламента
+								$humanDate = $this->curDate->format('d.m.Y');
+								if(!isset($this->planCalendar[$humanDate])){
+									$this->planCalendar[$humanDate] = [];
+								}									
+								$this->planCalendar[$humanDate] = [ // внести в план
+									'district_id'  => $this->districtOject->district_id,
+									'object_id'    => $this->object->id,
+									'device_id'    => $device->device_id,
+									'reglament_id' => $reglament->id,
+									'tbl_name'     => $device->tbl_name,
+								];
+							} else {
+								$this->remains->push([
+									$technickCounter => [
+										$this->object => [
+											'type' => '',
+											'reglament_id' => $reglament->id,
+											'device_id'    => $device->device_id,
+										]
+									]
+								]);
 							}
 						}
 					}
+					dd($this->planCalendar);
+
 					$this->nextObjectInDistrict();
+
+					$technickCounterRestart = $technickCounter == $this->district['technickCount'] - 1;
+					if($technickCounterRestart){
+						$technickCounter = 0;
+					} else {
+						++$technickCounter;
+					}
 				}
+				$technickLoopFlag = false;
+			}
+		
+			$this->nextDistrict();
+			$this->setCurDate($this->startDate); // устанавливаем начальную дату при смене участка
+		}
+
+		while(!is_null($this->curDate)){ // пока не закончились даты (не null)
+			dd($this->curDate);
+		
+				for($technick = 0; $technick < $this->district['technickCount']; $technick++){ //Для каждого техника на участке
+					
+						//TODO: добавить вычитание 30 миинут из оставшегося времени при смене объекта
+						$devices = $this->object->devices; // все оборудование на объекте
 			}
 			if($this->objects->count() > 0){
 				$this->nextObject();
@@ -74,12 +106,40 @@ class ReglamentPlanService {
 		}
 	}
 
-	private function nextObject(){
+	/**
+	 * set current object from objects array
+	 *
+	 * @return void
+	 */
+	private function nextObject():void
+	{
 		if($this->objects->count() > 0){
 			$this->object = $this->objects->pop();
+		} else {
+			$this->object = null;
 		}
 	}
 
+	/**
+	 * set current date as $date
+	 *
+	 * @param  DateTime $date
+	 *
+	 * @return void
+	 */
+	private function setCurDate(DateTime $date):void
+	{
+		$this->curDate = $date;
+		if($this->isVocation($date)){
+			$this->nextDay();
+		}
+	}
+
+	/**
+	 * adds one day to current date
+	 *
+	 * @return void
+	 */
 	private function nextDay(){
 		$oneDay = new \DateInterval('P1D');
 		do {
@@ -89,8 +149,13 @@ class ReglamentPlanService {
 			$this->curDate = null;
 	}
 
+	/**
+	 * removes object from objects array
+	 *
+	 * @return void
+	 */
 	private function removeObjectFromObjects(){
-		$object_id = $this->object->object_id;
+		$object_id = $this->object->id;
 		//remove object from total objects
 		if($this->objects->contains( 'id', $object_id)){
 			$this->objects = $this->objects->reject( function($item, $key) use($object_id) {
@@ -99,15 +164,27 @@ class ReglamentPlanService {
 		}
 	}
 
+	/**
+	 * sets current object from district objects and removes it from total objects
+	 *
+	 * @return void
+	 */
 	private function nextObjectInDistrict(){
 		if($this->district['objects']->count() > 0){
-			$this->object = $this->district['objects']->pop();
+			$object = $this->district['objects']->pop();
+			$this->districtOject = $object;
+			$this->object = $object->object;
+			$this->removeObjectFromObjects();
 		} else {
 			$this->object = null;
 		}
-		$this->removeObjectFromObjects();
 	}
 
+	/**
+	 * remove district from districts and set it as current
+	 *
+	 * @return void
+	 */
 	private function nextDistrict(){
 		if($this->districts->count() > 0 ){
 			$district = $this->districts->pop();
@@ -122,15 +199,19 @@ class ReglamentPlanService {
 		}
 	}
 
+	/**
+	 * set technicks from DB
+	 *
+	 * @return void
+	 */
 	private function fillTechnicks(){
 		$this->technicks = User::where('is_admin',0)->get();
 	}
 
-	private function setCurDate(DateTime $date){
-		$this->curDate = $date;
-		if($this->isVocation($date)){
-			$this->nextDay();
-		}
+	private function setStartDate(DateTime $date = null){
+		if(is_null($date))
+			$date = new \DateTime();
+		$this->startDate = $date;
 	}
 
 	private function fillVocations(){
@@ -149,6 +230,7 @@ class ReglamentPlanService {
 				'objects'       => $district->objects()->get(),
 			];
 		}
+		$this->districts = collect($this->districts);
 	}
 
 	/**
@@ -192,6 +274,6 @@ class ReglamentPlanService {
 	 * @return bool
 	 */
 	private function isVocation(DateTime $date):bool {
-		return collect($this->vocations)->contains($date->format('Y-m-d'));
+		return $this->vocations->contains($date->format('Y-m-d'));
 	}
 }
