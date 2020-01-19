@@ -85,7 +85,7 @@
 	                    <td>{{object.director_name}}, {{object.director_phone}}</td>
 	                    <td>{{object.contact_name}}, {{object.contact_phone}}</td>
 	                    <td>{{ object.contract_id ? `№${object.contract_id}`:'' }}<br />{{ object.contract_ends_at ? `до ${object.contract_ends_at}`:'' }}</td>
-	                    <td>
+	                    <td class="text-nowrap">
 	                        <a
 														v-if="$store.getters.CURRENT_USER.is_admin"
 	                        	href="#"
@@ -228,5 +228,11 @@ export default {
 </script>
 
 <style scoped>
+.table-hover tbody tr:hover {
+    background-color: #ccc;
+}
+.table td, .table th {
+    white-space: unset;
+}
 
 </style>
