@@ -39,10 +39,9 @@ class ReglamentPlanService {
 		while(!is_null($this->district)){ // пока не закончились участки работ
 			$technickCounter = 0;
 			$technickLoopFlag = true;
+			$timeLeft = $this->technickWorkTime; // Оставшееся рабочее время у техника
 			while($technickLoopFlag){
 				$technickId = $this->district['technicks'][$technickCounter]->user_id;
-				$timeLeft = $this->technickWorkTime; // Оставшееся рабочее время у техника
-
 				$this->nextObjectInDistrict();
 				while(!is_null($this->object)){ // пока имеются объекты
 					$devices = $this->object->devices; // все оборудование на объекте
@@ -80,13 +79,17 @@ class ReglamentPlanService {
 					}
 
 					$this->nextObjectInDistrict();
-
-					$technickCounterRestart = $technickCounter == $this->district['technickCount'] - 1;
-					if($technickCounterRestart){
-						$technickCounter = 0;
-						$this->nextDay();
-					} else {
-						++$technickCounter;
+					$timeLeft -= 30; //вычитаем полчаса на переезд к следующему объекту
+					
+					if($timeLeft < 60){
+						$technickCounterRestart = $technickCounter == $this->district['technickCount'] - 1;
+						if($technickCounterRestart){
+							$technickCounter = 0;
+							$this->nextDay();
+						} else {
+							++$technickCounter;
+						}
+						$timeLeft = $this->technickWorkTime;
 					}
 				}
 				$technickLoopFlag = false;
@@ -95,7 +98,7 @@ class ReglamentPlanService {
 			$this->nextDistrict();
 			$this->setCurDate($this->startDate); // устанавливаем начальную дату при смене участка
 		}
-		dd($this->remains);
+		//dd($this->remains);
 		dd($this->planCalendar);
 
 		if($this->objects->count() > 0){
