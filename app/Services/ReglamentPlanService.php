@@ -22,6 +22,9 @@ class ReglamentPlanService {
 	private $object;
 	private $startDate;
 	private $remains;
+	private $device = null;
+	private $technickTimeLeft = 0;
+	private $technickId = null;
 
 	function __construct() {
 		$this->fillDistricts();
@@ -39,49 +42,17 @@ class ReglamentPlanService {
 		while(!is_null($this->district)){ // пока не закончились участки работ
 			$technickCounter = 0;
 			$technickLoopFlag = true;
-			$timeLeft = $this->technickWorkTime; // Оставшееся рабочее время у техника
+			$this->technickTimeLeft = $this->technickWorkTime; // Оставшееся рабочее время у техника
 			while($technickLoopFlag){
-				$technickId = $this->district['technicks'][$technickCounter]->user_id;
+				$this->technickId = $this->district['technicks'][$technickCounter]->user_id;
 				$this->nextObjectInDistrict();
 				while(!is_null($this->object)){ // пока имеются объекты
-					$devices = $this->object->devices; // все оборудование на объекте
-					
-					foreach($devices as $device){ // Проходимся по всему оборудованию
-						foreach($device->reglaments as $reglament){ // Получаем все регламенты на оборудование
-							//dump([$reglament->duration, $timeLeft]);
-							if($timeLeft - $reglament->duration > 0){ // Если время проведения регламента не превышает оставшееся рабочее время ехника
-								$timeLeft -= $reglament->duration; // Из оставшегося рабочего времени вычесть продолжительность проведения регламента								
-								$humanDate = $this->curDate->format('d.m.Y');
-								if(!isset($this->planCalendar[$humanDate])){
-									$this->planCalendar[$humanDate] = [];
-								}									
-								$this->planCalendar[$humanDate][] = [ // внести в план
-									'district_id'      => $this->districtOject->district_id,
-									'object_id'        => $this->object->id,
-									'object_device_id' => $device->id,
-									'reglament_id'     => $reglament->id,
-									'tbl_name'         => $device->tbl_name,
-									'technick_id'      => $technickId,
-								];
-							} else {
-								//dd($this->object);
-								$this->remains->push([
-									$technickId => [
-										$this->object->id => [
-											'type'             => '',
-											'reglament_id'     => $reglament->id,
-											'object_device_id' => $device->id,
-										]
-									]
-								]);
-							}
-						}
-					}
-
+					$this->handleDevices();
 					$this->nextObjectInDistrict();
-					$timeLeft -= 30; //вычитаем полчаса на переезд к следующему объекту
+
+					$this->technickTimeLeft -= 30; //вычитаем полчаса на переезд к следующему объекту
 					
-					if($timeLeft < 60){
+					if($this->technickTimeLeft < 60){
 						$technickCounterRestart = $technickCounter == $this->district['technickCount'] - 1;
 						if($technickCounterRestart){
 							$technickCounter = 0;
@@ -89,7 +60,7 @@ class ReglamentPlanService {
 						} else {
 							++$technickCounter;
 						}
-						$timeLeft = $this->technickWorkTime;
+						$this->technickTimeLeft = $this->technickWorkTime;
 					}
 				}
 				$technickLoopFlag = false;
@@ -103,6 +74,116 @@ class ReglamentPlanService {
 
 		if($this->objects->count() > 0){
 			$this->nextObject();
+		}
+	}
+
+	/**
+	 * loop over all devices and handle its reglaments
+	 *
+	 * @return void
+	 */
+	private function handleDevices(){
+		$devices = $this->object->devices; // все оборудование на объекте
+
+		foreach($devices as $device){ // Проходимся по всему оборудованию
+			$this->device = $device;
+			foreach($device->reglaments as $reglament){ // Получаем все регламенты на оборудование
+				$this->handleReglament($reglament);
+			}
+			$this->device = null;
+		}
+	}
+
+	/**
+	 * check for time left and add reglament to plan or remains
+	 *
+	 * @return void
+	 */
+	private function handleReglament($reglament):void{
+		$this->reglament = $reglament; //Заносим текущий регламент
+
+		//dump([$reglament->duration, $timeLeft]);
+		if($this->technickTimeLeft - $this->reglament->duration > 0){ // Если время проведения регламента не превышает оставшееся рабочее время техника
+			$this->addReglamentToPlan();
+			$this->technickTimeLeft -= $this->reglament->duration; // Из оставшегося рабочего времени вычесть продолжительность проведения регламента	
+		} else {
+			$this->addReglamentToRemains();
+		}
+
+		$this->reglament = null; //Очищаем текущий регламент
+	}
+
+	
+	/**
+	 * add current reglament to remains
+	 *
+	 * @return void
+	 */
+	private function addReglamentToRemains():void {
+		$this->remains->push([
+			$this->technickId => [
+				$this->object->id => [
+					'type'             => '',
+					'reglament_id'     => $this->reglament->id,
+					'object_device_id' => $this->device->id,
+				]
+			]
+		]);
+	}				
+
+
+	/**
+	 * add current reglament to plan
+	 * 
+	 * @param  DateTime $date
+	 * 
+	 * @return void
+	 */
+	private function addReglamentToPlan($date=null):void {
+		if(is_null($date)){
+			$date = $this->curDate->format('d.m.Y');
+		}
+		$humanDate = $date->format('d.m.Y');
+		
+		if(!isset($this->planCalendar[$humanDate])){
+			$this->planCalendar[$humanDate] = [];
+		}									
+		$this->planCalendar[$humanDate][] = [ // внести в план по дате
+			'district_id'      => $this->districtOject->district_id,
+			'object_id'        => $this->object->id,
+			'object_device_id' => $this->device->id,
+			'reglament_id'     => $this->reglament->id,
+			'tbl_name'         => $this->device->tbl_name,
+			'technick_id'      => $this->technickId,
+		];
+		$this->addReglamentNextDate();
+	}
+
+	/**
+	 * add reglament next date
+	 *
+	 * @return void
+	 */
+	private function addReglamentNextDate():void {
+		//TODO: add reglament next date
+		$nextDate = clone $this->curDate;
+		$stringInterval = 'P';
+		if($this->reglament->day){
+			$stringInterval .= "{$this->reglament->day}D";
+		}
+		if($this->reglament->week){
+			$stringInterval .= "{$this->reglament->week}W";
+		}
+		if($this->reglament->month){
+			$stringInterval .= "{$this->reglament->month}M";
+		}
+		if($this->reglament->year){
+			$stringInterval .= "{$this->reglament->year}Y";
+		}		
+		$interval = new \DateInterval($stringInterval);
+		$nextDate->add($interval);
+		if($nextDate <= $this->endDate){
+			$this->addReglamentToPlan($nextDate);
 		}
 	}
 

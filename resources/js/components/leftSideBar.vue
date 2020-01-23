@@ -68,6 +68,12 @@
 										  Регламентные работы
 									</router-link>
 				                </li>
+				                <li class="nav-item">
+									<router-link :active-class="active" class="nav-link" :to="{ name: 'planReglamentYear' }">
+										  <i class="fas fa-cog text-primary"></i>
+										  План работ
+									</router-link>
+				                </li>
 		                    </ul>
 		                </div>
 		            </li>
