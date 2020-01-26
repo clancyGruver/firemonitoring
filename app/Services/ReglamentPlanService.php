@@ -47,6 +47,9 @@ class ReglamentPlanService {
 				$this->technickId = $this->district['technicks'][$technickCounter]->user_id;
 				$this->nextObjectInDistrict();
 				while(!is_null($this->object)){ // пока имеются объекты
+					if($this->remains->isNotEmpty()){
+						$this->handleRemains();
+					}
 					$this->handleDevices();
 					$this->nextObjectInDistrict();
 
@@ -69,11 +72,23 @@ class ReglamentPlanService {
 			$this->nextDistrict();
 			$this->setCurDate($this->startDate); // устанавливаем начальную дату при смене участка
 		}
-		//dd($this->remains);
-		dd($this->planCalendar);
 
-		if($this->objects->count() > 0){
+		if($this->objects->isNotEmpty()){
 			$this->nextObject();
+		}
+		dd([$this->remains, $this->planCalendar]);
+	}
+
+	/**
+	 * loop over raemains devices
+	 *
+	 * @return void
+	 */
+	private function handleRemains():void{
+		//TODO:
+		while($this->remains->isNotEmpty()){
+			$element = $this->remains->shift();
+
 		}
 	}
 
@@ -141,7 +156,7 @@ class ReglamentPlanService {
 	 */
 	private function addReglamentToPlan($date=null):void {
 		if(is_null($date)){
-			$date = $this->curDate->format('d.m.Y');
+			$date = clone $this->curDate;
 		}
 		$humanDate = $date->format('d.m.Y');
 		
@@ -156,7 +171,7 @@ class ReglamentPlanService {
 			'tbl_name'         => $this->device->tbl_name,
 			'technick_id'      => $this->technickId,
 		];
-		$this->addReglamentNextDate();
+		$this->addReglamentNextDate($date);
 	}
 
 	/**
@@ -164,9 +179,12 @@ class ReglamentPlanService {
 	 *
 	 * @return void
 	 */
-	private function addReglamentNextDate():void {
-		//TODO: add reglament next date
-		$nextDate = clone $this->curDate;
+	private function addReglamentNextDate(DateTime $date=null):void {
+		if(is_null($date)){
+			$nextDate = clone $this->curDate;
+		} else {
+			$nextDate = $date;
+		}
 		$stringInterval = 'P';
 		if($this->reglament->day){
 			$stringInterval .= "{$this->reglament->day}D";
@@ -194,7 +212,7 @@ class ReglamentPlanService {
 	 */
 	private function nextObject():void
 	{
-		if($this->objects->count() > 0){
+		if($this->objects->isNotEmpty()){
 			$this->object = $this->objects->pop();
 		} else {
 			$this->object = null;
@@ -251,7 +269,7 @@ class ReglamentPlanService {
 	 * @return void
 	 */
 	private function nextObjectInDistrict(){
-		if($this->district['objects']->count() > 0){
+		if($this->district['objects']->isNotEmpty()){
 			$object = $this->district['objects']->pop();
 			$this->districtOject = $object;
 			$this->object = $object->object;
@@ -267,7 +285,7 @@ class ReglamentPlanService {
 	 * @return void
 	 */
 	private function nextDistrict(){
-		if($this->districts->count() > 0 ){
+		if($this->districts->isNotEmpty() ){
 			$district = $this->districts->pop();
 			$technicksCount = $district['technickCount'];
 			if($technicksCount < 1){
