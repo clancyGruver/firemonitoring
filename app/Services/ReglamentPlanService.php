@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\MonitoringObject as MO;
 use App\District;
 use App\reglament_works;
+use Exception;
 
 class ReglamentPlanService {
 	private $vocations = [];
@@ -85,10 +86,17 @@ class ReglamentPlanService {
 	 * @return void
 	 */
 	private function handleRemains():void{
-		//TODO:
-		while($this->remains->isNotEmpty()){
-			$element = $this->remains->shift();
-
+		$technickRemains = $this->remains->filter(function ($remainElement, $key) {
+			return $remainElement['technick_id'] == $this->technickId;
+		});
+		while($technickRemains->isNotEmpty()){
+			$element = $technickRemains->shift();
+			try{
+				$this->addRemainedReglamentToPlan($element);
+			} catch(Exception $e){
+				dd($e,$element);
+			}
+			
 		}
 	}
 
@@ -136,16 +144,14 @@ class ReglamentPlanService {
 	 */
 	private function addReglamentToRemains():void {
 		$this->remains->push([
-			$this->technickId => [
-				$this->object->id => [
-					'type'             => '',
-					'reglament_id'     => $this->reglament->id,
-					'object_device_id' => $this->device->id,
-				]
-			]
+			'technick_id'      => $this->technickId,
+			'object_id'        => $this->object->id,
+			'tbl_name'         => $this->device->tbl_name,
+			'reglament_id'     => $this->reglament->id,
+			'reglament'        => $this->reglament,
+			'object_device_id' => $this->device->id,
 		]);
-	}				
-
+	}
 
 	/**
 	 * add current reglament to plan
@@ -172,6 +178,34 @@ class ReglamentPlanService {
 			'technick_id'      => $this->technickId,
 		];
 		$this->addReglamentNextDate($date);
+		
+	}
+		/**
+	 * add remained reglament to plan
+	 * 
+	 * @param  DateTime $date
+	 * 
+	 * @return void
+	 */
+	private function addRemainedReglamentToPlan($remainElement, $date=null):void {
+		if(is_null($date)){
+			$date = clone $this->curDate;
+		}
+		$humanDate = $date->format('d.m.Y');
+		
+		if(!isset($this->planCalendar[$humanDate])){
+			$this->planCalendar[$humanDate] = [];
+		}									
+		$this->planCalendar[$humanDate][] = [ // внести в план по дате
+			'district_id'      => $this->districtOject->district_id,
+			'object_id'        => $remainElement['object_id'],
+			'object_device_id' => $remainElement['object_device_id'],
+			'reglament_id'     => $remainElement['reglament_id'],
+			'tbl_name'         => $remainElement['tbl_name'],
+			'technick_id'      => $remainElement['technick_id'],
+		];
+		$this->reglament = $remainElement['reglament'];
+		$this->addReglamentNextDate($date, $remainElement);
 	}
 
 	/**
@@ -179,7 +213,7 @@ class ReglamentPlanService {
 	 *
 	 * @return void
 	 */
-	private function addReglamentNextDate(DateTime $date=null):void {
+	private function addReglamentNextDate(DateTime $date=null, $remainElement=null):void {
 		if(is_null($date)){
 			$nextDate = clone $this->curDate;
 		} else {
@@ -197,11 +231,17 @@ class ReglamentPlanService {
 		}
 		if($this->reglament->year){
 			$stringInterval .= "{$this->reglament->year}Y";
-		}		
+		}
+
 		$interval = new \DateInterval($stringInterval);
 		$nextDate->add($interval);
 		if($nextDate <= $this->endDate){
-			$this->addReglamentToPlan($nextDate);
+			if($remainElement){
+				$this->addRemainedReglamentToPlan($remainElement, $nextDate);
+			} else{
+				$this->addReglamentToPlan($nextDate);
+			}
+			
 		}
 	}
 

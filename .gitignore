@@ -2,7 +2,6 @@
 /public/hot
 /public/storage
 /storage/*.key
-/storage
 /vendor
 .env
 .phpunit.result.cache
@@ -14,3 +13,7 @@ ff.tar.gz
 firemonitoring.tar.gz
 .~lock.Таблиа общих сведений по АПС.xlsx#
 build/config.gypi
+storage/app
+storage/docker
+storage/framework
+storage/logs
