@@ -1,12 +1,27 @@
 <template>
   <div class="wrapper">
     <nav class="main-nav bg-gradient-primary border-bottom border-dark">
-      <Burger></Burger>
-      <div class="logo">
-        <router-link class="navbar-brand pt-0" :to="{ name: 'index' }">
-          <i class="fas fa-fire text-danger mr-2"></i>FIREMONITORING
-        </router-link>
-      </div>
+        <Burger></Burger>
+
+        <ul class="navbar-nav ml-lg-auto">
+          <li class="nav-item">
+            <router-link
+              class="nav-link text-white mr-3"
+              :to="{
+                name: 'objects',
+                params:{
+                  mode:'all'
+                }
+              }">
+              <i class="ni ni-building text-primary"></i> Объекты мониторинга
+            </router-link>
+          </li>
+        </ul>
+        <div class="logo">
+          <router-link class="navbar-brand pt-0" :to="{ name: 'index' }" title="Главная">
+            <i class="fas fa-fire text-danger mr-2"></i>FIREMONITORING
+          </router-link>
+        </div>
     </nav>
     <left-side-bar />
     <div class="main-content">

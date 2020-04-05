@@ -165,7 +165,7 @@
                 <div class="form-group col">
                     <button class="btn btn-icon btn-3 btn-success" type="button" @click.prevent="updateObject">
                         <span class="btn-inner--icon"><i class="fas fa-check"></i></span>
-                        <span class="btn-inner--text">Обновить</span>
+                        <span class="btn-inner--text">Сохранить</span>
                     </button>
                 </div>
             </div>

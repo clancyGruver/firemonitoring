@@ -1,5 +1,6 @@
 <template>
 	<autocomplete
+		:defaultValue="defaultValue"
         :placeholder="query"
 		:search="search"
     	:get-result-value="getResultValue"
@@ -18,8 +19,8 @@ export default{
 	data(){
 		return{
 			object:{
-				lat: '',
-				lng: '',
+				lat: 55.198003,
+				lng: 61.359724,
 	            address:'',
 			},
             options: {
@@ -33,10 +34,14 @@ export default{
 	},
 	methods:{
 		async handleSubmit(val){
-			const res = await this.fiasQuery(val.data.fias_id);
-			this.object.address = res.address;
-			this.object.lat = res.lat;
-			this.object.lng = res.lng;
+			if(val.data && val.data.fias_level >= 8){
+				const res = await this.fiasQuery(val.data.fias_id);
+				this.object.address = res.address;
+				this.object.lat = res.lat;
+				this.object.lng = res.lng;
+			} else {
+				this.object.address = val.value;
+			}
 			this.$emit('update',this.object);
 		},
 		getResultValue(val){
@@ -51,7 +56,8 @@ export default{
             };
             const url = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address';
             let res = await axios.post(url, {query,locations,count}, this.options);
-        	this.loading = false;
+			this.loading = false;
+			res.data.suggestions.push({value:val});
         	return res.data.suggestions;
         },
         async fiasQuery(fias_id){

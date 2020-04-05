@@ -22,9 +22,9 @@
 							            </tr>
 							        </thead>
         							<tbody class="list">
-										<tr v-for="reglament in allReglaments" :key="reglament.id">
+										<tr v-for="reglament in allReglaments" :key="reglament.id" @click.prevent="curReglament = reglament">
 											<th scope="row" class="name">
-												<a class="pointer card-title" @click.prevent="curReglament = reglament">
+												<a class="pointer card-title">
 													<span class="badge badge-info reglament_badge">
 														{{ reglament.name }}
 													</span>
@@ -46,6 +46,7 @@
 													}"
 													:default-value="new Date()"
 													@change="updateDate"
+													:first-day-of-week="1"
 												/>
 												<span v-else>
 												{{
@@ -82,6 +83,24 @@
 									<label class="custom-control-label" :for="element.id">{{element.text}}</label>
 								</div>
 							</li>
+							<li>
+								Дата проведения: 
+								<date-picker
+									v-model="curReglament.reglamentDate"
+									:lang="'ru'"
+									:type="'date'"
+									:placeholder="curReglament.reglamentDate ? curReglament.reglamentDate : 'Не проводились'"
+									:input-class="`form-control`"
+									:clearable="false"
+									:format="`DD-MM-YYYY`"
+									:popupStyle="{
+										top:0,
+										position:'unset',
+									}"
+									:default-value="new Date()"
+									:first-day-of-week="1"
+								/>
+							</li>
 							<button type="button" class="btn btn-success mt-4" @click.prevent="save">Сохранить</button>
 							<button type="button" class="btn btn-warning mt-4" @click.prevent="$router.go(-1)">Назад</button>
 						</ul>
@@ -104,6 +123,11 @@ export default {
 			allReglaments: {},
 			checkedElements: [],
 			device: {},
+			lang: {
+				formatLocale: {
+					firstDayOfWeek: 3,
+				},
+			},
 		}
 	},
 	beforeCreate: function(){
@@ -117,8 +141,15 @@ export default {
 
 	methods:{
 		updateDate(val){
-			console.log(val.getDate(),val.getMonth()+1,val.getFullYear());
-			//this.$stroe.dispatch('UPDATE_REGLAMENT_DATE');
+			const reglamentDate = `${val.getDate()}-${val.getMonth()+1}-${val.getFullYear()}`;
+			this.$store.dispatch('UPDATE_REGLAMENT_DATE',{
+				typeIdx: this.$route.params.typeIdx,
+				deviceId: this.device.id,
+				reglamentId: this.curReglament.id,
+				reglamentWorkId: this.curReglament.reglament_work.id,
+				odid: this.$route.params.objectDeviceId,
+				reglamentDate
+			});
 		},
 		dateCompare(checkDate){
 			let [day,month,year] = checkDate.split('-');
@@ -148,12 +179,20 @@ export default {
 				this.$awn.alert('Не все работы по регламенту проведены');
 				return false;
 			}
+			if(this.curReglament.reglamentDate){
+				this.curReglament.reglamentDate.setDate(this.curReglament.reglamentDate.getDate() + 1);
+			} else {
+				const curDate = new Date();
+				curDate.setDate(curDate.getDate() + 1);
+				this.curReglament.reglamentDate = curDate;
+			}
 			this.$store.dispatch('TOGGLE_DEVICE_REGLAMENT',{
 				typeIdx: this.$route.params.typeIdx,
 				deviceId: this.device.id,
 				reglamentId: this.curReglament.id,
 				reglamentWorkId: this.curReglament.reglament_work.id,
 				odid: this.$route.params.objectDeviceId,
+				reglamentDate: this.curReglament.reglamentDate,
 			})
             .then( success => {
             	this.$awn.success('Проведенная работа сохранена');

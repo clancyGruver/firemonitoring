@@ -225,7 +225,9 @@ export default{
       /*const res = await dispatch('SEND_DEVICE_REGLAMENT',payload.reglamentWorkId);
       res.then( promise => console.log(promise) );*/
   		//dispatch('LOAD_UNREGLAMENTED_DEVICES');
-      let res = await axios.post(`/api/reglament/updateWork/${payload.reglamentWorkId}`);
+      let res = await axios.post(`/api/reglament/updateWork/${payload.reglamentWorkId}`,{
+        reglamentDate: payload.reglamentDate
+      });
       dispatch('LOAD_UNREGLAMENTED_DEVICES');
     },
     async LOAD_USERS({commit}){
@@ -437,5 +439,12 @@ export default{
               }
             )
       });
+    },
+    async UPDATE_REGLAMENT_DATE({dispatch},payload){
+
+      let res = await axios.post(`/api/reglament/updateWork/${payload.reglamentWorkId}`,{
+        reglamentDate: payload.reglamentDate
+      });
+      dispatch('LOAD_UNREGLAMENTED_DEVICES');
     },
 }

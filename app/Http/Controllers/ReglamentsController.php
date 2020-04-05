@@ -71,7 +71,11 @@ class ReglamentsController extends Controller
 
 	public function updateWork($id, Request $request){
 		$obj = RW::find($id);
-		$cur_date = new \DateTime();
+		if($request->input('reglamentDate')){
+			$cur_date = new \DateTime($request->input('reglamentDate'));
+		} else {
+			$cur_date = new \DateTime();
+		}
 		$obj->update(['done_at' => $cur_date->format('Y-m-d H:i:s')]);
 		return response()->json($obj);
 	}

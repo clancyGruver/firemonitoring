@@ -41,7 +41,7 @@ class reglament_works extends Model
         static::updating(function($reglament) {
             $data = [];
             $dr = DR::find($reglament->reglament_id)->toArray();
-            $nextDate = new \DateTime();
+            $nextDate = new \DateTime($reglament->done_at);
             $curDate = date("Y-m-d H:i:s");
 			$formats = [
 				'D' => 'day',

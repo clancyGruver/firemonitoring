@@ -60,17 +60,18 @@
 			<Map :objects="objects" :center="center" />
 	    </div>
 	    <div class="row">
-	        <div class="table-responsive-xl">
+	        <div class="table-responsive">
 	            <table class="table align-items-center table-hover">
 	            <thead class="thead-light">
 	                <tr>
 	                  <th scope="col" class="border-0">#</th>
 	                  <th scope="col" class="border-0">Наименование</th>
-	                  <th scope="col" class="border-0">Район</th>
+	                  <!--th-- scope="col" class="border-0">Район</!--th-->
 	                  <th scope="col" class="border-0">Адрес</th>
-	                  <th scope="col" class="border-0">Директор</th>
+	                  <!--th scope="col" class="border-0">Директор</!--th>
 	                  <th scope="col" class="border-0">Контактное лицо</th>
-	                  <th scope="col" class="border-0">Договор</th>
+	                  <th-- scope="col" class="border-0">Договор</th-->
+	                  <th scope="col" class="border-0">Участок</th>
 	                  <th scope="col" class="border-0"></th>
 	                </tr>
 	            </thead>
@@ -80,13 +81,29 @@
 	                        {{index}}
 	                    </th>
 	                    <td>{{object.name}}</td>
-	                    <td>{{object.raion.name}}</td>
+	                    <!--td>{{object.raion.name}}</!--td>-->
 	                    <td>{{object.address}}</td>
-	                    <td>{{object.director_name}}, {{object.director_phone}}</td>
+	                    <!--td>{{object.director_name}}, {{object.director_phone}}</!--td>
 	                    <td>{{object.contact_name}}, {{object.contact_phone}}</td>
-	                    <td>{{ object.contract_id ? `№${object.contract_id}`:'' }}<br />{{ object.contract_ends_at ? `до ${object.contract_ends_at}`:'' }}</td>
+	                    <td>{{ object.contract_id ? `№${object.contract_id}`:'' }}<br />{{ object.contract_ends_at ? `до ${object.contract_ends_at}`:'' }}</td>-->
+						<td>
+							<select
+								class="form-control"
+								@change="changeDistrict($event, object)"
+							>
+							  	<option disabled value="-1" :selected="!object.district">Участок не выбран</option>
+						  		<option
+						  			v-for="district in districts"
+						  			:value="district.id"
+						  			:key="district.id"
+									:selected="object.district ? object.district.district.id == district.id : false"
+						  		>
+						  			{{ district.name }}
+						  		</option>
+							</select>
+						</td>
 	                    <td class="text-nowrap">
-	                        <a
+	                        <!--a
 														v-if="$store.getters.CURRENT_USER.is_admin"
 	                        	href="#"
 	                        	class="btn"
@@ -96,7 +113,7 @@
 	                        	@click.prevent="showCalendarWorkHandler(object)"
 	                        >
 	                        	<i class="fas fa-cog text-primary"></i>
-	                       	</a>
+	                       	</a-->
 	                       	<router-link
 	                       		class="btn"
 	                        	data-toggle="tooltip"
@@ -117,20 +134,6 @@
 	                        >
 	                        	<i class="fas fa-trash-alt text-danger"></i>
 	                        </a>
-							<select
-								class="form-control"
-								@change="changeDistrict($event, object)"
-							>
-							  	<option disabled value="-1" :selected="!object.district">Участок не выбран</option>
-						  		<option
-						  			v-for="district in districts"
-						  			:value="district.id"
-						  			:key="district.id"
-									:selected="object.district ? object.district.district.id == district.id : false"
-						  		>
-						  			{{ district.name }}
-						  		</option>
-							</select>
 	                    </td>
 	                </tr>
 	            </tbody>
