@@ -8,6 +8,11 @@
 				</router-link>
 			</li>
 			<li class="nav-item">
+				<router-link :active-class="'active'" class="nav-link" :to="{ name: 'objectAdditional' }">
+					Дополнительно
+				</router-link>
+			</li>
+			<li class="nav-item">
 				<router-link :active-class="'active'" class="nav-link" :to="{ name: 'objectEditDevices' }">
 					Оборудование
 				</router-link>

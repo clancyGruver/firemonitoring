@@ -91,60 +91,6 @@
                     >
                 </div>
             </div>
-
-            <div class="form-row">
-                <div class="form-group col">
-                    <label for="soue_type">Тип системы оповещения и управления эвакуацией людей при пожаре</label>
-                    <select id="soue_type" name="soue_type" class="form-control" v-model="object.soue_type">
-                        <option>Выберите тип</option>
-                        <option
-                            v-for="i in [1,2,3,4,5]"
-                            :key="i"
-                            :value="i"
-                            :selected="object.soue_type == i"
-                        >{{ i }}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="">
-                <div class="form-group col custom-control custom-control-alternative custom-checkbox">
-                    <input
-                        class="custom-control-input"
-                        id="project_isset"
-                        name="project_isset"
-                        type="checkbox"
-                        v-model="object.project_isset"
-                    >
-                    <label class="custom-control-label" for="project_isset">Наличие проекта</label>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col">
-                    <label for="project_cipher">Шифр проекта</label>
-                    <input
-                        id="project_cipher"
-                        name="project_cipher"
-                        type="text"
-                        class="form-control"
-                        placeholder="Шифр проекта"
-                        v-model="object.project_cipher"
-                    >
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col">
-                    <label for="project_year">Год проекта</label>
-                    <input
-                        id="project_year"
-                        name="project_year"
-                        type="number"
-                        class="form-control"
-                        v-model.number="object.project_year"
-                    >
-                </div>
-            </div>
             <hr />
             <div class="form-inline">
                 <input type="text" class="form-control mb-2 mr-sm-2" id="contractId" v-model.trim="object.contract_id" placeholder="Номер договора">

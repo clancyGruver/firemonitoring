@@ -2,3 +2,5 @@ TODOS:
 	- reglament_works.planned_reglament_at -> date
 	- vocations
 	- add completed_works table
+
+ALTER TABLE `object_device_reglament_limitations` ADD `additional_limitation_critical` TINYINT(1) NOT NULL DEFAULT '0' AFTER `deleted_at`;

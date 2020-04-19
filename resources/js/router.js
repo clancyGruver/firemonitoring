@@ -9,6 +9,7 @@ import MonitoringObjects from './components/monitoringObjects/index';
 import MonitoringObjectEdit from './components/monitoringObjects/edit/monitoringObject';
 import MonitoringObjectMedia from './components/monitoringObjects/edit/mediaFiles';
 import ObjectEdit from './components/monitoringObjects/edit';
+import objectAddintional from './components/monitoringObjects/additional';
 import ObjectNew from './components/monitoringObjects/new';
 import LimitationsIndex from './components/limitations/index';
 import limitationsEdit from './components/limitations/edit';
@@ -102,6 +103,11 @@ export const router = new VueRouter({
 					beforeEnter: (to, from, next) => {
 						next({ name: 'MonitoringObjectEdit' })
 					},
+				},
+				{
+					path: 'additional',
+					name: 'objectAdditional',
+					component: objectAddintional,
 				},
 				{
 					path: 'reports',

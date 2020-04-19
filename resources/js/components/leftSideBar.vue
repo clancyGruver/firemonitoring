@@ -98,11 +98,11 @@
 									</router-link>
 				                </li>
 
-				                <li class="nav-item">
+				                <!--li class="nav-item">
 									<router-link :active-class="active" class="nav-link" :to="{ name: 'limitationsIndex' }">
 										<i class="fas fa-exclamation-triangle text-primary"></i> Недостатки оборудования
 									</router-link>
-				                </li>
+				                </li-->
 		                        <li class="nav-item">
 									<router-link
 										class="nav-link"

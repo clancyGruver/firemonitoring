@@ -35,33 +35,43 @@
 			<h3 class="underline">{{type.name}}</h3>
 			<li v-for="device in type.items" :key="device.id">
 				<h4>
-					<router-link class="ml-2 fas pointer"
-							:class="{
-								'fa-times-circle text-danger': !device.is_good,
-								'fa-check-circle text-success': device.is_good,
-							}"
-							:to="{
-								name: 'objectDeviceLimitaion',
-								params:{
-									objectDeviceId: device.id,
-									typeIdx,
-								}
-							}"
-							tag="i">
+					<router-link
+						class="ml-2 fas pointer"
+						:class="{
+							'fa-times-circle text-danger': !device.is_good,
+							'fa-check-circle text-success': device.is_good,
+						}"
+						:to="{
+							name: 'objectDeviceLimitaion',
+							params:{
+								objectDeviceId: device.id,
+								typeIdx,
+							}
+						}"
+						tag="i"
+						data-toggle="tooltip"
+						data-placement="top"
+						title="Неисправности"
+					>
 					</router-link>
-					<router-link class="ml-2 fas pointer"
-							:class="{
-								'fa-times-circle text-danger': !isReglamented(device.id),
-								'fa-check-circle text-success': isReglamented(device.id),
-							}"
-							:to="{
-								name: 'objectDeviceReglaments',
-								params:{
-									objectDeviceId: device.id,
-									typeIdx,
-								}
-							}"
-							tag="i">
+					<router-link
+						class="ml-2 fas pointer"
+						:class="{
+							'fa-times-circle text-danger': !isReglamented(device.id),
+							'fa-check-circle text-success': isReglamented(device.id),
+						}"
+						:to="{
+							name: 'objectDeviceReglaments',
+							params:{
+								objectDeviceId: device.id,
+								typeIdx,
+							}
+						}"
+						tag="i"
+						data-toggle="tooltip"
+						data-placement="top"
+						title="Регламентные работы"
+					>
 					</router-link>
 					<span @click="toggle(device)" class="pointer" v-if="['App\\device_rspi','App\\device_aps','App\\device_system_voice_alert'].indexOf(typeIdx) >-1 ">
 						<span v-if="device.isShow">-</span>
@@ -71,7 +81,11 @@
 					<span v-else>
 						{{ device.name }}
 					</span>
-					<span>
+					<span
+						data-toggle="tooltip"
+						data-placement="top"
+						title="Дата установки оборудования"
+					>
 						<date-picker
 							v-model="device.setup_year"
 							lang="ru"

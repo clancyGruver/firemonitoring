@@ -1,7 +1,7 @@
 <template>
 	<autocomplete
+		:value="defaultValue"
 		:defaultValue="defaultValue"
-        :placeholder="query"
 		:search="search"
     	:get-result-value="getResultValue"
     	@submit="handleSubmit"

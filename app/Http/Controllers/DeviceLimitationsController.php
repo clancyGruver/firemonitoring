@@ -142,7 +142,7 @@ class DeviceLimitationsController extends Controller
 	public function deleteAdditioanal($id, Request $request){
 		$odrl = ODRL::find($id);
 		$od = OD::find($odrl['object_device_id']);
-		
+
 		$data = [
 			'object_id'=>$od['object_id'],
 			'object_device_id'=>$odrl['object_device_id'],

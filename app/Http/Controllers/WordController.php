@@ -8,32 +8,23 @@ use App\MonitoringObject as MO;
 use Illuminate\Support\Facades\Auth;
 use App\Object_Device as OD;
 use App\ObjectMediafile as OMedia;
+use App\Repositories\Serviceability;
 
 class WordController extends Controller
 {
     private $break = '</w:t><w:br/><w:t>';
-    
+
     public function serviceabilityAct($object_id, Request $request){
-        /*init*/
-
-        $object = MO::find($object_id);
-        $date = new \DateTime();
-
-        $dateMinusTenYears = new \DateTime();
-        $dateMinusTenYears = $dateMinusTenYears->sub(new \DateInterval('P10Y'));
-        $devices = OD::where('object_id', $object_id)->get();
+        $service = new Serviceability($object_id);
+        $tenYearsOldDevics = $service->tenYearsOldDevices();
 
         /* check defects */
-        $devices_tenYearsSetup = $devices->filter( function($device) use ($dateMinusTenYears) {
-            return !is_null($device->setup_year) && $device->setup_year < $dateMinusTenYears->format('Y');
-        } );
-        
         $devices_bad = $devices->filter( function($device) {
             return $device->is_good === 0;
         } );
 
         $aps = $devices->filter( function($device) {
-            return $device->tbl_name === 'App\device_aps';
+            return $device->tbl_name === $this->tables['aps'];
         } );
 
         $sensors_bad = 0;
@@ -97,7 +88,11 @@ class WordController extends Controller
 
         $resultFileName = 'Акт исправности ' . $date->format('d-m-Y') . '.docx';
 
-        $templateProcessor->saveAs(public_path('uploads/objectMedia/'.$object_id . '/' . $resultFileName));
+        $outputDir = public_path('uploads/objectMedia/'.$object_id . '/' . $resultFileName);
+        if(!is_dir($outputDir)){
+            mkdir($outputDir, 0777, true);
+        }
+        $templateProcessor->saveAs($outputDir);
 
         $params = [];
         $params['filename'] = $resultFileName;
