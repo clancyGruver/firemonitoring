@@ -47,6 +47,7 @@
                 <div class="form-group col">
                     <label for="address">Адрес объекта мониторинга</label>
                     <suggestions
+                        defaultValue=""
                         @update="updateAdressHandler"
                     />
                 </div>

@@ -16378,6 +16378,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -16390,7 +16392,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       object: {
         lat: 55.198003,
         lng: 61.359724,
-        address: ''
+        address: ""
       },
       options: {
         headers: {
@@ -16401,6 +16403,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     };
   },
+
+  /*mounted(){
+  	console.log("suggetion mounted");
+  	console.log(this.defaultValues);
+  	this.addressValue = this.defaultValue;
+  },*/
   methods: {
     handleSubmit: function () {
       var _handleSubmit = _asyncToGenerator(
@@ -16537,6 +16545,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   computed: {
     query: function query() {
       return this.defaultValue ? this.defaultValue : '';
+    },
+    address: function address() {
+      return this.object.address ? this.object.address : this.defaultValue;
     }
   }
 });
@@ -18137,6 +18148,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _leaflet_suggetion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../leaflet/suggetion */ "./resources/js/components/leaflet/suggetion.vue");
 /* harmony import */ var _leaflet_mapWithProps__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../leaflet/mapWithProps */ "./resources/js/components/leaflet/mapWithProps.vue");
+//
 //
 //
 //
@@ -78374,15 +78386,23 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("autocomplete", {
-    attrs: {
-      value: _vm.defaultValue,
-      defaultValue: _vm.defaultValue,
-      search: _vm.search,
-      "get-result-value": _vm.getResultValue
-    },
-    on: { submit: _vm.handleSubmit }
-  })
+  return _c(
+    "div",
+    [
+      _c("h4", [_vm._v(_vm._s(_vm.address))]),
+      _vm._v(" "),
+      _c("autocomplete", {
+        attrs: {
+          placeholder: "Новый адрес",
+          "aria-label": "Новый адрес",
+          search: _vm.search,
+          "get-result-value": _vm.getResultValue
+        },
+        on: { submit: _vm.handleSubmit }
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -81024,7 +81044,10 @@ var render = function() {
                   _vm._v("Адрес объекта мониторинга")
                 ]),
                 _vm._v(" "),
-                _c("suggestions", { on: { update: _vm.updateAdressHandler } })
+                _c("suggestions", {
+                  attrs: { defaultValue: "" },
+                  on: { update: _vm.updateAdressHandler }
+                })
               ],
               1
             )

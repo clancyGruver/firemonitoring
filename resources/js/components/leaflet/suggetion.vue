@@ -1,12 +1,14 @@
 <template>
+<div>
+	<h4>{{address}}</h4>
 	<autocomplete
-		:value="defaultValue"
-		:defaultValue="defaultValue"
+		placeholder="Новый адрес"
+		aria-label="Новый адрес"
 		:search="search"
     	:get-result-value="getResultValue"
     	@submit="handleSubmit"
-    >
-    </autocomplete>
+    />
+</div>
 </template>
 
 <script>
@@ -21,7 +23,7 @@ export default{
 			object:{
 				lat: 55.198003,
 				lng: 61.359724,
-	            address:'',
+	            address: "",
 			},
             options: {
                 headers: {
@@ -29,9 +31,15 @@ export default{
                     "Accept": "application/json",
                     "Authorization": "Token dd1b616c26fa31d568415b551b7bdc5b77e877e6"
                 }
-            }
+			},
+
 		}
 	},
+	/*mounted(){
+		console.log("suggetion mounted");
+		console.log(this.defaultValues);
+		this.addressValue = this.defaultValue;
+	},*/
 	methods:{
 		async handleSubmit(val){
 			if(val.data && val.data.fias_level >= 8){
@@ -74,7 +82,10 @@ export default{
 	computed:{
         query(){
             return this.defaultValue ? this.defaultValue : '';
-        }
+		},
+		address(){
+			return this.object.address ? this.object.address : this.defaultValue;
+		}
     },
 }
 </script>
