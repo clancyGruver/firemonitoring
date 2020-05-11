@@ -7,6 +7,7 @@ use App\WireSensor;
 use App\WireSensorPrevState;
 use App\repairQueue;
 use App\device_limitations;
+use App\WorkType;
 
 class SensorWireController extends Controller
 {
@@ -33,7 +34,7 @@ class SensorWireController extends Controller
         $params['SP5_valid'] = $SP5;
         $params['is_good'] = $is_good;
         $params['created_user_id'] = $request->header('x-user');
-        
+
         $objs = [];
         for($i = 0; $i < $count; $i++){
             if($count > 1){
@@ -41,6 +42,16 @@ class SensorWireController extends Controller
             }
             $obj = new WireSensor($params);
             $obj->save();
+
+            $id = $obj->id;
+            $work = new WorkType([
+                'object_id' => $data['ObjectId'],
+                'object_device_id' => $params['sensor_id'],
+                'user_id' => $params['created_user_id'],
+                'tbl_name' => 'App\Sensor',
+                'work_type' => 'setup'
+            ]);
+            $work->save();
             $objs[] = $obj;
         }
 

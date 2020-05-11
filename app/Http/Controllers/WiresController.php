@@ -47,7 +47,7 @@ class WiresController extends Controller
     }
 
     public function deleteJson($id){
-        Wire::where('id',$id)->delete();
+        Wire::find($id)->delete();
         return response(200);
     }
 }

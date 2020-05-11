@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Object_Device as OD;
 use Illuminate\Support\Facades\Auth;
+use App\WorkType;
 
 
 class ObjectdevicesController extends Controller
@@ -50,6 +51,14 @@ class ObjectdevicesController extends Controller
             $obj = new OD($params);
             $obj->save();
             $id = $obj->id;
+            $work = new WorkType([
+                'object_id' => $obj->object_id,
+                'object_device_id' => $obj->device_id,
+                'user_id' => $params['created_user_id'],
+                'tbl_name' => $obj->tbl_name,
+                'work_type' => 'setup'
+            ]);
+            $work->save();
             $result[] = OD::where('id', $id)
                     ->with('wires')
                     ->with('alerts')
@@ -75,6 +84,14 @@ class ObjectdevicesController extends Controller
 
     public function deleteJson($id, Request $request){
         $obj = OD::find($id);
+        $work = new WorkType([
+            'object_id' => $obj->object_id,
+            'object_device_id' => $obj->device_id,
+            'user_id' => $request->header('x-user'),
+            'tbl_name' => $obj->tbl_name,
+            'work_type' => 'delete'
+        ]);
+        $work->save();
         if($obj->tbl_name == 'App\device_aps'){
             foreach ($obj->wires as $wire) {
                 $wire->delete();

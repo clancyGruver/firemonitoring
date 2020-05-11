@@ -14857,7 +14857,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     save: function save() {
       if (!this.check()) return false;
-      this.deviceData.mast_height = this.deviceData.mast_height.replace(',', '.');
       this.$store.dispatch("UPDATE_OBJECT_DEVICE_PARAMS", {
         type: "antenna",
         data: this.deviceData

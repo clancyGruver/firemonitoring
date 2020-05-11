@@ -3,4 +3,7 @@ TODOS:
 	- vocations
 	- add completed_works table
 
+	- акт иправности
+	- добавление типов работ
+
 ALTER TABLE `object_device_reglament_limitations` ADD `additional_limitation_critical` TINYINT(1) NOT NULL DEFAULT '0' AFTER `deleted_at`;

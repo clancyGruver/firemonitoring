@@ -42,10 +42,19 @@ class WireSensor extends Model
         parent::boot();
 
         static::deleting(function($od) {
+            print_r($od->id);
             RW::where([
             	['device_id', '=' ,$od->id],
             	['tbl_name', '=' ,'App/Sensor'],
             ])->delete();
+            $work = new WorkType([
+                'object_id' => $od->wire->device->object->id,
+                'object_device_id' => $od->sensor_id,
+                'user_id' => 1,
+                'tbl_name' => 'App/Sensor',
+                'work_type' => 'delete'
+            ]);
+            $work->save();
         });
 
         static::created(function($sensor) {
