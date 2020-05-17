@@ -8,7 +8,7 @@ use App\device_limitations as limits;
 use App\Object_Device as OD;
 use App\object_device_reglament_limitations as ODRL;
 use Illuminate\Support\Facades\Log;
-use App\completed_works;
+use App\WorkType;
 use Illuminate\Support\Facades\Auth;
 
 class DeviceLimitationsController extends Controller
@@ -147,9 +147,10 @@ class DeviceLimitationsController extends Controller
 			'object_id'=>$od['object_id'],
 			'object_device_id'=>$odrl['object_device_id'],
 			'user_id' => Auth::user()->id,
-			'work_type'=> completed_works::work_types['repair'],
+			'tbl_name'=> $od['tbl_name'],
+			'work_type'=> 'repair',
 		];
-		$obj = new completed_works($data);
+		$obj = new WorkType($data);
 		$obj->save();
 		$odrl->delete();
 		return response(200);

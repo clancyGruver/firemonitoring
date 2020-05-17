@@ -20,4 +20,12 @@ class WorkType extends Model
         'deleted_at',
         'work_type'
     ];
+
+    public const work_types = [
+        'repair',
+        'setup',
+        'delete',
+        'reglament',
+        'replacement',
+    ];
 }
