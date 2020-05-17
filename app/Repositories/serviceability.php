@@ -3,6 +3,8 @@ namespace App\Repositories;
 
 use App\MonitoringObject as MO;
 use App\Object_Device as OD;
+use App\object_device_reglament_limitations as ODRL;
+;
 
 class Serviceability{
     private $tables = [
@@ -35,37 +37,49 @@ class Serviceability{
         $this->getRspiDevices();
     }
 
-    public function tenYearsOldDevices(){
+    private function checkForDefects($devices){
         $dateMinusTenYears = new \DateTime();
-        $dateMinusTenYears = $dateMinusTenYears->sub(new \DateInterval('P10Y'));
-        $rspis = $this->rspiDevices->filter( function($device) use ($dateMinusTenYears) {
-            return !is_null($device->setup_year) && $device->setup_year < $dateMinusTenYears->format('Y');
-        } );
-        $devices = $this->devices->filter( function($device) use ($dateMinusTenYears) {
-            return !is_null($device->setup_year) && $device->setup_year < $dateMinusTenYears->format('Y');
-        } );
-        return [
-            'rspi' => $rspis,
-            'devices' => $devices
-        ];
+        $devices->each(function($device) use ($dateMinusTenYears){
+            $device->defects = collect([]);
+            //Проверка, что обородувание установлено более 10 лет назад
+             if(!is_null($device->setup_year) && $device->setup_year >= $dateMinusTenYears->format('Y')){
+                $device->defects->put('tenYearsAgoSetup',true);
+             }
+            //проверка кабеля на огнестойкость и исправность извещателей
+            if($device->tbl_name == $this->tables['aps']){ // если оборудование ОПС
+                //проверка кабеля на огнестойкость
+                $unsafeWires = $device->wires->filter(function($wire){
+                    return $wire->type == 'unsafe';
+                });
+                $device->defects->put('unsafeWires',$unsafeWires);
+                //проверка исправности извещателей
+                $device->wires->each(function($wire){
+                    $wire['badSensors'] = $wire->sensors->filter(function ($sensor) {
+                        return $sensor->is_good == 0;
+                    })->count();
+                    $wire['badSeetup'] = $wire->sensors->filter(function ($sensor) {
+                        return $sensor->SP5_valid == 0;
+                    })->count();
+                });
+            }
+            //Прочие дефекты
+            if(!$device->is_good){//если оборудование неисправно
+                //Проверка на критичность
+                $allLimittions = ODRL::find('device_id', $device->id)->all();
+                $critical = $allLimittions->filter(function ($distinctLimitation) {
+                    return $distinctLimitation->additional_limitation_critical == 1;
+                });
+                $nonCritical = $allLimittions->diff($critical);
+                $device->defects->put('critical', $critical);
+                $device->defects->put('nonCritical', $nonCritical);
+            }
+        });
     }
 
     public function defects(){
-        $device->is_good === 0;
-        $rspis = $this->rspiDevices->filter( function($device) {
-            return !is_null($device->setup_year) && $device->setup_year < $dateMinusTenYears->format('Y');
-        } );
-        $devices = $this->devices->filter( function($device){
-            return !is_null($device->setup_year) && $device->setup_year < $dateMinusTenYears->format('Y');
-        } );
-        return [
-            'rspi' => $rspis,
-            'devices' => $devices
-        ];
-    }
-
-    public function criticalDefects(){
-        
+        //$device->is_good === 0;
+        $this->checkForDefects($this->rspiDevices);
+        $this->checkForDefects($this->devices);
     }
 
     private function getRspiDevices(){
