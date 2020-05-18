@@ -16,32 +16,10 @@ class WordController extends Controller
 
     public function serviceabilityAct($object_id, Request $request){
         $service = new Serviceability($object_id);
-        $tenYearsOldDevics = $service->tenYearsOldDevices();
-
-        /* check defects */
-        $devices_bad = $devices->filter( function($device) {
-            return $device->is_good === 0;
-        } );
-
-        $aps = $devices->filter( function($device) {
-            return $device->tbl_name === $this->tables['aps'];
-        } );
-
-        $sensors_bad = 0;
-        $sp_5 = 0;
-        foreach($aps as $aps_device){
-            foreach($aps_device->wires as $wire){
-                $bad_counted = $wire->sensors->countBy(function ($sensor) {
-                    return $sensor->is_good === 0 ? 'bad' : 'good';
-                });
-                $sp5_counted = $wire->sensors->countBy(function ($sensor) {
-                    return $sensor->SP5_valid === 0 ? 'bad' : 'good';
-                });
-                $sensors_bad += isset($bad_counted['bad']) && !empty($bad_counted['bad']) ? $bad_counted['bad'] : 0;
-                $sp_5 += isset($sp5_counted['bad']) && !empty($sp5_counted['bad']) ? $sp5_counted['bad'] : 0;
-            }
-        }
-        /* fill $defects */
+        $service->defects();
+        $service->printDevices();
+       /* 
+        // fill $defects 
         $defects = 'Без недостатков';
         $haveDefects = $devices_tenYearsSetup->count() > 0 
                         || $devices_bad->count() > 0
@@ -102,7 +80,7 @@ class WordController extends Controller
         $mediaObj = new OMedia($params);
         $mediaObj->save();
 
-        return response()->json($mediaObj);
+        return response()->json($mediaObj);*/
         //return response()->download(public_path('Акт исправности.docx'));
     }
 }

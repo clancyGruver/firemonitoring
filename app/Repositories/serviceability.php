@@ -53,19 +53,23 @@ class Serviceability{
                 });
                 $device->defects->put('unsafeWires',$unsafeWires);
                 //проверка исправности извещателей
-                $device->wires->each(function($wire){
-                    $wire['badSensors'] = $wire->sensors->filter(function ($sensor) {
+                $device->defects->put('badSensors',collect([]));
+                $device->defects->put('badSetup',collect([]));
+                $device->wires->each(function($wire) use ($device){
+                    $badSensorsCount= $wire->sensors->filter(function ($sensor) {
                         return $sensor->is_good == 0;
                     })->count();
-                    $wire['badSeetup'] = $wire->sensors->filter(function ($sensor) {
+                    $badSetupCount= $wire->sensors->filter(function ($sensor) {
                         return $sensor->SP5_valid == 0;
                     })->count();
+                    $device->defects['badSetup']->put($wire->description, $badSetupCount); 
+                    $device->defects['badSensors']->put($wire->description, $badSensorsCount); 
                 });
             }
             //Прочие дефекты
             if(!$device->is_good){//если оборудование неисправно
                 //Проверка на критичность
-                $allLimittions = ODRL::find('device_id', $device->id)->all();
+                $allLimittions = ODRL::where('object_device_id', $device->id)->get();
                 $critical = $allLimittions->filter(function ($distinctLimitation) {
                     return $distinctLimitation->additional_limitation_critical == 1;
                 });
@@ -74,12 +78,6 @@ class Serviceability{
                 $device->defects->put('nonCritical', $nonCritical);
             }
         });
-    }
-
-    public function defects(){
-        //$device->is_good === 0;
-        $this->checkForDefects($this->rspiDevices);
-        $this->checkForDefects($this->devices);
     }
 
     private function getRspiDevices(){
@@ -92,6 +90,100 @@ class Serviceability{
         $this->devices = $this->allDevices->filter( function($device) {
             return in_array($device->tbl_name, $this->device_tables);
         } );
+    }
+
+    public function defects(){
+        //$device->is_good === 0;
+        $this->checkForDefects($this->rspiDevices);
+        $this->checkForDefects($this->devices);
+    }
+
+    public function printDevices(){
+        $this->devices->each(function ($device) {
+            print_r("<p>".$device->devicable->name."</p>");
+            $device->defects->each(function ($defect, $key) {
+                switch($key){
+                    case 'unsafeWires': 
+                        $this->printUnsafeWires($defect);
+                        break;
+                    case 'critical':
+                        $this->printCriticalDefects($defect);
+                        break;
+                    case 'nonCritical':
+                        $this->printNonCriticalDefects($defect);
+                        break;
+                    case 'badSensors':
+                        $this->printBadSensors($defect);
+                        break;
+                    case 'badSetup':
+                        $this->printBadSetup($defect);
+                        break;
+                        
+                    default: print_r("<p>".$key."</p>"); break;
+                }
+            });
+        });
+    }
+
+    private function printUnsafeWires($defect){
+        print_r("<p>Пожароопасный кабель</p>");
+        print("<ul>");
+        $defect->each(function ($wire){
+            print("<li>");
+            print($wire->description);
+            print("</li>");
+        });
+        print("</ul>");
+    }
+
+    private function printCriticalDefects($defect){
+        print_r("<p>Критичные недостатки</p>");
+        print("<ul>");
+        $defect->each(function ($criticalDefect){
+            print("<li>");
+            print($criticalDefect->additional_limitation);
+            print("</li>");
+        });
+        print("</ul>");
+    }
+
+    private function printNonCriticalDefects($defect){
+        print_r("<p>Критичные недостатки</p>");
+        print("<ul>");
+        $defect->each(function ($nonCriticalDefect){
+            print("<li>");
+            print($nonCriticalDefect->additional_limitation);
+            print("</li>");
+        });
+        print("</ul>");
+    }
+
+    private function printBadSensors($defect){
+        print_r("<p>Неисправные извещатели</p>");
+        print("<ul>");
+        $defect->each(function ($wireName, $sensorCount){
+            if($sensorCount > 0){
+                print("<li>");
+                print("Шлейф: " . $wireName);
+                print($sensorCount . " шт.");
+                print("</li>");
+            }
+        });
+        print("</ul>");
+    }
+
+    private function printBadSetup($defect){
+        print_r("<p>Извещатели, установленные с нарушением СП-5</p>");
+        print("<ul>");
+        $defect->each(function ($wireName, $sensorCount){
+            if($sensorCount > 0){
+                print("<li>");
+                print("Шлейф: " . $wireName);
+                print($sensorCount . " шт.");
+                print("</li>");
+            }
+        });
+        print("</ul>");
     }
 
 }
