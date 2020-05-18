@@ -161,10 +161,10 @@ class Serviceability{
     private function printBadSensors($defect){
         print_r("<p>Неисправные извещатели</p>");
         print("<ul>");
-        $defect->each(function ($wireName, $sensorCount){
+        $defect->each(function ($sensorCount, $wireName){
             if($sensorCount > 0){
                 print("<li>");
-                print("Шлейф: " . $wireName);
+                print("Шлейф: " . $wireName . " - ");
                 print($sensorCount . " шт.");
                 print("</li>");
             }
@@ -175,10 +175,10 @@ class Serviceability{
     private function printBadSetup($defect){
         print_r("<p>Извещатели, установленные с нарушением СП-5</p>");
         print("<ul>");
-        $defect->each(function ($wireName, $sensorCount){
+        $defect->each(function ($sensorCount, $wireName){
             if($sensorCount > 0){
                 print("<li>");
-                print("Шлейф: " . $wireName);
+                print("Шлейф: " . $wireName . " - ");
                 print($sensorCount . " шт.");
                 print("</li>");
             }
