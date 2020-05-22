@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use PhpOffice\PhpWord\TemplateProcessor;
 use App\MonitoringObject as MO;
 use Illuminate\Support\Facades\Auth;
 use App\Object_Device as OD;
@@ -14,7 +12,7 @@ class WordController extends Controller
 {
     private $break = '</w:t><w:br/><w:t>';
 
-    public function serviceabilityAct($object_id, Request $request){
+    public function serviceabilityAct($object_id){
         $service = new Serviceability($object_id);
         $service->defects();
         //$service->printDevices();
