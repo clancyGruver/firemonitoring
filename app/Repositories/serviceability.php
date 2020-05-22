@@ -120,7 +120,7 @@ class Serviceability{
     }
 
     private function printNonCriticalDefects($defect){
-        print_r("<p>Критичные недостатки</p>");
+        print_r("<p>Некритичные недостатки</p>");
         print("<ul>");
         $defect->each(function ($nonCriticalDefect){
             print("<li>");
@@ -159,37 +159,37 @@ class Serviceability{
     }
 
     private function unsafeWires($defect){
-        return $defect->each(function ($wire){
+        $result = [];
+        foreach($defect as $wire){
             $result[] = $wire->description;
-        });
+        }
+        return $result;
     }
 
-    private function criticalDefects($defect){
-        return $defect->each(function ($criticalDefect){
-            $result[] = $criticalDefect->additional_limitation;
-        });
+    private function criticalDefects($defects){
+        $result = [];
+        foreach($defects as $defect){
+            $result[] = $defect->additional_limitation;
+        }
+        return $result;
     }
 
-    private function nonCriticalDefects($defect){
-        return $defect->each(function ($nonCriticalDefect){
-            $result[] = $nonCriticalDefect->additional_limitation;
-        });
+    private function nonCriticalDefects($defects){
+        return $this->criticalDefects($defects);
     }
 
     private function badSensors($defect){
-        return $defect->each(function ($sensorCount, $wireName){
+        $result = [];
+        foreach($defect as $wireName => $sensorCount){
             if($sensorCount > 0){
-                print("Шлейф: " . $wireName . " - " . $sensorCount . " шт.");
+                $result[] = "Шлейф: " . $wireName . " - " . $sensorCount . " шт.";
             }
-        });
+        }
+        return $result;
     }
 
     private function badSetup($defect){
-        return $defect->each(function ($sensorCount, $wireName){
-            if($sensorCount > 0){
-                print("Шлейф: " . $wireName . " - " . $sensorCount . " шт.");
-            }
-        });
+        return $this->badSensors($defect);
     }
 
     public function defects(){
@@ -230,8 +230,7 @@ class Serviceability{
     }
 
     public function getResultFileName() : string {
-        $date = new \DateTime();
-        $resultFileName = 'Акт исправности ' . $date->format('d-m-Y') . '.docx';
+        $resultFileName = 'Акт исправности ' . $this->currentDate->format('d-m-Y') . '.docx';
 
         $outputDir = public_path('uploads/objectMedia/'.$this->object->id);
         if(!is_dir($outputDir)){
@@ -276,17 +275,16 @@ class Serviceability{
             $device->defects->each(function ($defect, $key) use (&$elements) {
                 switch($key){
                     case 'unsafeWires': 
-                        $elements->push($this->unsafeWires($defect));
+                        $elements->put('Пожароопасный кабель', $this->unsafeWires($defect));
                         break;
                     case 'nonCritical':
-                        $elements->push($this->nonCriticalDefects($defect));
+                        $elements->put('Некритичные недостатки', $this->nonCriticalDefects($defect));
                         break;
                     case 'badSensors':
-                        $elements->push($this->badSensors($defect));
-                        $this->($defect);
+                        $elements->put('Неисправные извещатели', $this->badSensors($defect));
                         break;
                     case 'badSetup':
-                        $elements->push($this->badSetup($defect));
+                        $elements->put('Извещатели, установленные с нарушением СП-5', $this->badSetup($defect));
                         break;                        
                     default: break;
                 }
@@ -294,7 +292,7 @@ class Serviceability{
             $defectsList->push(collect([
                 'name' => $device->devicable->name,
                 'elements' => $elements
-            ]))
+            ]));
         });
         return $defectsList;
     }
@@ -304,13 +302,13 @@ class Serviceability{
             $elements = collect([]);
             $device->defects->each(function ($defect, $key) use (&$elements) {
                 if($key == 'critical'){
-                    $elements->push($this->criticalDefects($defect));
+                    $elements->put('Критичные недостатки', $this->criticalDefects($defect));
                 }
             });            
             $defectsList->push(collect([
                 'name' => $device->devicable->name,
                 'elements' => $elements
-            ]))
+            ]));
         });
         return $defectsList;
         
@@ -323,17 +321,16 @@ class Serviceability{
             $device->defects->each(function ($defect, $key) use (&$elements) {
                 switch($key){
                     case 'unsafeWires': 
-                        $elements->push($this->unsafeWires($defect));
+                        $elements->put('Пожароопасный кабель', $this->unsafeWires($defect));
                         break;
                     case 'nonCritical':
-                        $elements->push($this->nonCriticalDefects($defect));
+                        $elements->put('Некритичные недостатки', $this->nonCriticalDefects($defect));
                         break;
                     case 'badSensors':
-                        $elements->push($this->badSensors($defect));
-                        $this->($defect);
+                        $elements->put('Неисправные извещатели', $this->badSensors($defect));
                         break;
                     case 'badSetup':
-                        $elements->push($this->badSetup($defect));
+                        $elements->put('Извещатели, установленные с нарушением СП-5', $this->badSetup($defect));
                         break;                        
                     default: break;
                 }
@@ -341,23 +338,24 @@ class Serviceability{
             $defectsList->push(collect([
                 'name' => $device->devicable->name,
                 'elements' => $elements
-            ]))
+            ]));
         });
         return $defectsList;
     }
-    public function getDeviceCriticalDefects(){
+
+    public function getRspiCriticalDefects(){
         $defectsList = collect([]);
         $this->rspiDevices->each(function ($device, $index) use(&$defectsList) {
             $elements = collect([]);
             $device->defects->each(function ($defect, $key) use (&$elements) {
                 if($key == 'critical'){
-                    $elements->push($this->criticalDefects($defect));
+                    $elements->put('Критичные недостатки', $this->criticalDefects($defect));
                 }
             });            
             $defectsList->push(collect([
                 'name' => $device->devicable->name,
                 'elements' => $elements
-            ]))
+            ]));
         });
         return $defectsList;
         

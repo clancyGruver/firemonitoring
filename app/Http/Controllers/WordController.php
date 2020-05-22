@@ -11,9 +11,7 @@ use App\Repositories\WordWriter;
 
 class WordController extends Controller
 {
-    private $break = '</w:t><w:br/><w:t>';
-
-    public function serviceabilityAct($object_id){
+        public function serviceabilityAct($object_id){
         $service = new Serviceability($object_id);
         $service->defects();
         //$service->printDevices();
