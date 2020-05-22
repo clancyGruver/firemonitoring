@@ -158,6 +158,40 @@ class Serviceability{
         print("</ul>");
     }
 
+    private function unsafeWires($defect){
+        return $defect->each(function ($wire){
+            $result[] = $wire->description;
+        });
+    }
+
+    private function criticalDefects($defect){
+        return $defect->each(function ($criticalDefect){
+            $result[] = $criticalDefect->additional_limitation;
+        });
+    }
+
+    private function nonCriticalDefects($defect){
+        return $defect->each(function ($nonCriticalDefect){
+            $result[] = $nonCriticalDefect->additional_limitation;
+        });
+    }
+
+    private function badSensors($defect){
+        return $defect->each(function ($sensorCount, $wireName){
+            if($sensorCount > 0){
+                print("Шлейф: " . $wireName . " - " . $sensorCount . " шт.");
+            }
+        });
+    }
+
+    private function badSetup($defect){
+        return $defect->each(function ($sensorCount, $wireName){
+            if($sensorCount > 0){
+                print("Шлейф: " . $wireName . " - " . $sensorCount . " шт.");
+            }
+        });
+    }
+
     public function defects(){
         //$device->is_good === 0;
         $this->checkForDefects($this->rspiDevices);
@@ -220,8 +254,117 @@ class Serviceability{
     }
 
     public function getDeviceList(){
-        return 'asdas';
-        return $this->devices;
+        $deviceListNames = [];
+        $this->devices->each(function($device) use (&$deviceListNames){
+            $deviceListNames[] = $device->devicable->name;
+        });
+        return $deviceListNames;
+    }
+
+    public function getRspiList(){
+        $deviceListNames = [];
+        $this->rspiDevices->each(function($device) use (&$deviceListNames){
+            $deviceListNames[] = $device->devicable->name;
+        });
+        return $deviceListNames;
+    }
+
+    public function getDeviceDefects(){
+        $defectsList = collect([]);
+        $this->devices->each(function ($device, $index) use(&$defectsList) {
+            $elements = collect([]);
+            $device->defects->each(function ($defect, $key) use (&$elements) {
+                switch($key){
+                    case 'unsafeWires': 
+                        $elements->push($this->unsafeWires($defect));
+                        break;
+                    case 'nonCritical':
+                        $elements->push($this->nonCriticalDefects($defect));
+                        break;
+                    case 'badSensors':
+                        $elements->push($this->badSensors($defect));
+                        $this->($defect);
+                        break;
+                    case 'badSetup':
+                        $elements->push($this->badSetup($defect));
+                        break;                        
+                    default: break;
+                }
+            });            
+            $defectsList->push(collect([
+                'name' => $device->devicable->name,
+                'elements' => $elements
+            ]))
+        });
+        return $defectsList;
+    }
+    public function getDeviceCriticalDefects(){
+        $defectsList = collect([]);
+        $this->devices->each(function ($device, $index) use(&$defectsList) {
+            $elements = collect([]);
+            $device->defects->each(function ($defect, $key) use (&$elements) {
+                if($key == 'critical'){
+                    $elements->push($this->criticalDefects($defect));
+                }
+            });            
+            $defectsList->push(collect([
+                'name' => $device->devicable->name,
+                'elements' => $elements
+            ]))
+        });
+        return $defectsList;
+        
+    }
+
+    public function getRspiDefects(){
+        $defectsList = collect([]);
+        $this->rspiDevices->each(function ($device, $index) use(&$defectsList) {
+            $elements = collect([]);
+            $device->defects->each(function ($defect, $key) use (&$elements) {
+                switch($key){
+                    case 'unsafeWires': 
+                        $elements->push($this->unsafeWires($defect));
+                        break;
+                    case 'nonCritical':
+                        $elements->push($this->nonCriticalDefects($defect));
+                        break;
+                    case 'badSensors':
+                        $elements->push($this->badSensors($defect));
+                        $this->($defect);
+                        break;
+                    case 'badSetup':
+                        $elements->push($this->badSetup($defect));
+                        break;                        
+                    default: break;
+                }
+            });            
+            $defectsList->push(collect([
+                'name' => $device->devicable->name,
+                'elements' => $elements
+            ]))
+        });
+        return $defectsList;
+    }
+    public function getDeviceCriticalDefects(){
+        $defectsList = collect([]);
+        $this->rspiDevices->each(function ($device, $index) use(&$defectsList) {
+            $elements = collect([]);
+            $device->defects->each(function ($defect, $key) use (&$elements) {
+                if($key == 'critical'){
+                    $elements->push($this->criticalDefects($defect));
+                }
+            });            
+            $defectsList->push(collect([
+                'name' => $device->devicable->name,
+                'elements' => $elements
+            ]))
+        });
+        return $defectsList;
+        
+    }
+
+    public function getcurrentYear(){
+        return $this->currentDate->format('Y');
     }
 
 }

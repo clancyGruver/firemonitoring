@@ -19,16 +19,25 @@ class WordWriter{
         
         $templateProcessor = new TemplateProcessor($this->templateFile);
 
-        dd($serv->getDeviceList());
+        dd($serv->getRspiList());
 
         $templateProcessor->setValues([
-            'year'           => $date->format('Y'),
+            'year'           => $serv->getcurrentYear(),
             'director_fio'   => $serv->getDirector(),
             'technick_fio'   => $technick,
             'object_name'    => $serv->getObjectName(),
             'object_address' => $serv->getAddress(),
-            'defects'        => $defects,
+            'devices'        => $serv->getDeviceList(),
+            'rspis'          => $serv->getRspiList(),
+            'devices_defects'=>$serv->getDeviceDefects(),
+            'rspis_defects'  =>$serv->getRspiDefects(),
+            'devices_critical_defects'=>$serv->getDeviceCriticalDefects(),
+            'rspis_critical_defects'  =>$serv->getRspiCriticalDefects(),
         ]);
+    }
+
+    private function createWordList($array){
+
     }
 
 
