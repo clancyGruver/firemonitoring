@@ -29,16 +29,21 @@ class Serviceability{
     private $allDevices;
     private $rspiDevices;
     private $devices;
+    private $currentDate;
 
     public function __construct($object_id){
         $this->object = MO::find($object_id);
         $this->allDevices = OD::where('object_id', $object_id)->get();
         $this->getDevices();
         $this->getRspiDevices();
+        $this->currentDate = new \DateTime();
     }
 
     private function checkForDefects($devices){
-        $dateMinusTenYears = new \DateTime();
+        $dateMinusTenYears = clone($this->currentDate);
+        $tenYearsInterval = new \DateInterval("P10Y");
+        $dateMinusTenYears->sub($tenYearsInterval); 
+
         $devices->each(function($device) use ($dateMinusTenYears){
             $device->defects = collect([]);
             //Проверка, что обородувание установлено более 10 лет назад
@@ -200,6 +205,23 @@ class Serviceability{
         }
         $outputPath = $outputDir . '/' . $resultFileName;
         return $outputPath;
+    }
+
+    public function getDirector() : string {
+        return $this->object->director_name;
+    }
+
+    public function getObjectName() : string {
+        return $this->object->name;
+    }
+
+    public function getAddress() : string {
+        return $this->object->address;
+    }
+
+    public function getDeviceList(){
+        return 'asdas';
+        return $this->devices;
     }
 
 }

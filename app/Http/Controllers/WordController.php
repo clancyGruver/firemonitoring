@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\MonitoringObject as MO;
-use Illuminate\Support\Facades\Auth;
 use App\Object_Device as OD;
 use App\ObjectMediafile as OMedia;
+
 use App\Repositories\Serviceability;
+use App\Repositories\WordWriter;
 
 class WordController extends Controller
 {
@@ -17,8 +18,11 @@ class WordController extends Controller
         $service->defects();
         //$service->printDevices();
 
-        $file = $service->getTemplateName();
+        $template = $service->getTemplateName();
         $resultFileName = $service->getResultFileName();
+
+        $writer = new WordWriter($template, $resultFileName);
+        $writer->serviceReportAct($service);
        /* 
         // fill $defects 
         $defects = 'Без недостатков';
@@ -47,22 +51,7 @@ class WordController extends Controller
                 $defects .= 'Извещетелей установлено не в соответствии с СП 5: ' . $sp_5 . $this->break;
             }
         }
-        
-        $director = $object->director_name;
-        $technick = Auth::user()->name;
-        $object_name = $object->name;
-        $object_address = $object->address;
 
-        $templateProcessor = new TemplateProcessor($file);
-
-        $templateProcessor->setValues([
-            'year'           => $date->format('Y'),
-            'director_fio'   => $director,
-            'technick_fio'   => $technick,
-            'object_name'    => $object_name,
-            'object_address' => $object_address,
-            'defects'        => $defects,
-        ]);
         $templateProcessor->saveAs($outputDir);
 
         $params = [];
