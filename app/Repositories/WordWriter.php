@@ -26,18 +26,28 @@ class WordWriter{
             'technick_fio'   => $technick,
             'object_name'    => $serv->getObjectName(),
             'object_address' => $serv->getAddress(),
-            'devices'        => $serv->getDeviceList(),
-            'rspis'          => $serv->getRspiList(),
-            'devices_defects'=> createWordList($serv->getDeviceDefects()),
-            'rspis_defects'  => createWordList($serv->getRspiDefects()),
-            'devices_critical_defects'=> createWordList($serv->getDeviceCriticalDefects()),
-            'rspis_critical_defects'  => createWordList($serv->getRspiCriticalDefects()),
+            'devices'        => $this->createWordListDevices($serv->getDeviceList()),
+            'rspis'          => $this->createWordListDevices($serv->getRspiList()),
+            'devices_defects'=> $this->createWordListDefects($serv->getDeviceDefects()),
+            'rspis_defects'  => $this->createWordListDefects($serv->getRspiDefects()),
+            'devices_critical_defects'=> $this->createWordListDefects($serv->getDeviceCriticalDefects()),
+            'rspis_critical_defects'  => $this->createWordListDefects($serv->getRspiCriticalDefects()),
         ]);
+    }
+
+    private function createWordListDevices($list){
+        $resultStrring = "";
+        foreach($list as $device){
+            $resultStrring .= $this->textLine($device);
+        }
+        return $resultStrring;
     }
 
     private function createWordListDefects($list){
         $resultStrring = "";
         $list->each(function($device) use(&$resultStrring){
+            if($device['elements']->count() == 0 )
+                return;
             $resultStrring .= $this->textLine($device['name']);
             $device['elements']->each(function($elementList, $elementName) use(&$resultStrring){
                 $resultStrring .= $this->textLine($elementName, 1);

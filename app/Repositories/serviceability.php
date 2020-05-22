@@ -41,13 +41,13 @@ class Serviceability{
 
     private function checkForDefects($devices){
         $dateMinusTenYears = clone($this->currentDate);
-        $tenYearsInterval = new \DateInterval("P10Y");
-        $dateMinusTenYears->sub($tenYearsInterval); 
+        /*$tenYearsInterval = new \DateInterval("P10Y");
+        $dateMinusTenYears->sub($tenYearsInterval); */
 
         $devices->each(function($device) use ($dateMinusTenYears){
             $device->defects = collect([]);
             //Проверка, что обородувание установлено более 10 лет назад
-             if(!is_null($device->setup_year) && $device->setup_year >= $dateMinusTenYears->format('Y')){
+             if(!is_null($device->setup_year) && $device->setup_year <= $dateMinusTenYears->format('Y')){
                 $device->defects->put('tenYearsAgoSetup',true);
              }
             //проверка кабеля на огнестойкость и исправность извещателей
@@ -158,6 +158,10 @@ class Serviceability{
         print("</ul>");
     }
 
+    private function printOldDevices($defects){
+        print_r("<p>Оборудование установленно более 10 лет назад</p>");
+    }
+
     private function unsafeWires($defect){
         $result = [];
         foreach($defect as $wire){
@@ -192,6 +196,10 @@ class Serviceability{
         return $this->badSensors($defect);
     }
 
+    private function oldDevices($defects){
+        return "<p>Оборудование установленно более 10 лет назад</p>";
+    }
+
     public function defects(){
         //$device->is_good === 0;
         $this->checkForDefects($this->rspiDevices);
@@ -203,6 +211,9 @@ class Serviceability{
             print_r("<p>".$device->devicable->name."</p>");
             $device->defects->each(function ($defect, $key) {
                 switch($key){
+                    case 'tenYearsAgoSetup':
+                        $this->printOldDevices($defect);
+                        break;
                     case 'unsafeWires': 
                         $this->printUnsafeWires($defect);
                         break;
@@ -274,6 +285,9 @@ class Serviceability{
             $elements = collect([]);
             $device->defects->each(function ($defect, $key) use (&$elements) {
                 switch($key){
+                    case 'tenYearsAgoSetup':
+                        $this->oldDevices($defect);
+                        break;
                     case 'unsafeWires': 
                         $elements->put('Пожароопасный кабель', $this->unsafeWires($defect));
                         break;
@@ -320,6 +334,9 @@ class Serviceability{
             $elements = collect([]);
             $device->defects->each(function ($defect, $key) use (&$elements) {
                 switch($key){
+                    case 'tenYearsAgoSetup':
+                        $this->oldDevices($defect);
+                        break;
                     case 'unsafeWires': 
                         $elements->put('Пожароопасный кабель', $this->unsafeWires($defect));
                         break;

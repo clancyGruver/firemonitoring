@@ -14,7 +14,7 @@ class WordController extends Controller
         public function serviceabilityAct($object_id){
         $service = new Serviceability($object_id);
         $service->defects();
-        //$service->printDevices();
+//        $service->printDevices();
 
         $template = $service->getTemplateName();
         $resultFileName = $service->getResultFileName();
