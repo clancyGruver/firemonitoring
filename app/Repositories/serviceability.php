@@ -92,39 +92,6 @@ class Serviceability{
         } );
     }
 
-    public function defects(){
-        //$device->is_good === 0;
-        $this->checkForDefects($this->rspiDevices);
-        $this->checkForDefects($this->devices);
-    }
-
-    public function printDevices(){
-        $this->devices->each(function ($device) {
-            print_r("<p>".$device->devicable->name."</p>");
-            $device->defects->each(function ($defect, $key) {
-                switch($key){
-                    case 'unsafeWires': 
-                        $this->printUnsafeWires($defect);
-                        break;
-                    case 'critical':
-                        $this->printCriticalDefects($defect);
-                        break;
-                    case 'nonCritical':
-                        $this->printNonCriticalDefects($defect);
-                        break;
-                    case 'badSensors':
-                        $this->printBadSensors($defect);
-                        break;
-                    case 'badSetup':
-                        $this->printBadSetup($defect);
-                        break;
-                        
-                    default: print_r("<p>".$key."</p>"); break;
-                }
-            });
-        });
-    }
-
     private function printUnsafeWires($defect){
         print_r("<p>Пожароопасный кабель</p>");
         print("<ul>");
@@ -184,6 +151,55 @@ class Serviceability{
             }
         });
         print("</ul>");
+    }
+
+    public function defects(){
+        //$device->is_good === 0;
+        $this->checkForDefects($this->rspiDevices);
+        $this->checkForDefects($this->devices);
+    }
+
+    public function printDevices(){
+        $this->devices->each(function ($device) {
+            print_r("<p>".$device->devicable->name."</p>");
+            $device->defects->each(function ($defect, $key) {
+                switch($key){
+                    case 'unsafeWires': 
+                        $this->printUnsafeWires($defect);
+                        break;
+                    case 'critical':
+                        $this->printCriticalDefects($defect);
+                        break;
+                    case 'nonCritical':
+                        $this->printNonCriticalDefects($defect);
+                        break;
+                    case 'badSensors':
+                        $this->printBadSensors($defect);
+                        break;
+                    case 'badSetup':
+                        $this->printBadSetup($defect);
+                        break;
+                        
+                    default: print_r("<p>".$key."</p>"); break;
+                }
+            });
+        });
+    }
+
+    public function getTemplateName() : string {
+        return '../storage/word_templates/serviceabilityAct.docx';
+    }
+
+    public function getResultFileName() : string {
+        $date = new \DateTime();
+        $resultFileName = 'Акт исправности ' . $date->format('d-m-Y') . '.docx';
+
+        $outputDir = public_path('uploads/objectMedia/'.$this->object->id);
+        if(!is_dir($outputDir)){
+            mkdir($outputDir, 0777, true);
+        }
+        $outputPath = $outputDir . '/' . $resultFileName;
+        return $outputPath;
     }
 
 }

@@ -17,7 +17,10 @@ class WordController extends Controller
     public function serviceabilityAct($object_id, Request $request){
         $service = new Serviceability($object_id);
         $service->defects();
-        $service->printDevices();
+        //$service->printDevices();
+
+        $file = $service->getTemplateName();
+        $resultFileName = $service->getResultFileName();
        /* 
         // fill $defects 
         $defects = 'Без недостатков';
@@ -47,7 +50,6 @@ class WordController extends Controller
             }
         }
         
-        $file = '../storage/word_templates/serviceabilityAct.docx';
         $director = $object->director_name;
         $technick = Auth::user()->name;
         $object_name = $object->name;
@@ -63,13 +65,6 @@ class WordController extends Controller
             'object_address' => $object_address,
             'defects'        => $defects,
         ]);
-
-        $resultFileName = 'Акт исправности ' . $date->format('d-m-Y') . '.docx';
-
-        $outputDir = public_path('uploads/objectMedia/'.$object_id . '/' . $resultFileName);
-        if(!is_dir($outputDir)){
-            mkdir($outputDir, 0777, true);
-        }
         $templateProcessor->saveAs($outputDir);
 
         $params = [];
