@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Auth;
+use App\ObjectMediafile as OMedia;
 
 class WordWriter{
     private $lineBreak = '</w:t><w:br/><w:t>';
@@ -15,8 +16,20 @@ class WordWriter{
         $this->outputFile = $output;
     }
 
+    private function saveServiceReportAct($file, $userId, $objectId){
+        $params = [];
+        $params['filename'] = $file;
+        $params['description'] = $file;
+        $params['created_user_id'] = $userId;
+        $params['object_id'] = $objectId;
+        $mediaObj = new OMedia($params);
+        $mediaObj->save();
+        return $mediaObj;
+    }
+
     public function serviceReportAct(\App\Repositories\Serviceability $serv){
-        $technick = Auth::user()->name;
+        $auth = Auth::user();
+        $technick = $auth->name;
         
         $templateProcessor = new TemplateProcessor($this->templateFile);
 
@@ -33,6 +46,10 @@ class WordWriter{
             'devices_critical_defects'=> $this->createWordListDefects($serv->getDeviceCriticalDefects()),
             'rspis_critical_defects'  => $this->createWordListDefects($serv->getRspiCriticalDefects()),
         ]);
+        $oMedia = $this->saveServiceReportAct($serv->getResultFileName(), $auth->id, $serv->getObjectId(), );
+
+        $templateProcessor->saveAs($this->outputFile);
+        return $oMedia;
     }
 
     private function createWordListDevices($list){
@@ -52,7 +69,7 @@ class WordWriter{
             $device['elements']->each(function($elementList, $elementName) use(&$resultStrring){
                 $resultStrring .= $this->textLine($elementName, 1);
                 foreach($elementList as $element){
-                    $resultStrring .= $this->textLine($elementName, 2);
+                    $resultStrring .= $this->textLine($element, 2);
                 }
             });
         });

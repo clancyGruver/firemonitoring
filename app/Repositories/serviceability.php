@@ -4,7 +4,6 @@ namespace App\Repositories;
 use App\MonitoringObject as MO;
 use App\Object_Device as OD;
 use App\object_device_reglament_limitations as ODRL;
-;
 
 class Serviceability{
     private $tables = [
@@ -242,6 +241,11 @@ class Serviceability{
 
     public function getResultFileName() : string {
         $resultFileName = 'Акт исправности ' . $this->currentDate->format('d-m-Y') . '.docx';
+        return $resultFileName;
+    }
+
+    public function getResultPath() : string {
+        $resultFileName = $this->getResultFileName();
 
         $outputDir = public_path('uploads/objectMedia/'.$this->object->id);
         if(!is_dir($outputDir)){
@@ -249,6 +253,10 @@ class Serviceability{
         }
         $outputPath = $outputDir . '/' . $resultFileName;
         return $outputPath;
+    }
+
+    public function getObjectId() : int{
+        return $this->object->id;
     }
 
     public function getDirector() : string {

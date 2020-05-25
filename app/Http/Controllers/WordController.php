@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\MonitoringObject as MO;
 use App\Object_Device as OD;
-use App\ObjectMediafile as OMedia;
 
 use App\Repositories\Serviceability;
 use App\Repositories\WordWriter;
@@ -17,10 +16,11 @@ class WordController extends Controller
 //        $service->printDevices();
 
         $template = $service->getTemplateName();
-        $resultFileName = $service->getResultFileName();
+        $resultFileName = $service->getResultPath();
 
         $writer = new WordWriter($template, $resultFileName);
-        $writer->serviceReportAct($service);
+        $mediaObj = $writer->serviceReportAct($service);
+        return response()->json($mediaObj);
        /* 
         // fill $defects 
         $defects = 'Без недостатков';
@@ -52,13 +52,6 @@ class WordController extends Controller
 
         $templateProcessor->saveAs($outputDir);
 
-        $params = [];
-        $params['filename'] = $resultFileName;
-        $params['description'] = $resultFileName;
-        $params['created_user_id'] = Auth::user()->id;
-        $params['object_id'] = $object_id;
-        $mediaObj = new OMedia($params);
-        $mediaObj->save();
 
         return response()->json($mediaObj);*/
         //return response()->download(public_path('Акт исправности.docx'));
